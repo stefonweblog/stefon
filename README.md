@@ -1,4 +1,4 @@
-# stefon
+# Stefon
 
 A composable blogging engine in Clojure. This project will try to approach the feature set of [Wordpress](http://codex.wordpress.org/WordPress_Features).
  * Core Data Model
