@@ -11,7 +11,7 @@ A composable blogging engine in Clojure. This project will try to approach the f
  * Workflow component; preview, collaboration & editor review
  * Spam Detection
  * Versioning
- * Commentingssssssss component; default or an external comments service, like disqus or discourse
+ * Commenting component; default or an external comments service, like disqus or discourse
  * Administration Console
  * Plug-in support
  * Import / Export
