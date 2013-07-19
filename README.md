@@ -17,7 +17,7 @@ A composable blogging engine in Clojure. This project will try to approach the f
    * collaboration
    * editor review
    * versioning
- * Plug-in support
+ * Plug-in support; incl. communication between plug-ins
  * Database component;
    * adapters for [Datomic](http://www.datomic.com), SQL([Postgres](http://www.postgresql.org), etc), NoSQL ([Mongo](http://www.mongodb.org), etc), cloud storage (AWS [SimpleDB](http://aws.amazon.com/simpledb), [S3](http://aws.amazon.com/s3))
  * Web UI component;
