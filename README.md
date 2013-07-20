@@ -2,7 +2,7 @@
 
 A composable blogging engine in Clojure. This project will try to approach the feature set of [Wordpress](http://codex.wordpress.org/WordPress_Features).
  * Core Data Model
-   * posts (txt, rtf)
+   * posts (txt, rtf, md)
    * assets (images, audio, videos, documents)
    * tags / categories for content
  * Server component;
@@ -12,7 +12,7 @@ A composable blogging engine in Clojure. This project will try to approach the f
    * delete post / asset / tag
    * list posts / assets / tags
    * find posts / assets / tags
- * Workflow component;
+ * Workflow component; possibly model workflow with lamina?
    * preview
    * collaboration
    * editor review
