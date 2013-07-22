@@ -4,7 +4,9 @@
   (:require [stefon.shell :as shell]))
 
 
-(against-background [(after :facts (in-ns 'user))]
+
+(against-background [(before :facts (shell/start-system))
+                     (after :facts (shell/stop-system))]
 
 
                     (fact "Create the System"
@@ -29,4 +31,21 @@
                           (let [started (shell/start-system)
                                 stopped (shell/stop-system)]
 
-                            (ns-name *ns*) => 'user)))
+                            (ns-name *ns*) => 'user))
+
+
+                    (fact "Create a Post"
+
+                          (let [r1 (shell/create-post "t" "c" "0000")]
+
+                            (count (:posts @shell/*SYSTEM*)) => 1))
+
+                    (fact "Retrieve a Post" 1 => 1)
+
+                    (fact "Update a Post" 1 => 1)
+
+                    (fact "Delete a Post" 1 => 1)
+
+                    (fact "Find Posts" 1 => 1)
+
+                    (fact "List all Posts" 1 => 1))
