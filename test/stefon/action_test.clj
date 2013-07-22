@@ -1,6 +1,12 @@
 (ns stefon.action-test
   (:use midje.sweet)
-  (:require [stefon.action :as action]))
+  (:require [stefon.action :as action]
+            [stefon.shell :as shell]))
 
-(fact "Creating a Post"
-      1 => 1)
+
+(against-background [(before :facts (shell/start-system))]
+
+
+                    (fact "Creating a Post"
+
+                          ))

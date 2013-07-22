@@ -11,7 +11,10 @@
 
                           (let [system (shell/create-system)]
 
-                            system =not=> nil?))
+                            ;; checking i) not nil, ii) keys and iii) content
+                            system =not=> nil?
+                            (keys system) => (contains #{:posts :assets :tags})
+                            system => (just [[:posts []] [:assets []] [:tags []]])))
 
 
                     (fact "Start the System"
@@ -23,4 +26,7 @@
 
                     (fact "Stop the System"
 
-                          (let [result (shell/stop-system)])))
+                          (let [started (shell/start-system)
+                                stopped (shell/stop-system)]
+
+                            (ns-name *ns*) => 'user)))
