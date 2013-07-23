@@ -1,8 +1,11 @@
 (ns stefon.shell
 
-  (:require [stefon.domain :as domain]))
+  (:require [stefon.domain :as domain]
+            [cljs-uuid.core :as uuid]))
 
 
+;; ====
+;; SYSTEM structure & functions
 (def ^{:doc "In memory representation of the running system structures"}
   ^:dynamic *SYSTEM* (atom nil))
 
@@ -33,8 +36,23 @@
   (in-ns 'user))
 
 
+
+;; ====
+;; Functions for CRUD'ing to system structures
 (defn create-post [title content created-date]
 
-  (let [post (stefon.domain.Post. title content created-date)]
+  (let [uuidS (str (uuid/make-random))
+        post (stefon.domain.Post. uuidS title content created-date)]
 
-    (swap! *SYSTEM* update-in [:posts] conj post)))
+    (swap! *SYSTEM* update-in [:posts] conj post)
+    post))
+
+(defn retrieve-post [ID]
+
+  (first
+   (filter #(= (:id %) ID) (:posts @*SYSTEM*))))
+
+(defn delete-post [ID]
+
+  (swap! *SYSTEM* update-in [:posts] (fn [inp]
+                                       (remove #(= (:id %) ID) inp))))
