@@ -55,7 +55,15 @@
                             (type r2) => stefon.domain.Post
                             (:content r2) => "captain"))
 
-                    (fact "Update a Post" 1 => 1)
+                    (fact "Update a Post"
+
+                          (let [r1 (shell/create-post "t1" "fubar" "0000")
+                                postID (:id r1)
+
+                                r2 (shell/update-post postID {:content "fubar-two"})
+                                r3 (shell/retrieve-post postID)]
+
+                            (:content r3) => "fubar-two"))
 
                     (fact "Delete a Post"
 

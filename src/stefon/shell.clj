@@ -52,6 +52,20 @@
   (first
    (filter #(= (:id %) ID) (:posts @*SYSTEM*))))
 
+(defn update-post [ID update-map]
+
+  {:pre (map? update-map)}
+
+  (let [indexed-entry (seq (first (filter #(= (-> % second :id) ID)
+                                          (map-indexed (fn [idx itm] [idx itm]) (:posts @*SYSTEM*)))))]
+
+    (swap! *SYSTEM*
+           update-in
+           [:posts (first indexed-entry)]
+           (fn [inp]
+
+             (into inp update-map)))))
+
 (defn delete-post [ID]
 
   (swap! *SYSTEM* update-in [:posts] (fn [inp]
