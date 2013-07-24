@@ -135,24 +135,25 @@
 
                             r2 =not=> nil?
                             (type r2) => stefon.domain.Asset
-                            (:type r2) => "video")))
+                            (:type r2) => "video"))
 
 
-                    #_(fact "Create a Post"
+                    (fact "Create a Tag"
 
-                          (let [r1 (shell/create-post "t" "c" "0000")]
+                          (let [r1 (shell/create-tag "clojure")]
 
                             r1 =not=> nil?
-                            (type r1) => stefon.domain.Post
-                            (count (:posts @shell/*SYSTEM*)) => 1))
+                            (type r1) => stefon.domain.Tag
+                            (count (:tags @shell/*SYSTEM*)) => 1))
 
-                    #_(fact "Retrieve a Post"
 
-                          (let [r1 (shell/create-post "t" "captain" "0000")
+                    (fact "Retrieve a Tag"
 
-                                postID (:id r1)
-                                r2 (shell/retrieve-post postID)]
+                          (let [r1 (shell/create-tag "ruby")
+
+                                tagID (:id r1)
+                                r2 (shell/retrieve-tag tagID)]
 
                             r2 =not=> nil?
-                            (type r2) => stefon.domain.Post
-                            (:content r2) => "captain"))
+                            (type r2) => stefon.domain.Tag
+                            (:name r2) => "ruby")))
