@@ -1,6 +1,7 @@
 (ns stefon.shell
 
-  (:require [stefon.domain :as domain]
+  (:require [clojure.set :as set]
+            [stefon.domain :as domain]
             [cljs-uuid.core :as uuid]))
 
 
@@ -71,6 +72,10 @@
   (swap! *SYSTEM* update-in [:posts] (fn [inp]
                                        (remove #(= (:id %) ID) inp))))
 
-(defn find-posts [param-map]
+(defn find-posts
+  "Applies key value searching using an OR condition"
+  [param-map]
 
-  )
+  (let [entries (seq param-map)]
+
+    (seq (set/join [param-map] (:posts @*SYSTEM*)))))

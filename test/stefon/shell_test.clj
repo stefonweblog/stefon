@@ -1,7 +1,8 @@
 (ns stefon.shell-test
 
   (:use [midje.sweet])
-  (:require [stefon.shell :as shell]))
+  (:require [stefon.shell :as shell]
+            [clojure.pprint :as pprint]))
 
 
 
@@ -86,8 +87,17 @@
 
                           (let [r1 (shell/create-post "fubar one" "c1" "0000")
                                 r2 (shell/create-post "fubar two" "c2" "0000")
-                                r3 (shell/find-posts {:title "bar"})]
 
+                                r3 (shell/find-posts {:title "fubar one"}) ;; This SHOULD work
+                                r4 (shell/find-posts {:content "Zzz"}) ;; the should NOT work
+                                ]
+
+                            r3 =not=> nil?
+                            r4 => nil?
+
+                            ;; ensuring a proper count and the correct result
+                            (count r3) => 1
+                            (-> r3 first :id) => (:id r1)
                             ))
 
                     (fact "List all Posts" 1 => 1))
