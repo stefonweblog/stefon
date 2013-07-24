@@ -40,46 +40,74 @@
 
 ;; ====
 ;; Functions for CRUD'ing to system structures
-(defn create-post [title content created-date]
+(defn create [dkey title content created-date]
 
   (let [uuidS (str (uuid/make-random))
         post (stefon.domain.Post. uuidS title content created-date)]
 
-    (swap! *SYSTEM* update-in [:posts] conj post)
+    (swap! *SYSTEM* update-in [dkey] conj post)
     post))
 
-(defn retrieve-post [ID]
+(defn retrieve [dkey ID]
 
   (first
-   (filter #(= (:id %) ID) (:posts @*SYSTEM*))))
+   (filter #(= (:id %) ID) (dkey @*SYSTEM*))))
 
-(defn update-post [ID update-map]
+(defn update [dkey ID update-map]
 
   {:pre (map? update-map)}
 
   (let [indexed-entry (seq (first (filter #(= (-> % second :id) ID)
-                                          (map-indexed (fn [idx itm] [idx itm]) (:posts @*SYSTEM*)))))]
+                                          (map-indexed (fn [idx itm] [idx itm]) (dkey @*SYSTEM*)))))]
 
     (swap! *SYSTEM*
            update-in
-           [:posts (first indexed-entry)]
+           [dkey (first indexed-entry)]
            (fn [inp]
 
              (into inp update-map)))))
 
-(defn delete-post [ID]
+(defn delete [dkey ID]
 
-  (swap! *SYSTEM* update-in [:posts] (fn [inp]
+  (swap! *SYSTEM* update-in [dkey] (fn [inp]
                                        (remove #(= (:id %) ID) inp))))
 
-(defn find-posts
+(defn find
   "Applies key value searching using an OR condition"
-  [param-map]
+  [dkey param-map]
 
   (let [entries (seq param-map)]
 
-    (seq (set/join [param-map] (:posts @*SYSTEM*)))))
+    (seq (set/join [param-map] (dkey @*SYSTEM*)))))
+
+(defn list [dkey]
+
+  (dkey @*SYSTEM*))
+
+
+
+
+
+(defn create-post [title content created-date]
+
+  (create :posts title content created-date))
+
+(defn retrieve-post [ID]
+
+  (retrieve :posts ID))
+
+(defn update-post [ID update-map]
+
+  (update :posts ID update-map))
+
+(defn delete-post [ID]
+
+  (delete :posts ID))
+
+(defn find-posts [param-map]
+
+  (find :posts param-map))
 
 (defn list-posts []
 
-  (:posts @*SYSTEM*))
+  (list :posts))
