@@ -107,7 +107,7 @@
 
 ;; Assets
 (defn create-asset [asset type]
-  (create :assets asset type))
+  (create :assets 'stefon.domain.Asset asset type))
 
 (defn retrieve-asset [ID]
   (retrieve :assets ID))
@@ -123,3 +123,23 @@
 
 (defn list-assets []
   (list :assets))
+
+
+;; Tags
+(defn create-tag [name]
+  (create :tags 'stefon.domain.Tag name))
+
+(defn retrieve-tag [ID]
+  (retrieve :tags ID))
+
+(defn update-tag [ID update-map]
+  (update :tags ID update-map))
+
+(defn delete-tag [ID]
+  (delete :tags ID))
+
+(defn find-tags [param-map]
+  (find :tags param-map))
+
+(defn list-tags []
+  (list :tags))
