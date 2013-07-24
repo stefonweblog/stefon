@@ -82,6 +82,12 @@
 
                               (shell/retrieve-post postID) => nil?)))
 
-                    (fact "Find Posts" 1 => 1)
+                    (fact "Find Posts"
+
+                          (let [r1 (shell/create-post "fubar one" "c1" "0000")
+                                r2 (shell/create-post "fubar two" "c2" "0000")
+                                r3 (shell/find-posts {:title "bar"})]
+
+                            ))
 
                     (fact "List all Posts" 1 => 1))

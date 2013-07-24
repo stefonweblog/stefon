@@ -70,3 +70,7 @@
 
   (swap! *SYSTEM* update-in [:posts] (fn [inp]
                                        (remove #(= (:id %) ID) inp))))
+
+(defn find-posts [param-map]
+
+  )

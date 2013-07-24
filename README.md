@@ -12,11 +12,6 @@ A composable blogging engine in Clojure. This project will try to approach the f
    * delete post / asset / tag
    * list posts / assets / tags
    * find posts / assets / tags
- * Workflow component; possibly model workflow with lamina?
-   * preview
-   * collaboration
-   * editor review
-   * versioning
  * Plug-in support; I want to determine what's the best interface & messages to pass between stefon and plug-ins; are possible solutions: nrepl protocol, core.async
    * communication between plug-ins
    * way to declare 'stefon' service
@@ -29,6 +24,11 @@ A composable blogging engine in Clojure. This project will try to approach the f
  * Web UI component;
    * wyswyg editor, themes
    * embeddable in Compojure or Pedestal
+ * Workflow component; possibly model workflow with lamina?
+   * preview
+   * collaboration
+   * editor review
+   * versioning
  * Authentication & Authorization; OpenID
  * Spam Detection
  * Commenting component; default or an external comments service, like disqus or discourse
@@ -39,7 +39,11 @@ A composable blogging engine in Clojure. This project will try to approach the f
 
 ## Usage
 
-TBD
+   ;; To run tests
+   lein midje
+
+   ;; To autorun tests
+   lein midje :autotest :config test/etc/midje.clj
 
 ## License
 
