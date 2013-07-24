@@ -112,4 +112,47 @@
                             r3 =not=> nil?
                             (count r3) => 2
                             (filter #(= (:id %) (:id r1)) r3) =not=> empty?
-                            )))
+                            ))
+
+
+
+                    ;; ==== Shortened Tests for Asset & Tag functional decorators
+                    (fact "Create an Asset"
+
+                          (let [r1 (shell/create-asset "binary-goo" "image")]
+
+                            r1 =not=> nil?
+                            (type r1) => stefon.domain.Asset
+                            (count (:assets @shell/*SYSTEM*)) => 1))
+
+
+                    (fact "Retrieve an Asset"
+
+                          (let [r1 (shell/create-asset "binary-goo" "video")
+
+                                assetID (:id r1)
+                                r2 (shell/retrieve-asset assetID)]
+
+                            r2 =not=> nil?
+                            (type r2) => stefon.domain.Asset
+                            (:type r2) => "video")))
+
+
+                    #_(fact "Create a Post"
+
+                          (let [r1 (shell/create-post "t" "c" "0000")]
+
+                            r1 =not=> nil?
+                            (type r1) => stefon.domain.Post
+                            (count (:posts @shell/*SYSTEM*)) => 1))
+
+                    #_(fact "Retrieve a Post"
+
+                          (let [r1 (shell/create-post "t" "captain" "0000")
+
+                                postID (:id r1)
+                                r2 (shell/retrieve-post postID)]
+
+                            r2 =not=> nil?
+                            (type r2) => stefon.domain.Post
+                            (:content r2) => "captain"))
