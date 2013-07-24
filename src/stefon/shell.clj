@@ -40,13 +40,13 @@
 
 ;; ====
 ;; Functions for CRUD'ing to system structures
-(defn create [dkey title content created-date]
+(defn create [dkey klass & args]
 
   (let [uuidS (str (uuid/make-random))
-        post (stefon.domain.Post. uuidS title content created-date)]
+        entity-record (eval `(new ~klass ~uuidS ~@args))]
 
-    (swap! *SYSTEM* update-in [dkey] conj post)
-    post))
+    (swap! *SYSTEM* update-in [dkey] conj entity-record)
+    entity-record))
 
 (defn retrieve [dkey ID]
 
@@ -85,29 +85,41 @@
   (dkey @*SYSTEM*))
 
 
-
-
-
+;; Posts
 (defn create-post [title content created-date]
-
-  (create :posts title content created-date))
+  (create :posts 'stefon.domain.Post title content created-date))
 
 (defn retrieve-post [ID]
-
   (retrieve :posts ID))
 
 (defn update-post [ID update-map]
-
   (update :posts ID update-map))
 
 (defn delete-post [ID]
-
   (delete :posts ID))
 
 (defn find-posts [param-map]
-
   (find :posts param-map))
 
 (defn list-posts []
-
   (list :posts))
+
+
+;; Assets
+(defn create-asset [asset type]
+  (create :assets asset type))
+
+(defn retrieve-asset [ID]
+  (retrieve :assets ID))
+
+(defn update-asset [ID update-map]
+  (update :assets ID update-map))
+
+(defn delete-asset [ID]
+  (delete :assets ID))
+
+(defn find-assets [param-map]
+  (find :assets param-map))
+
+(defn list-assets []
+  (list :assets))
