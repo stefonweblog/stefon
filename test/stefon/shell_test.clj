@@ -100,4 +100,16 @@
                             (-> r3 first :id) => (:id r1)
                             ))
 
-                    (fact "List all Posts" 1 => 1))
+                    (fact "List all Posts"
+
+                          (let [r1 (shell/create-post "fubar one" "c1" "0000")
+                                r2 (shell/create-post "fubar two" "c2" "0000")
+
+                                r3 (shell/list-posts)
+                                ]
+
+                            ;; ensuring not nil, and a proper count
+                            r3 =not=> nil?
+                            (count r3) => 2
+                            (filter #(= (:id %) (:id r1)) r3) =not=> empty?
+                            )))

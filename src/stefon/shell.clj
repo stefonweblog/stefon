@@ -79,3 +79,7 @@
   (let [entries (seq param-map)]
 
     (seq (set/join [param-map] (:posts @*SYSTEM*)))))
+
+(defn list-posts []
+
+  (:posts @*SYSTEM*))
