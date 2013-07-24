@@ -73,7 +73,7 @@
                                        (remove #(= (:id %) ID) inp))))
 
 (defn find
-  "Applies key value searching using an OR condition"
+  "Applies key value searching using an AND condition"
   [dkey param-map]
 
   (let [entries (seq param-map)]

@@ -89,11 +89,15 @@
                                 r2 (shell/create-post "fubar two" "c2" "0000")
 
                                 r3 (shell/find-posts {:title "fubar one"}) ;; This SHOULD work
-                                r4 (shell/find-posts {:content "Zzz"}) ;; the should NOT work
+
+                                r4 (shell/find-posts {:content "Zzz"}) ;; this should NOT work
+                                r5 (shell/find-posts {:content "Zzz" :title "fubar one"})
                                 ]
 
                             r3 =not=> nil?
+
                             r4 => nil?
+                            r5 => nil?
 
                             ;; ensuring a proper count and the correct result
                             (count r3) => 1
