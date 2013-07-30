@@ -10,7 +10,9 @@
 (def  ^{:doc "In memory representation of the running system structures"}
       ^:dynamic *SYSTEM* (atom nil))
 
-(defn create-system []
+(defn create-system
+  "Creates a map with the core components of the system kernel"
+  []
 
   {:posts []
    :assets []
@@ -20,7 +22,6 @@
    :channel-sink nil})
 
 (defn start-system
-
   ([] (start-system (create-system)))
   ([system]
 
@@ -33,32 +34,19 @@
      (in-ns 'stefon.shell)))
 
 (defn stop-system []
-
   (swap! *SYSTEM* (fn [inp]  nil))
   (in-ns 'user))
 
 
 ;; SUBSCRIPTION code
 (defn close-plugin-channel []
-  (lamina/force-close (:channel-spout @*SYSTEM*)))
+  (plugin/close-plugin-channel @*SYSTEM*))
 
-(defn attach-plugin
-  "This function returns takes 1 function,
-   receieve-handler: a function called when the plugin receives a message
+(defn attach-plugin [receive-handler]
+  (plugin/attach-plugin @*SYSTEM* receive-handler))
 
-   And returns another function,
-   @returns: a function to invoke when the plugin needs to send the system a message"
-  [receive-handler]
-
-  (lamina/receive-all (:channel-spout @*SYSTEM*) receive-handler)
-  (fn [^clojure.lang.PersistentHashMap event]
-    (lamina/enqueue (:channel-sink @*SYSTEM*))))
-
-(defn- publish-event
-  "This function, internally, lets the core system pass messages to attached plugins"
-  [^clojure.lang.PersistentHashMap event]
-
-  (lamina/enqueue (:channel-spout @*SYSTEM*) event))
+(defn- publish-event [^clojure.lang.PersistentHashMap event]
+  (plugin/publish-event @*SYSTEM* event))
 
 
 ;; Posts
