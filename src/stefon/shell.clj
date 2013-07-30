@@ -21,7 +21,6 @@
 (defn start-system
 
   ([] (start-system (create-system)))
-
   ([system]
 
      ;; Setup the system atom
@@ -64,5 +63,3 @@
 (defn delete-tag [ID] (functions/delete *SYSTEM* :tags ID))
 (defn find-tags [param-map] (functions/find *SYSTEM* :tags param-map))
 (defn list-tags [] (functions/list *SYSTEM* :tags))
-
-
