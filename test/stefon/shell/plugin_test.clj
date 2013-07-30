@@ -6,7 +6,7 @@
             [stefon.shell.plugin :as plugin]))
 
 
-#_(against-background [(before :contents (shell/start-system))
+(against-background [(before :contents (shell/start-system))
                      (after :contents  (shell/stop-system))]
 
                     ;; ====
@@ -49,26 +49,30 @@
 (against-background [(before :facts (shell/start-system))
                      (after :facts (shell/stop-system))]
 
-                    #_(fact "Test for multiple sends"
+                    (fact "Test for multiple sends from kernel"
 
                             (let [handler-1 (fn [inp] inp)
-                                  sender-1 (plugin/attach-plugin shell/*SYSTEM* handler-1)]
+                                  sender-1 (plugin/attach-plugin shell/*SYSTEM* handler-1)
+                                  call-multiple (fn []
 
-                              (plugin/publish-event shell/*SYSTEM* {:fu :bar})
-                              (plugin/publish-event shell/*SYSTEM* {:interrupt :software})
+                                                  (plugin/publish-event shell/*SYSTEM* {:fu :bar}) => nil?
+                                                  (plugin/publish-event shell/*SYSTEM* {:interrupt :software}) => nil?
+                                                  nil)]
 
-                              (provided handler-1 :times 2)))
+                              (call-multiple) => nil?
+                              (provided
+                               (handler-1 {}) => {} :times 2)))
 
                     (fact "Test for multiple handlers receiving a send"
 
                           (let [r1 (atom nil)
                                 r2 (atom nil)
 
-                                handler-1 (fn [inp] (swap! r1 (fn [i] inp)))
-                                handler-2 (fn [inp] (swap! r2 (fn [i] inp)))
+                                h1 (fn [inp] (swap! r1 (fn [i] inp)))
+                                h2 (fn [inp] (swap! r2 (fn [i] inp)))
 
-                                sender-1 (plugin/attach-plugin shell/*SYSTEM* handler-1)
-                                sender-2 (plugin/attach-plugin shell/*SYSTEM* handler-2)]
+                                sender-1 (plugin/attach-plugin shell/*SYSTEM* h1)
+                                sender-2 (plugin/attach-plugin shell/*SYSTEM* h2)]
 
                             (plugin/publish-event shell/*SYSTEM* {:fu :bar})
 
@@ -77,3 +81,8 @@
 
                             (keys @r1) => (contains #{:fu})
                             (keys @r2) => (contains #{:fu}))))
+
+(against-background [(before :facts (shell/start-system))
+                     (after :facts (shell/stop-system))]
+
+                    (fact 1 => 1))
