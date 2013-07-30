@@ -54,7 +54,10 @@
   (fn [^clojure.lang.PersistentHashMap event]
     (lamina/enqueue (:channel-sink @*SYSTEM*))))
 
-(defn- publish-event [^clojure.lang.PersistentHashMap event]
+(defn- publish-event
+  "This function, internally, lets the core system pass messages to attached plugins"
+  [^clojure.lang.PersistentHashMap event]
+
   (lamina/enqueue (:channel-spout @*SYSTEM*) event))
 
 
