@@ -6,20 +6,13 @@
             [stefon.shell.plugin :as plugin]))
 
 
-(against-background [(before :facts (shell/start-system))
-                     (after :facts (shell/stop-system))]
-
+(against-background [(before :contents (shell/start-system))
+                     (after :contents  (shell/stop-system))]
 
                     ;; ====
-                    (let [result (plugin/create-plugin-system @shell/*SYSTEM*)]
+                    (let [result-system (plugin/create-plugin-system @shell/*SYSTEM*)]
 
-                      (fact "" 1 => 1))
-
-
-                    #_(let [[client server] (lamina/channel-pair)]
-
-                      (fact ""
-                            1 => 1))
-
+                      (fact "Testing that channels exist in the returned system"
+                            (keys result-system) => (contains #{:channel-spout :channel-sink})))
 
 )
