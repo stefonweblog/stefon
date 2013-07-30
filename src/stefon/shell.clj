@@ -1,10 +1,11 @@
 (ns stefon.shell
 
-  (:require [stefon.domain :as domain]
-            [stefon.shell.functions :as functions]))
+  (:require [lamina.core :as lamina]
+            [stefon.domain :as domain]
+            [stefon.shell.functions :as functions]
+            [stefon.shell.plugin :as plugin]))
 
 
-;; ====
 ;; SYSTEM structure & functions
 (def  ^{:doc "In memory representation of the running system structures"}
       ^:dynamic *SYSTEM* (atom nil))
@@ -23,8 +24,8 @@
   ([] (start-system (create-system)))
   ([system]
 
-     ;; Setup the system atom
-     (swap! *SYSTEM* (fn [inp] system))
+     ;; Setup the system atom & attach plugin channels
+     (swap! *SYSTEM* (fn [inp] (plugin/create-plugin-system system)))
 
      ;; Generate Post, Asset and Tag record types
 
@@ -36,6 +37,25 @@
   (swap! *SYSTEM* (fn [inp]  nil))
   (in-ns 'user))
 
+
+;; SUBSCRIPTION code
+(defn close-plugin-channel []
+  (lamina/force-close (:channel-spout @*SYSTEM*)))
+
+(defn attach-plugin
+  "This function returns takes 1 function,
+   receieve-handler: a function called when the plugin receives a message
+
+   And returns another function,
+   @returns: a function to invoke when the plugin needs to send the system a message"
+  [receive-handler]
+
+  (lamina/receive-all (:channel-spout @*SYSTEM*) receive-handler)
+  (fn [^clojure.lang.PersistentHashMap event]
+    (lamina/enqueue (:channel-sink @*SYSTEM*))))
+
+(defn- publish-event [^clojure.lang.PersistentHashMap event]
+  (lamina/enqueue (:channel-spout @*SYSTEM*) event))
 
 
 ;; Posts
