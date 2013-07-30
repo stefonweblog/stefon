@@ -6,7 +6,7 @@
             [stefon.shell.plugin :as plugin]))
 
 
-(against-background [(before :contents (shell/start-system))
+#_(against-background [(before :contents (shell/start-system))
                      (after :contents  (shell/stop-system))]
 
                     ;; ====
@@ -46,7 +46,7 @@
                             (keys @result-event)  => (contains #{:fu}))))
 
 
-(against-background [(before :facts (shell/start-system))
+#_(against-background [(before :facts (shell/start-system))
                      (after :facts (shell/stop-system))]
 
                     (fact "Test for multiple sends from kernel"
@@ -85,4 +85,8 @@
 (against-background [(before :facts (shell/start-system))
                      (after :facts (shell/stop-system))]
 
-                    (fact 1 => 1))
+                    (fact "Test kernel receive from plugin message"
+                          1 => 1)
+
+                    (fact "Test kernel action map from plugin message"
+                          2 => 2))
