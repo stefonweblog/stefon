@@ -1,12 +1,19 @@
 (ns stefon.plugin-test
-  (:use [midje.sweet]))
+  (:require [midje.sweet :refer :all]
+            [lamina.core :as lamina]
+
+            [stefon.plugin :as plugin]))
 
 
-(against-background [(before :facts 1)
+#_(against-background [(before :facts 1)
                      (after :facts 2)]
 
 
                     ;; ====
-                    (fact ""
-                          1 => 1)
-                    )
+                    #_(let [[client server] (lamina/channel-pair)]
+
+                      (fact ""
+                            1 => 1))
+
+
+)
