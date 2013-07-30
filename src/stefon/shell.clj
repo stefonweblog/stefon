@@ -1,5 +1,4 @@
 (ns stefon.shell
-
   (:require [lamina.core :as lamina]
             [stefon.domain :as domain]
             [stefon.shell.functions :as functions]

@@ -25,7 +25,14 @@
    @returns: a function to invoke when the plugin needs to send the system a message"
   [system-atom receive-handler]
 
-  (lamina/receive-all (:channel-spout @system-atom) receive-handler)
+  {:pre [(-> system-atom nil? not)
+         (= clojure.lang.Atom (type system-atom))
+         (= clojure.lang.PersistentArrayMap (type @system-atom))
+
+         (-> receive-handler nil? not)
+         (-> receive-handler fn?)]}
+
+  (lamina/receive-all (:channel-sink @system-atom) receive-handler)
   (fn [^clojure.lang.PersistentHashMap event]
     (lamina/enqueue (:channel-sink @system-atom))))
 
