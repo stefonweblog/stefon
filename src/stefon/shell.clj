@@ -25,7 +25,11 @@
   ([system]
 
      ;; Setup the system atom & attach plugin channels
-     (swap! *SYSTEM* (fn [inp] (plugin/create-plugin-system system)))
+     (swap! *SYSTEM* (fn [inp]
+
+                       ;; ...
+
+                       (plugin/create-plugin-system system)))
 
      ;; Generate Post, Asset and Tag record types
 
