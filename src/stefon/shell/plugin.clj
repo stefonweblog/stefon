@@ -6,16 +6,16 @@
 (defn create-plugin-system
   "Returns a System with 2 bi-directional channels.
    See reference here: https://github.com/ztellman/lamina/wiki/Connections"
-  [system-map]
+  [system]
 
-  {:pre [(map? system-map)]}
+  {:pre [(map? system)]}
 
   (let [client-server (lamina/channel-pair)]
-    (assoc system-map :channel-spout (first client-server) :channel-sink (second client-server))))
+    (assoc system :channel-spout (first client-server) :channel-sink (second client-server))))
 
 
-(defn close-plugin-channel [system-atom]
-  (lamina/force-close (:channel-spout @system-atom)))
+(defn close-plugin-channel [system]
+  (lamina/force-close (:channel-spout system)))
 
 (defn attach-plugin
   "This function returns takes 1 function,
@@ -23,21 +23,20 @@
 
    And returns another function,
    @returns: a function to invoke when the plugin needs to send the system a message"
-  [system-atom receive-handler]
+  [system receive-handler]
 
-  {:pre [(-> system-atom nil? not)
-         (= clojure.lang.Atom (type system-atom))
-         (= clojure.lang.PersistentArrayMap (type @system-atom))
+  {:pre [(-> system nil? not)
+         (= clojure.lang.PersistentArrayMap (type system))
 
          (-> receive-handler nil? not)
          (-> receive-handler fn?)]}
 
-  (lamina/receive-all (:channel-sink @system-atom) receive-handler)
+  (lamina/receive-all (:channel-sink system) receive-handler)
   (fn [^clojure.lang.PersistentHashMap event]
-    (lamina/enqueue (:channel-sink @system-atom))))
+    (lamina/enqueue (:channel-sink system))))
 
 (defn publish-event
   "This function, internally, lets the core system pass messages to attached plugins"
-  [system-atom ^clojure.lang.PersistentHashMap event]
+  [system ^clojure.lang.PersistentHashMap event]
 
-  (lamina/enqueue (:channel-spout @system-atom) event))
+  (lamina/enqueue (:channel-spout system) event))

@@ -6,7 +6,7 @@
             [stefon.shell.plugin :as plugin]))
 
 
-#_(against-background [(before :contents (shell/start-system))
+(against-background [(before :contents (shell/start-system))
                      (after :contents  (shell/stop-system))]
 
                     ;; ====
@@ -26,7 +26,7 @@
 
                     ;; ====
                     (let [handler-fn (fn [event])
-                          sender-fn (plugin/attach-plugin shell/*SYSTEM* handler-fn)]
+                          sender-fn (plugin/attach-plugin @shell/*SYSTEM* handler-fn)]
 
                       (fact "Ensure we're getting back a sender function"
 
@@ -35,12 +35,12 @@
 
                     (let [result-event (atom nil)
                           handler-fn (fn [event] (swap! result-event (fn [i] event)))
-                          sender-fn (plugin/attach-plugin shell/*SYSTEM* handler-fn)]
+                          sender-fn (plugin/attach-plugin @shell/*SYSTEM* handler-fn)]
 
                       (fact "Ensure that result begins as empty" @result-event => nil?)
                       (fact "Ensure that kernel sending messages is recieved by handler function"
 
-                            (plugin/publish-event shell/*SYSTEM* {:fu :bar})
+                            (plugin/publish-event @shell/*SYSTEM* {:fu :bar})
 
                             @result-event =not=> nil?
                             (keys @result-event)  => (contains #{:fu}))))
@@ -52,11 +52,11 @@
                     (fact "Test for multiple sends from kernel"
 
                             (let [handler-1 (fn [inp] inp)
-                                  sender-1 (plugin/attach-plugin shell/*SYSTEM* handler-1)
+                                  sender-1 (plugin/attach-plugin @shell/*SYSTEM* handler-1)
                                   call-multiple (fn []
 
-                                                  (plugin/publish-event shell/*SYSTEM* {:fu :bar}) => nil?
-                                                  (plugin/publish-event shell/*SYSTEM* {:interrupt :software}) => nil?
+                                                  (plugin/publish-event @shell/*SYSTEM* {:fu :bar}) => nil?
+                                                  (plugin/publish-event @shell/*SYSTEM* {:interrupt :software}) => nil?
                                                   nil)]
 
                               (call-multiple) => nil?
@@ -71,8 +71,8 @@
                                 h1 (fn [inp] (swap! r1 (fn [i] inp)))
                                 h2 (fn [inp] (swap! r2 (fn [i] inp)))
 
-                                sender-1 (plugin/attach-plugin shell/*SYSTEM* h1)
-                                sender-2 (plugin/attach-plugin shell/*SYSTEM* h2)]
+                                sender-1 (plugin/attach-plugin @shell/*SYSTEM* h1)
+                                sender-2 (plugin/attach-plugin @shell/*SYSTEM* h2)]
 
                             (plugin/publish-event shell/*SYSTEM* {:fu :bar})
 
@@ -81,12 +81,3 @@
 
                             (keys @r1) => (contains #{:fu})
                             (keys @r2) => (contains #{:fu}))))
-
-(against-background [(before :facts (shell/start-system))
-                     (after :facts (shell/stop-system))]
-
-                    (fact "Test kernel receive from plugin message"
-                          1 => 1)
-
-                    (fact "Test kernel action map from plugin message"
-                          2 => 2))
