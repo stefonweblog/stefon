@@ -33,7 +33,7 @@
 
   (lamina/receive-all (:channel-sink system) receive-handler)
   (fn [^clojure.lang.PersistentHashMap event]
-    (lamina/enqueue (:channel-sink system))))
+    (lamina/enqueue (:channel-sink system) event)))
 
 (defn publish-event
   "This function, internally, lets the core system pass messages to attached plugins"

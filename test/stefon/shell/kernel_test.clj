@@ -8,7 +8,7 @@
 
 
 
-#_(against-background [#_(before :facts (shell/start-system))
+(against-background [#_(before :facts (shell/start-system))
                      #_(after :facts (shell/stop-system))]
 
 
