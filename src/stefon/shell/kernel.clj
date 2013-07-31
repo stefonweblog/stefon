@@ -10,6 +10,9 @@
 
 (defn attach-kernel
   "Attaches a listener / handler to an in coming lamina channel"
-  [system]
 
-  (lamina/receive-all (:channel-spout system) handle-incoming-messages))
+  ([system]
+     (attach-kernel system handle-incoming-messages))
+
+  ([system message-handler]
+     (lamina/receive-all (:channel-spout system) message-handler)))

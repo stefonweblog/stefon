@@ -7,25 +7,21 @@
             [stefon.shell.kernel :as kernel]))
 
 
+(fact "Test kernel receive from plugin message"
 
-(against-background [#_(before :facts (shell/start-system))
-                     #_(after :facts (shell/stop-system))]
+      (let [system (plugin/create-plugin-system (shell/create-system))
+            handler (fn [inp] inp)
+            sender (plugin/attach-plugin system handler)
 
+            result-event (atom nil)
+            kernel-handler (fn [inp] (swap! result-event (fn [i] inp)))
 
-                    (fact "Test kernel receive from plugin message"
+            xxx (kernel/attach-kernel system kernel-handler)
+            xxy (sender {:fu :bar :qwerty :board})]
 
-                          (let [system (plugin/create-plugin-system (shell/create-system))
+        @result-event =not=> nil?
+        (type @result-event) => clojure.lang.PersistentArrayMap
+        (keys @result-event) => (contains #{:fu :qwerty})))
 
-                                handler (fn [inp] inp)
-                                sender (plugin/attach-plugin system handler)
-
-                                satom (kernel/attach-kernel system)
-
-                                xxx (sender {:fu :bar})]
-
-                            )
-                          1 => 1)
-
-                    (fact "Test kernel action map from plugin message"
-                          2 => 2)
-)
+(fact "Test kernel action map from plugin message"
+      2 => 2)
