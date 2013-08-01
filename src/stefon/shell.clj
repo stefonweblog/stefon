@@ -35,7 +35,10 @@
      ;; Generate Post, Asset and Tag record types
 
      ;; switch namespaces
-     (in-ns 'stefon.shell)))
+     (in-ns 'stefon.shell)
+
+     ;; return *SYSTEM*
+     *SYSTEM*))
 
 (defn stop-system []
   (swap! *SYSTEM* (fn [inp]  nil))
