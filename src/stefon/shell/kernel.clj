@@ -1,6 +1,8 @@
 (ns stefon.shell.kernel
 
   (:require [lamina.core :as lamina]
+            [clojure.string :as string]
+
             [stefon.shell.plugin :as plugin]
             [stefon.shell.functions :as functions]))
 
@@ -31,7 +33,11 @@
 
                 ;; execute the mapped action
                 (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
-                (eval `(~afn ~@params) )))
+                (eval `(~afn ~@params) )
+
+                ;; notify other plugins what has taken place; replacing :stefon... with :plugin...
+                (send-message {(keyword (string/replace (name :stefon.post.create) #"stefon" "plugin"))
+                               {:parameters (-> event ekey :parameters)}})))
             []
             filtered-event-keys)
 

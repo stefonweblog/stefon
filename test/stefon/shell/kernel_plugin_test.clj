@@ -41,8 +41,7 @@
 
                             @result-event =not=> nil?
                             (type @result-event) => clojure.lang.PersistentArrayMap
-                            (keys @result-event) => (contains #{:fu :qwerty})
-                            ))
+                            (keys @result-event) => (contains #{:fu :qwerty})))
 
 
                     (fact "Test kernel action map from plugin message"
@@ -59,4 +58,17 @@
                                 result-send (sender {:stefon.post.create {:parameters {:title "Latest In Biotech" :content "Lorem ipsum." :created-date "0000"}}
                                                      :fu :bar})])
 
-                          2 => 2))
+                          2 => 2
+                          ;; TODO - so far just testing with println ; find a better way to test kernel handler
+
+                          ;; did handler receive event
+
+                          ;; did correct function get triggered, from a mapped action
+                          ;; did the triggered function, send out a message to other plugins after the fact
+
+                          ;; if applicable, did multiple functions get triggred
+
+                          ;; did the kernel ignore actions it did not recognize
+                          ;; did the kernel forward on, to other plugins, the actions it did not recognize
+
+                          ))
