@@ -46,4 +46,13 @@
 
 
                     (fact "Test kernel action map from plugin message"
+
+                          (let [system (shell/create-system)
+                                system-with-handler (shell/start-system system)
+
+                                ;; something needs to send an event
+                                handler (fn [inp] inp)
+                                sender (plugin/attach-plugin @system-with-handler handler)
+
+                                result-send (sender {:stefon.post.create {:parameters {:title "Latest In Biotech" :content "Lorem ipsum." :created-date "0000"}}})])
                           2 => 2))

@@ -7,19 +7,30 @@
 
 ;; KERNEL message handling
 (defn handle-incoming-messages
-  "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in ...clj.
+  "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.clj.
 
-   {:stefon.post.create :parameters {:title :content :created-date}}"
+   {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
   [event]
 
-  (println (str "handle-incoming-messages CALLED > " event))
+  (println (str ">> handle-incoming-messages CALLED > " event))
 
   ;; perform actions, based on keys
-  (let [event-keys (keys event)]
+  (let [event-keys (keys event)
+        action-config (:action-mappings (load-file "resources/config.edn"))]
 
-    (map (fn [inp]
+    (println (str ">> event-keys[" event-keys "] / action-config[" action-config "]"))
 
-           inp)
+    (reduce (fn [rslt ekey]
+
+
+           (let [afn (ekey action-config)
+                 params (-> event ekey :parameters vals)]
+
+             (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
+
+             ;; execute the mapped action
+             (eval `(~afn ~@params) )))
+            []
          event-keys))
 
   ;; pass along any event(s) for which we do not have mappings
