@@ -6,6 +6,9 @@
 
 
 ;; KERNEL message handling
+(defn send-message [event]
+  (lamina/enqueue (:channel-spout @*SYSTEM*) event))
+
 (defn handle-incoming-messages
   "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.clj.
 
@@ -13,30 +16,31 @@
   [event]
 
   (println (str ">> handle-incoming-messages CALLED > " event))
-
-  ;; perform actions, based on keys
   (let [event-keys (keys event)
         action-config (:action-mappings (load-file "resources/config.edn"))]
 
+    ;; ====
+    ;; perform actions, based on keys
     (println (str ">> event-keys[" event-keys "] / action-config[" action-config "]"))
-
     (reduce (fn [rslt ekey]
 
+              (let [afn (ekey action-config)
+                    params (-> event ekey :parameters vals)]
 
-           (let [afn (ekey action-config)
-                 params (-> event ekey :parameters vals)]
-
-             (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
-
-             ;; execute the mapped action
-             (eval `(~afn ~@params) )))
+                ;; execute the mapped action
+                (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
+                (eval `(~afn ~@params) )))
             []
-         event-keys))
+            event-keys)
 
-  ;; pass along any event(s) for which we do not have mappings
-  ;; ...
+    ;; ====
+    ;; pass along any event(s) for which we do not have mappings
+    (let [action-keys (keys action-config)
+          event-less-known-mappings (eval `(dissoc event ~@'action-keys))]
 
-  )
+      (send-message event-less-known-mappings))))
+
+
 
 (defn attach-kernel
   "Attaches a listener / handler to an in coming lamina channel"
