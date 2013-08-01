@@ -2,7 +2,8 @@
   (:require [lamina.core :as lamina]
             [stefon.domain :as domain]
             [stefon.shell.functions :as functions]
-            [stefon.shell.plugin :as plugin]))
+            [stefon.shell.plugin :as plugin]
+            [stefon.shell.kernel :as kernel]))
 
 
 ;; SYSTEM structure & functions
@@ -22,14 +23,14 @@
 
 (defn start-system
   ([] (start-system (create-system)))
-  ([system]
+  ([system] (start-system system kernel/handle-incoming-messages))
+  ([system kernel-handler]
 
      ;; Setup the system atom & attach plugin channels
      (swap! *SYSTEM* (fn [inp]
-
-                       ;; ...
-
-                       (plugin/create-plugin-system system)))
+                       (let [with-plugin-system (plugin/create-plugin-system system)]
+                         (kernel/attach-kernel with-plugin-system kernel-handler)
+                         with-plugin-system)))
 
      ;; Generate Post, Asset and Tag record types
 

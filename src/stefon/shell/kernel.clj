@@ -1,6 +1,7 @@
 (ns stefon.shell.kernel
 
-  (:require [lamina.core :as lamina]))
+  (:require [lamina.core :as lamina]
+            ))
 
 
 (defn handle-incoming-messages [event]
