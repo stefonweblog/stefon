@@ -51,8 +51,12 @@
                                 system-with-handler (shell/start-system system)
 
                                 ;; something needs to send an event
-                                handler (fn [inp] inp)
+                                handler (fn [inp]
+
+                                          (println (str "test plugin handler [" inp "]")))
                                 sender (plugin/attach-plugin @system-with-handler handler)
 
-                                result-send (sender {:stefon.post.create {:parameters {:title "Latest In Biotech" :content "Lorem ipsum." :created-date "0000"}}})])
+                                result-send (sender {:stefon.post.create {:parameters {:title "Latest In Biotech" :content "Lorem ipsum." :created-date "0000"}}
+                                                     :fu :bar})])
+
                           2 => 2))

@@ -16,12 +16,14 @@
   [event]
 
   (println (str ">> handle-incoming-messages CALLED > " event))
-  (let [event-keys (keys event)
-        action-config (:action-mappings (load-file "resources/config.edn"))]
+  (let [action-config (:action-mappings (load-file "resources/config.edn"))
+        action-keys (keys action-config)
+
+        filtered-event-keys (keys (select-keys event action-keys))]
 
     ;; ====
     ;; perform actions, based on keys
-    (println (str ">> event-keys[" event-keys "] / action-config[" action-config "]"))
+    (println (str ">> filtered-event-keys[" filtered-event-keys "] / action-config[" action-config "]"))
     (reduce (fn [rslt ekey]
 
               (let [afn (ekey action-config)
@@ -31,13 +33,13 @@
                 (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
                 (eval `(~afn ~@params) )))
             []
-            event-keys)
+            filtered-event-keys)
 
     ;; ====
     ;; pass along any event(s) for which we do not have mappings
-    (let [action-keys (keys action-config)
-          event-less-known-mappings (eval `(dissoc event ~@'action-keys))]
+    (let [event-less-known-mappings (eval `(~dissoc ~event ~@action-keys))]
 
+      (println (str ">> forwarding unknown events > " event-less-known-mappings))
       (send-message event-less-known-mappings))))
 
 
