@@ -3,6 +3,7 @@
             [lamina.core :as lamina]
 
             [stefon.shell :as shell]
+            [stefon.shell.kernel :as kernel]
             [stefon.shell.plugin :as plugin]))
 
 
@@ -10,7 +11,7 @@
                      (after :contents  (shell/stop-system))]
 
                     ;; ====
-                    (let [result-system (plugin/create-plugin-system @shell/*SYSTEM*)]
+                    (let [result-system (plugin/create-plugin-system @(kernel/get-system))]
 
                       (fact "Testing that channels exist in the returned system"
 
@@ -20,13 +21,13 @@
 
                     (fact "Test that shell/*SYSTEM* has the attached channel(s)"
 
-                          (:channel-spout @shell/*SYSTEM*) =not=> nil?
-                          (:channel-sink @shell/*SYSTEM*) =not=> nil?)
+                          (:channel-spout @(kernel/get-system)) =not=> nil?
+                          (:channel-sink @(kernel/get-system)) =not=> nil?)
 
 
                     ;; ====
                     (let [handler-fn (fn [event])
-                          sender-fn (plugin/attach-plugin @shell/*SYSTEM* handler-fn)]
+                          sender-fn (plugin/attach-plugin @(kernel/get-system) handler-fn)]
 
                       (fact "Ensure we're getting back a sender function"
 
@@ -35,12 +36,12 @@
 
                     (let [result-event (atom nil)
                           handler-fn (fn [event] (swap! result-event (fn [i] event)))
-                          sender-fn (plugin/attach-plugin @shell/*SYSTEM* handler-fn)]
+                          sender-fn (plugin/attach-plugin @(kernel/get-system) handler-fn)]
 
                       (fact "Ensure that result begins as empty" @result-event => nil?)
                       (fact "Ensure that kernel sending messages is recieved by handler function"
 
-                            (plugin/publish-event @shell/*SYSTEM* {:fu :bar})
+                            (plugin/publish-event @(kernel/get-system) {:fu :bar})
 
                             @result-event =not=> nil?
                             (keys @result-event)  => (contains #{:fu}))))
@@ -52,11 +53,11 @@
                     (fact "Test for multiple sends from kernel"
 
                             (let [handler-1 (fn [inp] inp)
-                                  sender-1 (plugin/attach-plugin @shell/*SYSTEM* handler-1)
+                                  sender-1 (plugin/attach-plugin @(kernel/get-system) handler-1)
                                   call-multiple (fn []
 
-                                                  (plugin/publish-event @shell/*SYSTEM* {:fu :bar}) => nil?
-                                                  (plugin/publish-event @shell/*SYSTEM* {:interrupt :software}) => nil?
+                                                  (plugin/publish-event @(kernel/get-system) {:fu :bar}) => nil?
+                                                  (plugin/publish-event @(kernel/get-system) {:interrupt :software}) => nil?
                                                   nil)]
 
                               (call-multiple) => nil?
@@ -71,10 +72,10 @@
                                 h1 (fn [inp] (swap! r1 (fn [i] inp)))
                                 h2 (fn [inp] (swap! r2 (fn [i] inp)))
 
-                                sender-1 (plugin/attach-plugin @shell/*SYSTEM* h1)
-                                sender-2 (plugin/attach-plugin @shell/*SYSTEM* h2)]
+                                sender-1 (plugin/attach-plugin @(kernel/get-system) h1)
+                                sender-2 (plugin/attach-plugin @(kernel/get-system) h2)]
 
-                            (plugin/publish-event shell/*SYSTEM* {:fu :bar})
+                            (plugin/publish-event (kernel/get-system) {:fu :bar})
 
                             @r1 =not=> nil?
                             @r2 =not=> nil?

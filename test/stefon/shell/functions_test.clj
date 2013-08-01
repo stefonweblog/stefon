@@ -2,6 +2,7 @@
 
   (:use [midje.sweet])
   (:require [stefon.shell :as shell]
+            [stefon.shell.kernel :as kernel]
             [clojure.pprint :as pprint]))
 
 
@@ -13,18 +14,18 @@
                     ;; ====
                     (fact "Create a Post"
 
-                          (let [r1 (shell/create-post "t" "c" "0000")]
+                          (let [r1 (kernel/create-post "t" "c" "0000")]
 
                             r1 =not=> nil?
                             (type r1) => stefon.domain.Post
-                            (count (:posts @shell/*SYSTEM*)) => 1))
+                            (count (:posts @(kernel/get-system))) => 1))
 
                     (fact "Retrieve a Post"
 
-                          (let [r1 (shell/create-post "t" "captain" "0000")
+                          (let [r1 (kernel/create-post "t" "captain" "0000")
 
                                 postID (:id r1)
-                                r2 (shell/retrieve-post postID)]
+                                r2 (kernel/retrieve-post postID)]
 
                             r2 =not=> nil?
                             (type r2) => stefon.domain.Post
@@ -32,40 +33,40 @@
 
                     (fact "Update a Post"
 
-                          (let [r1 (shell/create-post "t1" "fubar" "0000")
+                          (let [r1 (kernel/create-post "t1" "fubar" "0000")
                                 postID (:id r1)
 
-                                r2 (shell/update-post postID {:content "fubar-two"})
-                                r3 (shell/retrieve-post postID)]
+                                r2 (kernel/update-post postID {:content "fubar-two"})
+                                r3 (kernel/retrieve-post postID)]
 
                             (:content r3) => "fubar-two"))
 
                     (fact "Delete a Post"
 
                           ;; inserting and checking
-                          (let [r1 (shell/create-post "t" "thing" "0000")
+                          (let [r1 (kernel/create-post "t" "thing" "0000")
 
                                 postID (:id r1)
-                                r2 (shell/retrieve-post postID)]
+                                r2 (kernel/retrieve-post postID)]
 
                             r2 =not=> nil?
                             (type r2) => stefon.domain.Post
                             (:content r2) => "thing"
 
                             ;; deleting and checking
-                            (let [r2 (shell/delete-post postID)]
+                            (let [r2 (kernel/delete-post postID)]
 
-                              (shell/retrieve-post postID) => nil?)))
+                              (kernel/retrieve-post postID) => nil?)))
 
                     (fact "Find Posts"
 
-                          (let [r1 (shell/create-post "fubar one" "c1" "0000")
-                                r2 (shell/create-post "fubar two" "c2" "0000")
+                          (let [r1 (kernel/create-post "fubar one" "c1" "0000")
+                                r2 (kernel/create-post "fubar two" "c2" "0000")
 
-                                r3 (shell/find-posts {:title "fubar one"}) ;; This SHOULD work
+                                r3 (kernel/find-posts {:title "fubar one"}) ;; This SHOULD work
 
-                                r4 (shell/find-posts {:content "Zzz"}) ;; this should NOT work
-                                r5 (shell/find-posts {:content "Zzz" :title "fubar one"})
+                                r4 (kernel/find-posts {:content "Zzz"}) ;; this should NOT work
+                                r5 (kernel/find-posts {:content "Zzz" :title "fubar one"})
                                 ]
 
                             r3 =not=> nil?
@@ -80,10 +81,10 @@
 
                     (fact "List all Posts"
 
-                          (let [r1 (shell/create-post "fubar one" "c1" "0000")
-                                r2 (shell/create-post "fubar two" "c2" "0000")
+                          (let [r1 (kernel/create-post "fubar one" "c1" "0000")
+                                r2 (kernel/create-post "fubar two" "c2" "0000")
 
-                                r3 (shell/list-posts)
+                                r3 (kernel/list-posts)
                                 ]
 
                             ;; ensuring not nil, and a proper count

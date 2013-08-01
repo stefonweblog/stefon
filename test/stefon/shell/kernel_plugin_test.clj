@@ -1,4 +1,4 @@
-(ns stefon.shell.kernel-test
+(ns stefon.shell.kernel-plugin-test
   (:require [midje.sweet :refer :all]
             [lamina.core :as lamina]
 
@@ -6,7 +6,7 @@
             [stefon.shell.plugin :as plugin]
             [stefon.shell.kernel :as kernel]))
 
-
+(against-background []
 (fact "Test kernel receive from plugin message"
 
       (let [system (plugin/create-plugin-system (shell/create-system))
@@ -44,5 +44,7 @@
         ))
 
 
-#_(fact "Test kernel action map from plugin message"
+(fact "Test kernel action map from plugin message"
       2 => 2)
+      )
+

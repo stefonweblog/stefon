@@ -33,48 +33,4 @@
                           (let [started (shell/start-system)
                                 stopped (shell/stop-system)]
 
-                            (ns-name *ns*) => 'user))
-
-
-
-                    ;; ==== Shortened Tests for Asset & Tag functional decorators
-                    (fact "Create an Asset"
-
-                          (let [r1 (shell/create-asset "binary-goo" "image")]
-
-                            r1 =not=> nil?
-                            (type r1) => stefon.domain.Asset
-                            (count (:assets @shell/*SYSTEM*)) => 1))
-
-
-                    (fact "Retrieve an Asset"
-
-                          (let [r1 (shell/create-asset "binary-goo" "video")
-
-                                assetID (:id r1)
-                                r2 (shell/retrieve-asset assetID)]
-
-                            r2 =not=> nil?
-                            (type r2) => stefon.domain.Asset
-                            (:type r2) => "video"))
-
-
-                    (fact "Create a Tag"
-
-                          (let [r1 (shell/create-tag "clojure")]
-
-                            r1 =not=> nil?
-                            (type r1) => stefon.domain.Tag
-                            (count (:tags @shell/*SYSTEM*)) => 1))
-
-
-                    (fact "Retrieve a Tag"
-
-                          (let [r1 (shell/create-tag "ruby")
-
-                                tagID (:id r1)
-                                r2 (shell/retrieve-tag tagID)]
-
-                            r2 =not=> nil?
-                            (type r2) => stefon.domain.Tag
-                            (:name r2) => "ruby")))
+                            (ns-name *ns*) => 'user)))
