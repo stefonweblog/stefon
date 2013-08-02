@@ -71,4 +71,6 @@
                           ;; did the kernel ignore actions it did not recognize
                           ;; did the kernel forward on, to other plugins, the actions it did not recognize
 
+
+                          ;; howto test how many times a function was called
                           ))
