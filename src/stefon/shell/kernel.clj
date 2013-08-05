@@ -6,6 +6,23 @@
             [stefon.shell.plugin :as plugin]
             [stefon.shell.functions :as functions]))
 
+(declare attach-kernel)
+
+;; SYSTEM structure & functions
+(def  ^{:doc "In memory representation of the running system structures"}
+      ^:dynamic *SYSTEM* (atom nil))
+
+(defn get-system [] *SYSTEM*)
+
+(defn start-system [system kernel-handler]
+
+  ;; Setup the system atom & attach plugin channels
+  (swap! *SYSTEM* (fn [inp]
+
+                    (let [with-plugin-system (plugin/create-plugin-system system)]
+                      (attach-kernel with-plugin-system kernel-handler)
+                      with-plugin-system))))
+
 
 ;; KERNEL message handling
 (defn send-message [event]
@@ -48,8 +65,6 @@
       (println (str ">> forwarding unknown events > " event-less-known-mappings))
       (send-message event-less-known-mappings))))
 
-
-
 (defn attach-kernel
   "Attaches a listener / handler to an in coming lamina channel"
 
@@ -58,23 +73,6 @@
 
   ([system message-handler]
      (lamina/receive-all (:channel-spout system) message-handler)))
-
-
-
-;; SYSTEM structure & functions
-(def  ^{:doc "In memory representation of the running system structures"}
-      ^:dynamic *SYSTEM* (atom nil))
-
-(defn get-system [] *SYSTEM*)
-
-(defn start-system [system kernel-handler]
-
-  ;; Setup the system atom & attach plugin channels
-  (swap! *SYSTEM* (fn [inp]
-
-                    (let [with-plugin-system (plugin/create-plugin-system system)]
-                      (attach-kernel with-plugin-system kernel-handler)
-                      with-plugin-system))))
 
 
 ;; Posts
