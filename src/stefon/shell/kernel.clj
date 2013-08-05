@@ -8,6 +8,7 @@
 
 (declare attach-kernel)
 
+
 ;; SYSTEM structure & functions
 (def  ^{:doc "In memory representation of the running system structures"}
       ^:dynamic *SYSTEM* (atom nil))
