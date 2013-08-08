@@ -22,5 +22,6 @@
                    :stefon.tag.list 'stefon.shell.kernel/list-tag
                    }
 
+ ;; Stefon will look for <plugin-name>.plugin/
  :plugins [[stefon-datomic]]
  }
