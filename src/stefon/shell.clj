@@ -14,10 +14,10 @@
    :assets []
    :tags []
 
-   :channel-spout nil
-   :channel-sink nil})
+   :kernel-channel nil})
 
 (defn start-system
+  []
   #_([] (start-system (create-system)))
   #_([system] (start-system system kernel/handle-incoming-messages))
   #_([system kernel-handler]
@@ -31,17 +31,17 @@
      ;; return *SYSTEM*
      (kernel/get-system)))
 
-(defn stop-system []
+#_(defn stop-system []
   (swap! (kernel/get-system) (fn [inp]  nil))
   (in-ns 'user))
 
 
 ;; SUBSCRIPTION code
-(defn close-plugin-channel []
+#_(defn close-plugin-channel []
   (plugin/close-plugin-channel (kernel/get-system)))
 
-(defn attach-plugin [receive-handler]
+#_(defn attach-plugin [receive-handler]
   (plugin/attach-plugin (kernel/get-system) receive-handler))
 
-(defn- publish-event [^clojure.lang.PersistentHashMap event]
+#_(defn- publish-event [^clojure.lang.PersistentHashMap event]
   (plugin/publish-event (kernel/get-system) event))
