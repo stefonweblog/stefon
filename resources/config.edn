@@ -21,4 +21,6 @@
                    :stefon.tag.find 'stefon.shell.kernel/find-tag
                    :stefon.tag.list 'stefon.shell.kernel/list-tag
                    }
+
+ :plugins [[stefon-datomic]]
  }
