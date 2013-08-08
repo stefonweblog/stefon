@@ -1,9 +1,39 @@
 (ns stefon.shell.kernel-spec
 
-  (:require [speclj.core :refer :all]))
+  (:require [speclj.core :refer :all]
+            [clojure.core.async :as async]
 
-(describe "A test"
-          (it "Should fail"
-              (should= 1 1)))
+            [stefon.shell.kernel :as kernel]))
 
-(run-specs)
+
+(describe "Setup"
+
+          (it "Setup a basic kernel channel"
+
+              (let [kchannel (kernel/init-channel)]
+
+                ;; ensure an async channel is returned
+                (should-not-be-nil kchannel))))
+
+(describe "Core kernel functions"
+
+          (before (def kchannel (kernel/init-channel)))
+
+          (it "Test basic message passing in kernel channel"
+
+              (let [one-msg (async/go (async/<! kchannel))]
+
+                ;; ensure an async channel is returned
+                (should-not-be-nil kchannel)
+
+                ;; ensure kernel can recieve 1 message
+
+                ;; ensure kernel can receive multiple messages
+
+                ;; ensure we can't double create a channel
+
+                #_(should= 1 1))
+
+              )
+
+          )

@@ -18,9 +18,9 @@
    :channel-sink nil})
 
 (defn start-system
-  ([] (start-system (create-system)))
-  ([system] (start-system system kernel/handle-incoming-messages))
-  ([system kernel-handler]
+  #_([] (start-system (create-system)))
+  #_([system] (start-system system kernel/handle-incoming-messages))
+  #_([system kernel-handler]
 
      ;; Delegate to the kernel
      (kernel/start-system system kernel-handler)

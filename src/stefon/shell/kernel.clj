@@ -2,6 +2,7 @@
 
   (:require [lamina.core :as lamina]
             [clojure.string :as string]
+            [clojure.core.async :as async]
 
             [stefon.shell.plugin :as plugin]
             [stefon.shell.functions :as functions]))
@@ -26,10 +27,14 @@
 
 
 ;; KERNEL message handling
-(defn send-message [event]
+(defn init-channel []
+
+  (async/chan))
+
+#_(defn send-message [event]
   (lamina/enqueue (:channel-spout @*SYSTEM*) event))
 
-(defn handle-incoming-messages
+#_(defn handle-incoming-messages
   "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.clj.
 
    {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
@@ -66,7 +71,7 @@
       (println (str ">> forwarding unknown events > " event-less-known-mappings))
       (send-message event-less-known-mappings))))
 
-(defn attach-kernel
+#_(defn attach-kernel
   "Attaches a listener / handler to an in coming lamina channel"
 
   ([system]
