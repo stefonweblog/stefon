@@ -14,7 +14,8 @@
 
 
   (swap! system-atom (fn [inp]
-                       (assoc inp :kernel-channel (async/chan)))))
+                       (assoc inp :kernel-channel (async/chan))))
+  system-atom)
 
 
 (defn get-kernel-channel [system-atom]
