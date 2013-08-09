@@ -4,6 +4,8 @@
             [clojure.core.async :as async]))
 
 
+(declare get-kernel-channel)
+
 
 ;; KERNEL message handling
 (defn init-kernel-channel [system-atom]
@@ -13,8 +15,13 @@
          (= clojure.lang.PersistentArrayMap (type @system-atom))]}
 
 
-  (swap! system-atom (fn [inp]
-                       (assoc inp :kernel-channel (async/chan))))
+  ;; ensure we don't already have an existing channel
+  (if (not (and
+            (not (nil? (get-kernel-channel system-atom)))
+            (= clojure.core.async.impl.channels.ManyToManyChannel (type (get-kernel-channel system-atom)))))
+
+    (swap! system-atom (fn [inp]
+                         (assoc inp :kernel-channel (async/chan)))))
   system-atom)
 
 
