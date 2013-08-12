@@ -17,5 +17,9 @@
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
                                   [midje "1.5.0"]]}}
 
+  :plugins [[speclj "2.5.0"]]
+
+  :test-paths ["spec"]
+
   :resource-paths ["resources/"]
   )
