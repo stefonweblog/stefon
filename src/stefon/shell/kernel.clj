@@ -53,6 +53,7 @@
         action-keys (keys action-config)
 
         eventF (:send-event event)
+        sendF (:send-handler event)
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
     ;; ====
@@ -65,7 +66,11 @@
 
                 ;; execute the mapped action
                 (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
-                (eval `(~afn ~@params) )
+                (let [eval-result (eval `(~afn ~@params) )]
+
+                  ;; send evaluation result back to sender
+                  (sendF eval-result))
+
 
                 ;; notify other plugins what has taken place; replacing :stefon... with :plugin...
                 (send-message {(keyword (string/replace (name ekey) #"stefon" "plugin"))

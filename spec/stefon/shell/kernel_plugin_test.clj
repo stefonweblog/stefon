@@ -23,7 +23,6 @@
 
                 (should-not-be-nil @result-event)
 
-                (println "... " @result-event)
                 (should= clojure.lang.PersistentArrayMap (type @result-event))
                 (should-contain :fu (keys @result-event))
                 (should-contain :qwerty (keys @result-event))))
@@ -49,7 +48,7 @@
                   (should-contain :qwerty (keys @result-event))))
 
 
-          (it "Test kernel action map from plugin message"
+          (it "Test kernel action mapping:"
 
               (let [system (shell/create-system)
                     system-with-handler (shell/start-system system)
@@ -81,7 +80,7 @@
               ;; howto test how many times a function was called
               )
 
-          (it "Test kernel action mapping: :stefon.domain"
+          (it "Test kernel action mapping: :stefon.domain ... Also tests that the plugin gets a promise-result from to their evaluation"
 
               (let [system (shell/create-system)
                     system-with-handler (shell/start-system system)
@@ -93,7 +92,9 @@
 
                     sender (plugin/attach-plugin @system-with-handler handler)
 
-                    result-send (sender {:stefon.domain {:parameters nil}})]
+                    result-promise (sender {:stefon.domain {:parameters nil}})]
 
-                (should true))
-              ))
+                (should-not-be-nil @result-promise)
+                (should= {:posts [], :assets [], :tags []} @result-promise)))
+
+          )
