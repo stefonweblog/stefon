@@ -13,7 +13,18 @@
 (def  ^{:doc "In memory representation of the running system structures"}
       ^:dynamic *SYSTEM* (atom nil))
 
+
 (defn get-system [] *SYSTEM*)
+
+(defn get-posts []
+  (-> @(get-system) :domain :posts))
+
+(defn get-assets []
+  (-> @(get-system) :domain :assets))
+
+(defn get-tags []
+  (-> @(get-system) :domain :tags))
+
 
 (defn start-system [system kernel-handler]
 

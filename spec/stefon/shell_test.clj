@@ -20,8 +20,8 @@
                 ;; checking i) not nil, ii) keys and iii) content
                 (should-not-be-nil system)
 
-                (should-not-be-nil (some #{:posts :assets :tags} (keys system)))
-                (should= {:posts [], :assets [], :tags [], :channel-spout nil, :channel-sink nil} system)))
+                (should-not-be-nil (some #{:posts :assets :tags} (keys (:domain system))))
+                (should= {:domain {:posts [] :assets [] :tags []} :channel-spout nil :channel-sink nil} system)))
 
 
           (it "Start the System"

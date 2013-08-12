@@ -10,10 +10,9 @@
   "Creates a map with the core components of the system kernel"
   []
 
-  {:posts []
-   :assets []
-   :tags []
-
+  {:domain {:posts []
+            :assets []
+            :tags []}
    :channel-spout nil
    :channel-sink nil})
 

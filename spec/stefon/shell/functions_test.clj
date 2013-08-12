@@ -19,7 +19,9 @@
 
                   (should-not-be-nil r1)
                   (should= stefon.domain.Post (type r1))
-                  (should= 1 (count (:posts @(kernel/get-system))))))
+
+                  (should= 1 (count (kernel/get-posts)))
+                  (should= stefon.domain.Post (type (first (kernel/get-posts))))))
 
           (it "Retrieve a Post"
 

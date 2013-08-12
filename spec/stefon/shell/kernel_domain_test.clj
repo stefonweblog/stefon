@@ -21,7 +21,7 @@
 
                   (should-not-be-nil r1)
                   (should= stefon.domain.Asset (type r1))
-                  (should= 1 (count (:assets @(kernel/get-system))))))
+                  (should= 1 (count (kernel/get-assets)))))
 
 
           (it "Retrieve an Asset"
@@ -44,7 +44,7 @@
                   (should-not-be-nil r1)
 
                   (should= stefon.domain.Tag (type r1))
-                  (should= 1 (count (:tags @(kernel/get-system))))))
+                  (should= 1 (count (kernel/get-tags)))))
 
 
           (it "Retrieve a Tag"
