@@ -20,7 +20,9 @@
                    :stefon.tag.delete 'stefon.shell.kernel/delete-tag
                    :stefon.tag.find 'stefon.shell.kernel/find-tag
                    :stefon.tag.list 'stefon.shell.kernel/list-tag
+
+                   :stefon.domain 'stefon.shell.kernel/get-domain
                    }
 
- :plugins [[stefon-datomic]]
+ ;;:plugins [['stefon-datomic]]
  }

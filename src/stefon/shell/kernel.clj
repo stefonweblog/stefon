@@ -16,6 +16,9 @@
 
 (defn get-system [] *SYSTEM*)
 
+(defn get-domain []
+  (:domain @(get-system)))
+
 (defn get-posts []
   (-> @(get-system) :domain :posts))
 
@@ -41,14 +44,16 @@
   (lamina/enqueue (:channel-spout @*SYSTEM*) event))
 
 (defn handle-incoming-messages
-  "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.clj.
+  "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.edn.
 
    {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
   [event]
 
-  (println (str ">> handle-incoming-messages CALLED > " event))
   (let [action-config (:action-mappings (load-file "resources/config.edn"))
+
         action-keys (keys action-config)
+
+
 
         filtered-event-keys (keys (select-keys event action-keys))]
 
@@ -65,7 +70,7 @@
                 (eval `(~afn ~@params) )
 
                 ;; notify other plugins what has taken place; replacing :stefon... with :plugin...
-                (send-message {(keyword (string/replace (name :stefon.post.create) #"stefon" "plugin"))
+                (send-message {(keyword (string/replace (name ekey) #"stefon" "plugin"))
                                {:parameters (-> event ekey :parameters)}})))
             []
             filtered-event-keys)
@@ -74,8 +79,10 @@
     ;; pass along any event(s) for which we do not have mappings
     (let [event-less-known-mappings (eval `(~dissoc ~event ~@action-keys))]
 
-      (println (str ">> forwarding unknown events > " event-less-known-mappings))
-      (send-message event-less-known-mappings))))
+      (if-not (empty? event-less-known-mappings)
+
+        (println (str ">> forwarding unknown events > " event-less-known-mappings))
+        (send-message event-less-known-mappings)))))
 
 (defn attach-kernel
   "Attaches a listener / handler to an in coming lamina channel"

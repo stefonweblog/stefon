@@ -60,9 +60,10 @@
                     sender (plugin/attach-plugin @system-with-handler handler)
 
                     result-send (sender {:stefon.post.create {:parameters {:title "Latest In Biotech" :content "Lorem ipsum." :created-date "0000"}}
-                                         :fu :bar})])
+                                         :fu :bar})]
 
-              (should true)
+                (should true))
+
               ;; TODO - so far just testing with println ; find a better way to test kernel handler
 
               ;; did handler receive event
@@ -77,4 +78,20 @@
 
 
               ;; howto test how many times a function was called
+              )
+
+          (it "Test kernel action mapping: :stefon.domain"
+
+              (let [system (shell/create-system)
+                    system-with-handler (shell/start-system system)
+
+                    ;; something needs to send an event
+                    handler (fn [inp]
+
+                              (println (str "test plugin handler [" inp "]")))
+                    sender (plugin/attach-plugin @system-with-handler handler)
+
+                    result-send (sender {:stefon.domain {:parameters nil}})]
+
+                (should true))
               ))
