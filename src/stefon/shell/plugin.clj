@@ -31,9 +31,19 @@
          (-> receive-handler nil? not)
          (-> receive-handler fn?)]}
 
+  ;; attach plugin's handler
   (lamina/receive-all (:channel-sink system) receive-handler)
+
+  ;; return a sender function
   (fn [^clojure.lang.PersistentHashMap event]
-    (lamina/enqueue (:channel-sink system) event)))
+
+    (let [result-promise (promise)
+          send-handler (fn [result-event]
+                         (deliver result-promise result-event))]
+
+      ;; pass the event, and a callback function, used to fill a promise
+      (lamina/enqueue (:channel-sink system) {:send-event event :send-handler send-handler})
+      result-promise)))
 
 (defn publish-event
   "This function, internally, lets the core system pass messages to attached plugins"

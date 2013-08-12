@@ -50,12 +50,10 @@
   [event]
 
   (let [action-config (:action-mappings (load-file "resources/config.edn"))
-
         action-keys (keys action-config)
 
-
-
-        filtered-event-keys (keys (select-keys event action-keys))]
+        eventF (:send-event event)
+        filtered-event-keys (keys (select-keys eventF action-keys))]
 
     ;; ====
     ;; perform actions, based on keys
@@ -63,7 +61,7 @@
     (reduce (fn [rslt ekey]
 
               (let [afn (ekey action-config)
-                    params (-> event ekey :parameters vals)]
+                    params (-> eventF ekey :parameters vals)]
 
                 ;; execute the mapped action
                 (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
@@ -71,13 +69,13 @@
 
                 ;; notify other plugins what has taken place; replacing :stefon... with :plugin...
                 (send-message {(keyword (string/replace (name ekey) #"stefon" "plugin"))
-                               {:parameters (-> event ekey :parameters)}})))
+                               {:parameters (-> eventF ekey :parameters)}})))
             []
             filtered-event-keys)
 
     ;; ====
     ;; pass along any event(s) for which we do not have mappings
-    (let [event-less-known-mappings (eval `(~dissoc ~event ~@action-keys))]
+    (let [event-less-known-mappings (eval `(~dissoc ~eventF ~@action-keys))]
 
       (if-not (empty? event-less-known-mappings)
 
