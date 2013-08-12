@@ -16,13 +16,14 @@
                     sender (plugin/attach-plugin system handler)
 
                     result-event (atom nil)
-                    kernel-handler (fn [inp] (swap! result-event (fn [i] inp)))
+                    kernel-handler (fn [inp] (swap! result-event (fn [i] (:send-event inp))))
 
                     xxx (kernel/attach-kernel system kernel-handler)
                     xxy (sender {:fu :bar :qwerty :board})]
 
                 (should-not-be-nil @result-event)
 
+                (println "... " @result-event)
                 (should= clojure.lang.PersistentArrayMap (type @result-event))
                 (should-contain :fu (keys @result-event))
                 (should-contain :qwerty (keys @result-event))))
@@ -32,7 +33,7 @@
 
                 (let [system (shell/create-system)
                       result-event (atom nil)
-                      kernel-handler (fn [inp] (swap! result-event (fn [i] inp)))
+                      kernel-handler (fn [inp] (swap! result-event (fn [i] (:send-event inp))))
 
                       system-with-handler (shell/start-system system kernel-handler)
 
@@ -89,6 +90,7 @@
                     handler (fn [inp]
 
                               (println (str "test plugin handler [" inp "]")))
+
                     sender (plugin/attach-plugin @system-with-handler handler)
 
                     result-send (sender {:stefon.domain {:parameters nil}})]
