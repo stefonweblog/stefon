@@ -38,10 +38,10 @@
 
 ;; SUBSCRIPTION code
 (defn close-plugin-channel []
-  (plugin/close-plugin-channel (kernel/get-system)))
+  (plugin/close-plugin-channel @(kernel/get-system)))
 
 (defn attach-plugin [receive-handler]
-  (plugin/attach-plugin (kernel/get-system) receive-handler))
+  (plugin/attach-plugin @(kernel/get-system) receive-handler))
 
 (defn- publish-event [^clojure.lang.PersistentHashMap event]
-  (plugin/publish-event (kernel/get-system) event))
+  (plugin/publish-event @(kernel/get-system) event))
