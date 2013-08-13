@@ -43,6 +43,7 @@
 
       ;; pass the event, and a callback function, used to fill a promise
       (lamina/enqueue (:channel-sink system) {:send-event event :send-handler send-handler})
+
       result-promise)))
 
 (defn publish-event

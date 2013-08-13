@@ -1,6 +1,7 @@
 (ns stefon.shell.kernel
 
-  (:require [lamina.core :as lamina]
+  (:require [clojure.java.io :as io]
+            [lamina.core :as lamina]
             [clojure.string :as string]
 
             [stefon.shell.plugin :as plugin]
@@ -49,12 +50,13 @@
    {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
   [event]
 
-  (let [action-config (:action-mappings (load-file "resources/config.edn"))
+  (let [action-config (:action-mappings (load-string (slurp (io/resource "config.edn"))))
         action-keys (keys action-config)
 
         eventF (:send-event event)
         sendF (:send-handler event)
         filtered-event-keys (keys (select-keys eventF action-keys))]
+
 
     ;; ====
     ;; perform actions, based on keys
