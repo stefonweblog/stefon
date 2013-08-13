@@ -1,14 +1,76 @@
 (ns stefon.domain)
 
 
+(defprotocol Domain
+  (schema [this] "Gets the schema definition for this domain object"))
+
+(defn post-schema []
+
+  [{:name :id
+    :type :uuid
+    :cardinality :one}
+   {:name :title
+    :type :string
+    :cardinality :one}
+   {:name :content
+    :type :string
+    :cardinality :one}
+   {:name :content-type
+    :type :string
+    :cardinality :one}
+   {:name :created-date
+    :type :date
+    :cardinality :one}
+   {:name :modified-date
+    :type :date
+    :cardinality :one}])
+
+(defn asset-schema []
+
+  [{:name :id
+    :type :uuid
+    :cardinality :one}
+   {:name :name
+    :type :string
+    :cardinality :one}
+   {:name :type
+    :type :string
+    :cardinality :one}
+   {:name :asset
+    :type :string
+    :cardinality :one}])
+
+(defn tag-schema []
+
+  [{:name :id
+    :type :uuid
+    :cardinality :one}
+   {:name :name
+    :type :string
+    :cardinality :one}])
+
+
+;; When using defrecord, it will be generated from the names of the domain's schema definitions
 (defn gen-post-type []
 
-  (defrecord Post [id title content created-date]))
+  (let [args-vec (into []
+                       (map #(-> % :name name symbol)
+                            (post-schema))) ]
+
+    (eval `(defrecord ~(symbol "Post") [~@args-vec]))))
 
 (defn gen-asset-type []
 
-  (defrecord Asset [id asset type]))
+  (let [args-vec (into []
+                       (map #(-> % :name name symbol)
+                            (asset-schema))) ]
+
+    (eval `(defrecord ~(symbol "Asset") [~@args-vec]))))
 
 (defn gen-tag-type []
 
-  (defrecord Tag [id name]))
+  (let [args-vec (into []
+                       (map #(-> % :name name symbol)
+                            (tag-schema))) ]
+
+    (eval `(defrecord ~(symbol "Tag") [~@args-vec]))))
