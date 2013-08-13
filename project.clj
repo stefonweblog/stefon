@@ -11,7 +11,7 @@
                   :exclusions [org.slf4j/slf4j-nop org.slf4j/log4j-over-slf4j]]
 
                  ;; Plugins
-                 [stefon-datomic "0.1.0-SNAPSHOT"]]
+                 #_[stefon-datomic "0.1.0-SNAPSHOT"]]
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
