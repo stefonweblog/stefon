@@ -57,7 +57,9 @@
                        (map #(-> % :name name symbol)
                             (post-schema))) ]
 
-    (eval `(defrecord ~(symbol "Post") [~@args-vec]))))
+    ;; ensure that we eval, and create record in the 'stefon.domain' namespace
+    (binding [*ns* (find-ns 'stefon.domain)]
+      (eval `(defrecord ~(symbol "Post") [~@args-vec])))))
 
 (defn gen-asset-type []
 
@@ -65,7 +67,8 @@
                        (map #(-> % :name name symbol)
                             (asset-schema))) ]
 
-    (eval `(defrecord ~(symbol "Asset") [~@args-vec]))))
+    (binding [*ns* (find-ns 'stefon.domain)]
+      (eval `(defrecord ~(symbol "Asset") [~@args-vec])))))
 
 (defn gen-tag-type []
 
@@ -73,4 +76,5 @@
                        (map #(-> % :name name symbol)
                             (tag-schema))) ]
 
-    (eval `(defrecord ~(symbol "Tag") [~@args-vec]))))
+    (binding [*ns* (find-ns 'stefon.domain)]
+      (eval `(defrecord ~(symbol "Tag") [~@args-vec])))))
