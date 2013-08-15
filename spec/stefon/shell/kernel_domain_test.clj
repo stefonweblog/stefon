@@ -17,7 +17,7 @@
           ;; ==== Shortened Tests for Asset & Tag functional decorators
           (it "Create an Asset"
 
-                (let [r1 (kernel/create-asset "binary-goo" "image")]
+                (let [r1 (kernel/create-asset "myimage" "image" "binary-goo")]
 
                   (should-not-be-nil r1)
                   (should= stefon.domain.Asset (type r1))
@@ -26,7 +26,7 @@
 
           (it "Retrieve an Asset"
 
-                (let [r1 (kernel/create-asset "binary-goo" "video")
+                (let [r1 (kernel/create-asset "myimage" "video"  "binary-goo")
 
                       assetID (:id r1)
                       r2 (kernel/retrieve-asset assetID)]

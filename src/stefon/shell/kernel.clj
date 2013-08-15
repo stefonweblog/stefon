@@ -4,6 +4,7 @@
             [lamina.core :as lamina]
             [clojure.string :as string]
 
+            [stefon.domain :as domain]
             [stefon.shell.plugin :as plugin]
             [stefon.shell.functions :as functions]))
 
@@ -20,6 +21,11 @@
 (defn get-domain []
   (:domain @(get-system)))
 
+(defn get-domain-schema []
+  {:posts (domain/post-schema)
+   :assets (domain/asset-schema)
+   :tags (domain/tag-schema)})
+
 (defn get-posts []
   (-> @(get-system) :domain :posts))
 
@@ -31,6 +37,11 @@
 
 
 (defn start-system [system kernel-handler]
+
+  ;; generate domain Classes
+  (domain/gen-post-type)
+  (domain/gen-asset-type)
+  (domain/gen-tag-type)
 
   ;; Setup the system atom & attach plugin channels
   (swap! *SYSTEM* (fn [inp]
@@ -100,7 +111,7 @@
 
 
 ;; Posts
-(defn create-post [title content created-date] (functions/create *SYSTEM* :posts 'stefon.domain.Post title content created-date))
+(defn create-post [title content content-type created-date modified-date] (functions/create *SYSTEM* :posts 'stefon.domain.Post title content content-type created-date modified-date))
 (defn retrieve-post [ID] (functions/retrieve *SYSTEM* :posts ID))
 (defn update-post [ID update-map] (functions/update *SYSTEM* :posts ID update-map))
 (defn delete-post [ID] (functions/delete *SYSTEM* :posts ID))
@@ -109,7 +120,7 @@
 
 
 ;; Assets
-(defn create-asset [asset type] (functions/create *SYSTEM* :assets 'stefon.domain.Asset asset type))
+(defn create-asset [name type asset] (functions/create *SYSTEM* :assets 'stefon.domain.Asset name type asset))
 (defn retrieve-asset [ID] (functions/retrieve *SYSTEM* :assets ID))
 (defn update-asset [ID update-map] (functions/update *SYSTEM* :assets ID update-map))
 (defn delete-asset [ID] (functions/delete *SYSTEM* :assets ID))

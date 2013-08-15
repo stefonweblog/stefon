@@ -15,7 +15,7 @@
 
           (it "Create a Post"
 
-                (let [r1 (kernel/create-post "t" "c" "0000")]
+                (let [r1 (kernel/create-post "t" "c" "c/t" "0000" "1111")]
 
                   (should-not-be-nil r1)
                   (should= stefon.domain.Post (type r1))
@@ -25,7 +25,7 @@
 
           (it "Retrieve a Post"
 
-                (let [r1 (kernel/create-post "t" "captain" "0000")
+                (let [r1 (kernel/create-post "t" "captain" "c/t" "0000" "1111")
 
                       postID (:id r1)
                       r2 (kernel/retrieve-post postID)]
@@ -36,7 +36,7 @@
 
           (it "Update a Post"
 
-                (let [r1 (kernel/create-post "t1" "fubar" "0000")
+                (let [r1 (kernel/create-post "t1" "fubar" "c/t" "0000" "1111")
                       postID (:id r1)
 
                       r2 (kernel/update-post postID {:content "fubar-two"})
@@ -47,7 +47,7 @@
           (it "Delete a Post"
 
                 ;; inserting and checking
-                (let [r1 (kernel/create-post "t" "thing" "0000")
+                (let [r1 (kernel/create-post "t" "thing" "c/t" "0000" "1111")
 
                       postID (:id r1)
                       r2 (kernel/retrieve-post postID)]
@@ -63,8 +63,8 @@
 
           (it "Find Posts"
 
-                (let [r1 (kernel/create-post "fubar one" "c1" "0000")
-                      r2 (kernel/create-post "fubar two" "c2" "0000")
+                (let [r1 (kernel/create-post "fubar one" "c1" "c/t" "0000" "1111")
+                      r2 (kernel/create-post "fubar two" "c2" "c/t" "0000" "1111")
 
                       r3 (kernel/find-posts {:title "fubar one"}) ;; This SHOULD work
 
@@ -82,8 +82,8 @@
 
           (it "List all Posts"
 
-                (let [r1 (kernel/create-post "fubar one" "c1" "0000")
-                      r2 (kernel/create-post "fubar two" "c2" "0000")
+                (let [r1 (kernel/create-post "fubar one" "c1" "c/t" "0000" "1111")
+                      r2 (kernel/create-post "fubar two" "c2" "c/t" "0000" "1111")
 
                       r3 (kernel/list-posts)
                       ]
