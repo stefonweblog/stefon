@@ -19,10 +19,10 @@
     :type :string
     :cardinality :one}
    {:name :created-date
-    :type :date
+    :type :instant
     :cardinality :one}
    {:name :modified-date
-    :type :date
+    :type :instant
     :cardinality :one}])
 
 (defn asset-schema []

@@ -22,6 +22,7 @@
                    :stefon.tag.list 'stefon.shell.kernel/list-tag
 
                    :stefon.domain 'stefon.shell.kernel/get-domain
+                   :stefon.domain.schema 'stefon.shell.kernel/get-domain-schema
                    }
 
  ;;:plugins [['stefon-datomic]]
