@@ -6,6 +6,12 @@
             [stefon.shell.kernel :as kernel]))
 
 
+(defn system-started? []
+
+  (if-not (nil? @(kernel/get-system))
+    true
+    false))
+
 (defn create-system
   "Creates a map with the core components of the system kernel"
   []
@@ -27,16 +33,18 @@
      ;; return *SYSTEM*
      (kernel/get-system)))
 
+(defn stop-system []
+  (swap! (kernel/get-system) (fn [inp]  nil))
+  (in-ns 'user))
+
+
+;; Open to a Stefon SHELL
 (defn shell []
 
   (start-system)
 
   ;; switch namespaces
   (in-ns 'stefon.shell))
-
-(defn stop-system []
-  (swap! (kernel/get-system) (fn [inp]  nil))
-  (in-ns 'user))
 
 
 ;; SUBSCRIPTION code
