@@ -28,11 +28,19 @@
 
               (let [result (shell/start-system)]
 
-                (should= 'stefon.shell (ns-name *ns*))))
+                ;; should return a hash
+                (should-not-be-nil result)
+                (should (map? @result))))
+
 
           (it "Stop the System"
 
               (let [started (shell/start-system)
                     stopped (shell/stop-system)]
 
-                (should= 'user (ns-name *ns*)))))
+                (should= 'user (ns-name *ns*))))
+
+          (it "Opens a shell"
+
+              (shell/shell)
+              (should= 'stefon.shell (ns-name *ns*))))

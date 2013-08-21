@@ -24,11 +24,15 @@
      ;; Delegate to the kernel
      (kernel/start-system system kernel-handler)
 
-     ;; switch namespaces
-     (in-ns 'stefon.shell)
-
      ;; return *SYSTEM*
      (kernel/get-system)))
+
+(defn shell []
+
+  (start-system)
+
+  ;; switch namespaces
+  (in-ns 'stefon.shell))
 
 (defn stop-system []
   (swap! (kernel/get-system) (fn [inp]  nil))
