@@ -40,7 +40,14 @@
 
                 (should= 'user (ns-name *ns*))))
 
+
           (it "Opens a shell"
 
               (shell/shell)
-              (should= 'stefon.shell (ns-name *ns*))))
+              (should= 'stefon.shell (ns-name *ns*)))
+
+
+          (it "Should throw an Exception if a plug tries to attach when the System hasn't started"
+              (let [one (shell/stop-system)
+                    handler (fn [message] (println ">> Main 001 > " message))]
+                (should-throw Exception (shell/attach-plugin handler)))))

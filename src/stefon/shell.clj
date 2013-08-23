@@ -52,7 +52,10 @@
   (plugin/close-plugin-channel @(kernel/get-system)))
 
 (defn attach-plugin [receive-handler]
-  (plugin/attach-plugin @(kernel/get-system) receive-handler))
+
+  (if (system-started?)
+    (plugin/attach-plugin @(kernel/get-system) receive-handler)
+    (throw Exception "System has not been started")))
 
 (defn- publish-event [^clojure.lang.PersistentHashMap event]
   (plugin/publish-event @(kernel/get-system) event))
