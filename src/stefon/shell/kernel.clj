@@ -97,8 +97,8 @@
 
       (if-not (empty? event-less-known-mappings)
 
-        (println (str ">> forwarding unknown events > " event-less-known-mappings))
-        (send-message event-less-known-mappings)))))
+        (do (println (str ">> forwarding unknown events > " event-less-known-mappings))
+            (send-message event-less-known-mappings))))))
 
 (defn attach-kernel
   "Attaches a listener / handler to an in coming lamina channel"
