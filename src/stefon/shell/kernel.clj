@@ -11,6 +11,13 @@
 (declare attach-kernel)
 
 
+;; LOAD Config information
+(defn load-config-raw []
+  (load-string (slurp (io/resource "config.edn"))))
+
+(def load-config (memoize load-config-raw))
+
+
 ;; SYSTEM structure & functions
 (def  ^{:doc "In memory representation of the running system structures"}
       ^:dynamic *SYSTEM* (atom nil))
@@ -61,7 +68,7 @@
    {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
   [event]
 
-  (let [action-config (:action-mappings (load-string (slurp (io/resource "config.edn"))))
+  (let [action-config (:action-mappings (load-config))
         action-keys (keys action-config)
 
         eventF (:send-event event)
