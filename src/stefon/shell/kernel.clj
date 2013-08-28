@@ -68,6 +68,8 @@
    {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
   [event]
 
+  (println "WTFFFFF !! > " event)
+
   (let [action-config (:action-mappings (load-config))
         action-keys (keys action-config)
 
