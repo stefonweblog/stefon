@@ -7,7 +7,7 @@
 (defn post-schema []
 
   [{:name :id
-    :type :uuid
+    :type :string
     :cardinality :one}
    {:name :title
     :type :string
@@ -28,7 +28,7 @@
 (defn asset-schema []
 
   [{:name :id
-    :type :uuid
+    :type :string
     :cardinality :one}
    {:name :name
     :type :string
@@ -43,7 +43,7 @@
 (defn tag-schema []
 
   [{:name :id
-    :type :uuid
+    :type :string
     :cardinality :one}
    {:name :name
     :type :string
