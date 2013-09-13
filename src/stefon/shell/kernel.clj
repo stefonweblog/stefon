@@ -10,6 +10,12 @@
 
 (declare attach-kernel)
 
+;; generate domain Classes
+(domain/gen-post-type)
+(domain/gen-asset-type)
+(domain/gen-tag-type)
+
+
 
 ;; LOAD Config information
 (defn load-config-raw []
@@ -44,11 +50,6 @@
 
 
 (defn start-system [system kernel-handler]
-
-  ;; generate domain Classes
-  (domain/gen-post-type)
-  (domain/gen-asset-type)
-  (domain/gen-tag-type)
 
   ;; Setup the system atom & attach plugin channels
   (swap! *SYSTEM* (fn [inp]

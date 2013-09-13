@@ -5,7 +5,14 @@
 
             [stefon.shell :as shell]
             [stefon.shell.kernel :as kernel]
-            [stefon.shell.plugin :as plugin]))
+            [stefon.shell.plugin :as plugin]
+            [stefon.domain :as domain]))
+
+
+;; generate domain Classes
+(domain/gen-post-type)
+(domain/gen-asset-type)
+(domain/gen-tag-type)
 
 
 (describe "one"

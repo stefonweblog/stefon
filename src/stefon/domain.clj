@@ -64,9 +64,12 @@
                        (map #(-> % :name name symbol)
                             (post-schema))) ]
 
+    (println ">> GEN_POST_TYPE > " (type args-vec))
+
     ;; ensure that we eval, and create record in the 'stefon.domain' namespace
     (binding [*ns* (find-ns 'stefon.domain)]
-      (eval `(defrecord ~(symbol "Post") [~@args-vec])))))
+      (eval `(defrecord ~(symbol "Post") [~@args-vec]))
+      #_(defrecord Post args-vec))))
 
 (defn gen-asset-type []
 

@@ -3,7 +3,14 @@
   (:require [speclj.core :refer :all]
             [stefon.shell :as shell]
             [stefon.shell.kernel :as kernel]
-            [clojure.pprint :as pprint]))
+            [clojure.pprint :as pprint]
+
+            []stefon.domain :as domain))
+
+;; generate domain Classes
+(domain/gen-post-type)
+(domain/gen-asset-type)
+(domain/gen-tag-type)
 
 
 
