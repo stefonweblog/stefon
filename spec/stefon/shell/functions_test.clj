@@ -5,14 +5,7 @@
             [stefon.shell.kernel :as kernel]
             [clojure.pprint :as pprint]
 
-            []stefon.domain :as domain))
-
-;; generate domain Classes
-(domain/gen-post-type)
-(domain/gen-asset-type)
-(domain/gen-tag-type)
-
-
+            [stefon.domain :as domain]))
 
 (describe "one"
 
@@ -22,7 +15,7 @@
 
           (it "Create a Post"
 
-                (let [r1 (kernel/create-post "t" "c" "c/t" "0000" "1111")]
+                (let [r1 (kernel/create-post "t" "c" "c/t" "0000" "1111" nil nil)]
 
                   (should-not-be-nil r1)
                   (should= stefon.domain.Post (type r1))
@@ -32,7 +25,7 @@
 
           (it "Retrieve a Post"
 
-                (let [r1 (kernel/create-post "t" "captain" "c/t" "0000" "1111")
+                (let [r1 (kernel/create-post "t" "captain" "c/t" "0000" "1111" nil nil)
 
                       postID (:id r1)
                       r2 (kernel/retrieve-post postID)]
@@ -43,7 +36,7 @@
 
           (it "Update a Post"
 
-                (let [r1 (kernel/create-post "t1" "fubar" "c/t" "0000" "1111")
+                (let [r1 (kernel/create-post "t1" "fubar" "c/t" "0000" "1111" nil nil)
                       postID (:id r1)
 
                       r2 (kernel/update-post postID {:content "fubar-two"})
@@ -54,7 +47,7 @@
           (it "Delete a Post"
 
                 ;; inserting and checking
-                (let [r1 (kernel/create-post "t" "thing" "c/t" "0000" "1111")
+                (let [r1 (kernel/create-post "t" "thing" "c/t" "0000" "1111" nil nil)
 
                       postID (:id r1)
                       r2 (kernel/retrieve-post postID)]
@@ -70,8 +63,8 @@
 
           (it "Find Posts"
 
-                (let [r1 (kernel/create-post "fubar one" "c1" "c/t" "0000" "1111")
-                      r2 (kernel/create-post "fubar two" "c2" "c/t" "0000" "1111")
+                (let [r1 (kernel/create-post "fubar one" "c1" "c/t" "0000" "1111" nil nil)
+                      r2 (kernel/create-post "fubar two" "c2" "c/t" "0000" "1111" nil nil)
 
                       r3 (kernel/find-posts {:title "fubar one"}) ;; This SHOULD work
 
@@ -89,8 +82,8 @@
 
           (it "List all Posts"
 
-                (let [r1 (kernel/create-post "fubar one" "c1" "c/t" "0000" "1111")
-                      r2 (kernel/create-post "fubar two" "c2" "c/t" "0000" "1111")
+                (let [r1 (kernel/create-post "fubar one" "c1" "c/t" "0000" "1111" nil nil)
+                      r2 (kernel/create-post "fubar two" "c2" "c/t" "0000" "1111" nil nil)
 
                       r3 (kernel/list-posts)
                       ]

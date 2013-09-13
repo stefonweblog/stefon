@@ -6,7 +6,6 @@
             [stefon.shell.kernel :as kernel]))
 
 
-
 (defn system-started? []
 
   (if-not (nil? @(kernel/get-system))

@@ -10,12 +10,6 @@
 
 (declare attach-kernel)
 
-;; generate domain Classes
-(domain/gen-post-type)
-(domain/gen-asset-type)
-(domain/gen-tag-type)
-
-
 
 ;; LOAD Config information
 (defn load-config-raw []
@@ -119,7 +113,8 @@
 
 
 ;; Posts
-(defn create-post [title content content-type created-date modified-date] (functions/create *SYSTEM* :posts 'stefon.domain.Post title content content-type created-date modified-date))
+(defn create-post [title content content-type created-date modified-date assets-ref tags-ref]
+  (functions/create *SYSTEM* :posts 'stefon.domain.Post title content content-type created-date modified-date assets-ref tags-ref))
 (defn retrieve-post [ID] (functions/retrieve *SYSTEM* :posts ID))
 (defn update-post [ID update-map] (functions/update *SYSTEM* :posts ID update-map))
 (defn delete-post [ID] (functions/delete *SYSTEM* :posts ID))

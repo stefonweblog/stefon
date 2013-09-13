@@ -9,11 +9,6 @@
             [stefon.domain :as domain]))
 
 
-;; generate domain Classes
-(domain/gen-post-type)
-(domain/gen-asset-type)
-(domain/gen-tag-type)
-
 (describe "one"
 
           (it "Test kernel receive from plugin message"

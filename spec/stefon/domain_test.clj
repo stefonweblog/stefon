@@ -5,9 +5,6 @@
             [cljs-uuid.core :as uuid]))
 
 ;; generate domain Classes
-(domain/gen-post-type)
-(domain/gen-asset-type)
-(domain/gen-tag-type)
 
 
 (describe "one"
@@ -18,8 +15,8 @@
                     uuidS (str (uuid/make-random))]
 
                 (should-not-be-nil post-type)
-                (should= {:id uuidS :title "ta" :content "ca" :content-type "c/t" :created-date "07202013" :modified-date "07222013"}
-                         (into {} (stefon.domain.Post. uuidS "ta" "ca" "c/t" "07202013" "07222013")))))
+                (should= {:id uuidS :title "ta" :content "ca" :content-type "c/t" :created-date "07202013" :modified-date "07222013" :assets nil :tags nil}
+                         (into {} (stefon.domain.Post. uuidS "ta" "ca" "c/t" "07202013" "07222013" nil nil)))))
 
           (it "Generating an Asset type"
 

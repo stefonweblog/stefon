@@ -1,7 +1,9 @@
 (ns stefon.shell.functions
 
   (:require [clojure.set :as set]
-            [cljs-uuid.core :as uuid]))
+            [cljs-uuid.core :as uuid]
+            [stefon.domain :as domain]))
+
 
 
 ;; ====
