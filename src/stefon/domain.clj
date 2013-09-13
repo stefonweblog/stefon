@@ -23,7 +23,14 @@
     :cardinality :one}
    {:name :modified-date
     :type :instant
-    :cardinality :one}])
+    :cardinality :one}
+   {:name :assets
+    :type :ref
+    :cardinality :many}
+   {:name :tags
+    :type :ref
+    :cardinality :many}
+    ])
 
 (defn asset-schema []
 
