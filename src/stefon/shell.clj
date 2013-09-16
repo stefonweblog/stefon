@@ -35,7 +35,7 @@
 
 (defn stop-system []
   (swap! (kernel/get-system) (fn [inp]  nil))
-  (in-ns 'user))
+  #_(in-ns 'user))
 
 
 ;; Open to a Stefon SHELL

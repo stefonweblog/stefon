@@ -34,7 +34,7 @@
                 (should (map? @result))))
 
 
-          (it "Stop the System"
+          #_(it "Stop the System"
 
               (let [started (shell/start-system)
                     stopped (shell/stop-system)]
