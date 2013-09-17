@@ -113,59 +113,83 @@
 
 ;; UPDATE
 (defmulti update (fn [& arg-list] (first arg-list)))
-(defmethod update :post ([& arg-list] (let [args (rest arg-list)]
+(defmethod update :post ([& arg-list] (let [args (rest arg-list)
+                                            result-promise (promise)]
                                         (kernel/handle-incoming-messages {:send-event {:stefon.post.update {:parameters {:id (nth args 0)
                                                                                                                          :update-map (nth args 1)}}}
-                                                                          :send-handler (fn [message])}))))
+                                                                          :send-handler (fn [message] (deliver result-promise message))})
+                                        result-promise)))
 
-(defmethod update :asset ([& arg-list] (let [args (rest arg-list)]
+(defmethod update :asset ([& arg-list] (let [args (rest arg-list)
+                                             result-promise (promise)]
                                          (kernel/handle-incoming-messages {:send-event {:stefon.asset.update {:parameters {:id (nth args 0)
                                                                                                                            :update-map (nth args 1)}}}
-                                                                           :send-handler (fn [message])}))))
+                                                                           :send-handler (fn [message] (deliver result-promise message))})
+                                         result-promise)))
 
-(defmethod update :tag ([& arg-list] (let [args (rest arg-list)]
+(defmethod update :tag ([& arg-list] (let [args (rest arg-list)
+                                           result-promise (promise)]
                                        (kernel/handle-incoming-messages {:send-event {:stefon.tag.update {:parameters {:id (nth args 0)
                                                                                                                        :update-map (nth args 1)}}}
-                                                                         :send-handler (fn [message])}))))
+                                                                         :send-handler (fn [message] (deliver result-promise message))})
+                                       result-promise)))
 
 ;; DELETE
 (defmulti delete (fn [& arg-list] (first arg-list)))
-(defmethod delete :post ([& arg-list] (let [args (rest arg-list)]
+(defmethod delete :post ([& arg-list] (let [args (rest arg-list)
+                                            result-promise (promise)]
                                         (kernel/handle-incoming-messages {:send-event {:stefon.post.delete {:parameters {:id (nth args 0)}}}
-                                                                          :send-handler (fn [message])}))))
+                                                                          :send-handler (fn [message] (deliver result-promise message))})
+                                        result-promise)))
 
-(defmethod delete :asset ([& arg-list] (let [args (rest arg-list)]
+(defmethod delete :asset ([& arg-list] (let [args (rest arg-list)
+                                             result-promise (promise)]
                                          (kernel/handle-incoming-messages {:send-event {:stefon.asset.delete {:parameters {:id (nth args 0)}}}
-                                                                           :send-handler (fn [message])}))))
+                                                                           :send-handler (fn [message] (deliver result-promise message))})
+                                         result-promise)))
 
-(defmethod delete :tag ([& arg-list] (let [args (rest arg-list)]
+(defmethod delete :tag ([& arg-list] (let [args (rest arg-list)
+                                           result-promise (promise)]
                                        (kernel/handle-incoming-messages {:send-event {:stefon.tag.delete {:parameters {:id (nth args 0)}}}
-                                                                         :send-handler (fn [message])}))))
+                                                                         :send-handler (fn [message] (deliver result-promise message))})
+                                       result-promise)))
 
 ;; FIND
 (defmulti find (fn [& arg-list] (first arg-list)))
-(defmethod find :post ([& arg-list] (let [args (rest arg-list)]
+(defmethod find :post ([& arg-list] (let [args (rest arg-list)
+                                          result-promise (promise)]
                                       (kernel/handle-incoming-messages {:send-event {:stefon.post.find {:parameters {:param-map (nth args 0)}}}
-                                                                        :send-handler (fn [message])}))))
+                                                                        :send-handler (fn [message] (deliver result-promise message))})
+                                      result-promise)))
 
-(defmethod find :asset ([& arg-list] (let [args (rest arg-list)]
+(defmethod find :asset ([& arg-list] (let [args (rest arg-list)
+                                           result-promise (promise)]
                                        (kernel/handle-incoming-messages {:send-event {:stefon.asset.find {:parameters {:param-map (nth args 0)}}}
-                                                                         :send-handler (fn [message])}))))
+                                                                         :send-handler (fn [message] (deliver result-promise message))})
+                                       result-promise)))
 
-(defmethod find :tag ([& arg-list] (let [args (rest arg-list)]
+(defmethod find :tag ([& arg-list] (let [args (rest arg-list)
+                                         result-promise (promise)]
                                      (kernel/handle-incoming-messages {:send-event {:stefon.tag.find {:parameters {:param-map (nth args 0)}}}
-                                                                       :send-handler (fn [message])}))))
+                                                                       :send-handler (fn [message] (deliver result-promise message))})
+                                     result-promise)))
 
 ;; LIST
 (defmulti list (fn [& arg-list] (first arg-list)))
-(defmethod list :post ([& arg-list] (let [args (rest arg-list)]
+(defmethod list :post ([& arg-list] (let [args (rest arg-list)
+                                          result-promise (promise)]
                                       (kernel/handle-incoming-messages {:send-event {:stefon.post.list {:parameters nil}}
-                                                                        :send-handler (fn [message])}))))
+                                                                        :send-handler (fn [message] (deliver result-promise message))})
+                                      result-promise)))
 
-(defmethod list :asset ([& arg-list] (let [args (rest arg-list)]
+(defmethod list :asset ([& arg-list] (let [args (rest arg-list)
+                                           result-promise (promise)]
                                        (kernel/handle-incoming-messages {:send-event {:stefon.asset.list {:parameters nil}}
-                                                                         :send-handler (fn [message])}))))
+                                                                         :send-handler (fn [message] (deliver result-promise message))})
+                                       result-promise)))
 
-(defmethod list :tag ([& arg-list] (let [args (rest arg-list)]
+(defmethod list :tag ([& arg-list] (let [args (rest arg-list)
+                                         result-promise (promise)]
                                      (kernel/handle-incoming-messages {:send-event {:stefon.tag.list {:parameters nil}}
-                                                                       :send-handler (fn [message])}))))
+                                                                       :send-handler (fn [message] (deliver result-promise message))})
+                                     result-promise)))
