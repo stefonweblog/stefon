@@ -73,7 +73,7 @@
 
     ;; ====
     ;; perform actions, based on keys
-    (println (str ">> filtered-event-keys[" filtered-event-keys "] / action-config[" action-config "]"))
+    ;;(println (str ">> filtered-event-keys[" filtered-event-keys "] / action-config[" action-config "]"))
     (reduce (fn [rslt ekey]
 
               (let [afn (ekey action-config)
