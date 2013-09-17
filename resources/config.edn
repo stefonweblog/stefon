@@ -4,22 +4,22 @@
                    :stefon.post.retrieve 'stefon.shell.kernel/retrieve-post
                    :stefon.post.update 'stefon.shell.kernel/update-post
                    :stefon.post.delete 'stefon.shell.kernel/delete-post
-                   :stefon.post.find 'stefon.shell.kernel/find-post
-                   :stefon.post.list 'stefon.shell.kernel/list-post
+                   :stefon.post.find 'stefon.shell.kernel/find-posts
+                   :stefon.post.list 'stefon.shell.kernel/list-posts
 
                    :stefon.asset.create 'stefon.shell.kernel/create-asset
                    :stefon.asset.retrieve 'stefon.shell.kernel/retrieve-asset
                    :stefon.asset.update 'stefon.shell.kernel/update-asset
                    :stefon.asset.delete 'stefon.shell.kernel/delete-asset
-                   :stefon.asset.find 'stefon.shell.kernel/find-asset
-                   :stefon.asset.list 'stefon.shell.kernel/list-asset
+                   :stefon.asset.find 'stefon.shell.kernel/find-assets
+                   :stefon.asset.list 'stefon.shell.kernel/list-assets
 
                    :stefon.tag.create 'stefon.shell.kernel/create-tag
                    :stefon.tag.retrieve 'stefon.shell.kernel/retrieve-tag
                    :stefon.tag.update 'stefon.shell.kernel/update-tag
                    :stefon.tag.delete 'stefon.shell.kernel/delete-tag
-                   :stefon.tag.find 'stefon.shell.kernel/find-tag
-                   :stefon.tag.list 'stefon.shell.kernel/list-tag
+                   :stefon.tag.find 'stefon.shell.kernel/find-tags
+                   :stefon.tag.list 'stefon.shell.kernel/list-tags
 
                    :stefon.domain 'stefon.shell.kernel/get-domain
                    :stefon.domain.schema 'stefon.shell.kernel/get-domain-schema

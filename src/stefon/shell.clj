@@ -65,7 +65,8 @@
 ;; CRUD Wrappers around kernel functions
 ;; CREATE
 (defmulti create (fn [& arg-list] (first arg-list)))
-(defmethod create :post ([& arg-list] (let [args (rest arg-list)]
+(defmethod create :post ([& arg-list] (let [args (rest arg-list)
+                                            result-promise (promise)]
                                         (kernel/handle-incoming-messages  {:send-event {:stefon.post.create {:parameters {:title (nth args 0)
                                                                                                                           :content (nth args 1)
                                                                                                                           :content-type (nth args 2)
@@ -73,7 +74,11 @@
                                                                                                                           :modified-date (nth args 4)
                                                                                                                           :assets-ref (nth args 5)
                                                                                                                           :tags-ref (nth args 6)}}}
-                                                                           :send-handler (fn [message])}))))
+                                                                           :send-handler (fn [message]
+                                                                                           (println ">> send-handler > " message)
+                                                                                           (deliver result-promise message))})
+                                        result-promise)))
+
 (defmethod create :asset ([& arg-list] (let [args (rest arg-list)]
                                          (kernel/handle-incoming-messages {:send-event {:stefon.asset.create {:parameters {:name (nth args 0)
                                                                                                                            :type (nth args 1)
