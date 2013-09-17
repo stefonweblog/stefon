@@ -72,8 +72,8 @@
                                                                                                                           :content-type (nth args 2)
                                                                                                                           :created-date (nth args 3)
                                                                                                                           :modified-date (nth args 4)
-                                                                                                                          :assets-ref (nth args 5)
-                                                                                                                          :tags-ref (nth args 6)}}}
+                                                                                                                          :assets (nth args 5)
+                                                                                                                          :tags (nth args 6)}}}
                                                                            :send-handler (fn [message] (deliver result-promise message))})
                                         result-promise)))
 
