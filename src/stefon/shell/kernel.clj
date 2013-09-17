@@ -29,9 +29,9 @@
   (:domain @(get-system)))
 
 (defn get-domain-schema []
-  {:posts (domain/post-schema)
-   :assets (domain/asset-schema)
-   :tags (domain/tag-schema)})
+  {:posts domain/post-schema
+   :assets domain/asset-schema
+   :tags domain/tag-schema})
 
 (defn get-posts []
   (-> @(get-system) :domain :posts))
