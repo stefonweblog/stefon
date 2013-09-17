@@ -74,33 +74,42 @@
                                                                                                                           :modified-date (nth args 4)
                                                                                                                           :assets-ref (nth args 5)
                                                                                                                           :tags-ref (nth args 6)}}}
-                                                                           :send-handler (fn [message]
-                                                                                           (println ">> send-handler > " message)
-                                                                                           (deliver result-promise message))})
+                                                                           :send-handler (fn [message] (deliver result-promise message))})
                                         result-promise)))
 
-(defmethod create :asset ([& arg-list] (let [args (rest arg-list)]
+(defmethod create :asset ([& arg-list] (let [args (rest arg-list)
+                                             result-promise (promise)]
                                          (kernel/handle-incoming-messages {:send-event {:stefon.asset.create {:parameters {:name (nth args 0)
                                                                                                                            :type (nth args 1)
                                                                                                                            :asset (nth args 2)}}}
-                                                                           :send-handler (fn [message])}))))
-(defmethod create :tag ([& arg-list] (let [args (rest arg-list)]
+                                                                           :send-handler (fn [message] (deliver result-promise message))})
+                                         result-promise)))
+
+(defmethod create :tag ([& arg-list] (let [args (rest arg-list)
+                                           result-promise (promise)]
                                        (kernel/handle-incoming-messages {:send-event {:stefon.tag.create {:parameters {:name (nth args 0)}}}
-                                                                         :send-handler (fn [message])}))))
+                                                                         :send-handler (fn [message] (deliver result-promise message))})
+                                       result-promise)))
 
 ;; RETRIEVE
 (defmulti retrieve (fn [& arg-list] (first arg-list)))
-(defmethod retrieve :post ([& arg-list] (let [args (rest arg-list)]
+(defmethod retrieve :post ([& arg-list] (let [args (rest arg-list)
+                                              result-promise (promise)]
                                           (kernel/handle-incoming-messages {:send-event {:stefon.post.retrieve {:parameters {:id (nth args 0)}}}
-                                                                            :send-handler (fn [message])}))))
+                                                                            :send-handler (fn [message] (deliver result-promise message))})
+                                          result-promise)))
 
-(defmethod retrieve :asset ([& arg-list] (let [args (rest arg-list)]
+(defmethod retrieve :asset ([& arg-list] (let [args (rest arg-list)
+                                               result-promise (promise)]
                                            (kernel/handle-incoming-messages {:send-event {:stefon.asset.retrieve {:parameters {:name (nth args 0)}}}
-                                                                             :send-handler (fn [message])}))))
+                                                                             :send-handler (fn [message] (deliver result-promise message))})
+                                           result-promise)))
 
-(defmethod retrieve :tag ([& arg-list] (let [args (rest arg-list)]
+(defmethod retrieve :tag ([& arg-list] (let [args (rest arg-list)
+                                             result-promise (promise)]
                                          (kernel/handle-incoming-messages {:send-event {:stefon.tag.retrieve {:parameters {:name (nth args 0)}}}
-                                                                           :send-handler (fn [message])}))))
+                                                                           :send-handler (fn [message] (deliver result-promise message))})
+                                         result-promise)))
 
 ;; UPDATE
 (defmulti update (fn [& arg-list] (first arg-list)))
