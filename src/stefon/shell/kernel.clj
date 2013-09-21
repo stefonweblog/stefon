@@ -79,6 +79,9 @@
               (let [afn (ekey action-config)
                     params (-> eventF ekey :parameters vals)]
 
+
+                ;; TODO - operations should occur in 1 place.. so data doesn't separate
+
                 ;; execute the mapped action
                 (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
                 (let [eval-result (eval `(~afn ~@params) )]
