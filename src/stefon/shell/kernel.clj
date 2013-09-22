@@ -1,13 +1,14 @@
 (ns stefon.shell.kernel
 
   (:require [clojure.java.io :as io]
-            [lamina.core :as lamina]
             [clojure.string :as string]
 
             [stefon.domain :as domain]
             [stefon.shell.plugin :as plugin]
             [stefon.shell.functions :as functions]))
 
+
+(def channel-list (atom []))
 
 
 ;; LOAD Config information
@@ -47,7 +48,7 @@
   ;; Setup the system atom & attach plugin channels
   (swap! *SYSTEM* (fn [inp]
 
-                    (let [with-plugin-system (plugin/create-plugin-system system)]
+                    #_(let [with-plugin-system (plugin/create-plugin-system system)]
                       (attach-kernel with-plugin-system kernel-handler)
                       with-plugin-system))))
 

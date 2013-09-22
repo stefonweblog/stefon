@@ -6,7 +6,8 @@
 
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [cljs-uuid "0.0.4"]
-                 [lamina "0.5.0-rc3"]
+                 [prismatic/schema "0.1.3"]
+                 [org.clojure/core.async "0.1.222.0-83d0c2-alpha"]
                  [com.datomic/datomic "0.8.3335"
                   :exclusions [org.slf4j/slf4j-nop org.slf4j/log4j-over-slf4j]]
 
