@@ -8,7 +8,6 @@
             [stefon.shell.plugin :as plugin]
             [stefon.shell.functions :as functions]))
 
-(declare attach-kernel)
 
 
 ;; LOAD Config information
@@ -52,67 +51,6 @@
                       (attach-kernel with-plugin-system kernel-handler)
                       with-plugin-system))))
 
-
-;; KERNEL message handling
-(defn send-message [event]
-  (lamina/enqueue (:channel-spout @*SYSTEM*) event))
-
-(defn handle-incoming-messages
-  "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.edn.
-
-   {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
-  [event]
-
-  (let [action-config (:action-mappings (load-config))
-        action-keys (keys action-config)
-
-        eventF (:send-event event)
-        sendF (:send-handler event)
-        filtered-event-keys (keys (select-keys eventF action-keys))]
-
-
-    ;; ====
-    ;; perform actions, based on keys
-    ;;(println (str ">> filtered-event-keys[" filtered-event-keys "] / action-config[" action-config "]"))
-    (reduce (fn [rslt ekey]
-
-              (let [afn (ekey action-config)
-                    params (-> eventF ekey :parameters vals)]
-
-
-                ;; TODO - operations should occur in 1 place.. so data doesn't separate
-
-                ;; execute the mapped action
-                (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
-                (let [eval-result (eval `(~afn ~@params) )]
-
-                  ;; send evaluation result back to sender
-                  (sendF eval-result))
-
-
-                ;; notify other plugins what has taken place; replacing :stefon... with :plugin...
-                (send-message {(keyword (string/replace (name ekey) #"stefon" "plugin"))
-                               {:parameters (-> eventF ekey :parameters)}})))
-            []
-            filtered-event-keys)
-
-    ;; ====
-    ;; pass along any event(s) for which we do not have mappings
-    (let [event-less-known-mappings (eval `(~dissoc ~eventF ~@action-keys))]
-
-      (if-not (empty? event-less-known-mappings)
-
-        (do (println (str ">> forwarding unknown events > " event-less-known-mappings))
-            (send-message event-less-known-mappings))))))
-
-(defn attach-kernel
-  "Attaches a listener / handler to an in coming lamina channel"
-
-  ([system]
-     (attach-kernel system handle-incoming-messages))
-
-  ([system message-handler]
-     (lamina/receive-all (:channel-spout system) message-handler)))
 
 
 ;; Posts
