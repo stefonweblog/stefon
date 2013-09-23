@@ -17,7 +17,17 @@
 
               ;;
               (let [new-channel (chan)
-                    add-result (kernel/add-to-channel-list new-channel)]
+                    add-result (try (kernel/add-to-channel-list new-channel) (catch Exception e e))
+                    add-result-2 (try (kernel/add-to-channel-list {:id 2 :channel new-channel}) (catch Exception e e))
+                    add-result-3 (try (kernel/add-to-channel-list {:id "ID" :channel new-channel}))]
+
+
+                (should-not-be-nil add-result)
+                (should (= RuntimeException (type add-result)))
+                (should (= RuntimeException (type add-result-2)))
+
+                (should-not (empty? add-result-3))
+                (should (vector? add-result-3))
 
                 (should-not (empty? @kernel/channel-list))
                 (should (map? (first @kernel/channel-list))))))
