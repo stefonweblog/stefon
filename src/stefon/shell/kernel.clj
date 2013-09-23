@@ -2,13 +2,30 @@
 
   (:require [clojure.java.io :as io]
             [clojure.string :as string]
+            [clojure.core.async :as async :refer :all]
+            [schema.core :as s]
 
+            [stefon.schema :as ss]
             [stefon.domain :as domain]
             [stefon.shell.plugin :as plugin]
             [stefon.shell.functions :as functions]))
 
 
+(ss/turn-on-validation)
 (def channel-list (atom []))
+
+(s/defn add-to-channel-list [new-channel :- { (s/required-key :id) s/String (s/required-key :channel) s/Any}]
+
+  (swap! channel-list (fn [inp] (conj inp new-channel))))
+
+
+;; GET a Channel
+(defn get-channel [ID]
+  (->> @channel-list (filter #(= ID (:id %))) first))
+
+(defn get-kernel-channel []
+  (get-channel "kernel-channel"))
+
 
 
 ;; LOAD Config information
