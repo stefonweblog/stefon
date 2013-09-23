@@ -19,6 +19,18 @@
   (swap! channel-list (fn [inp] (conj inp new-channel))))
 
 
+;; CREATE Channels
+(defn generate-channel
+  ([] (generate-channel (str (java.util.UUID/randomUUID))))
+  ([channelID]
+     {:id channelID
+      :channel (chan)}))
+
+(defn generate-kernel-channel []
+  (generate-channel "kernel-channel"))
+
+
+
 ;; GET a Channel
 (defn get-channel [ID]
   (->> @channel-list (filter #(= ID (:id %))) first))
