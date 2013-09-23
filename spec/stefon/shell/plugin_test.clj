@@ -44,4 +44,17 @@
                     rvalue (<!! new-channel)]
 
                 (should (fn? sendfn))
-                (should= {:fu :bar} rvalue))))
+                (should= {:fu :bar} rvalue)))
+
+          (it "Should be able to generate a recieve function"
+
+              (let [new-channel (chan)
+
+                    recievefn (plugin/generate-recieve-fn new-channel)
+
+                    result (promise)
+                    xx (recievefn (fn [msg] (deliver result msg)))
+                    xx (>!! new-channel {:fu :bar})]
+
+                (should-not-be-nil @result)
+                (should= {:fu :bar} @result))))
