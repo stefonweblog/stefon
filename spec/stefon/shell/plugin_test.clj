@@ -16,8 +16,19 @@
                 (should (string? (:id r1)))
 
                 (should-not-be-nil r2)
-                (should= RuntimeException (type r2))))
+                (should= RuntimeException (type r2)))
+
+              (let [r3 (plugin/generate-kernel-channel)]
+
+                (should-not-be-nil r3)
+                (should= '(:id :channel) (keys r3))
+                (should= "kernel-channel" (:id r3))))
 
           (it "Should be able to get a channel (incl. kernel channel)"
 
-              ))
+              (let [channel-list [(plugin/generate-kernel-channel)]
+
+                    r1 (plugin/generate-kernel-channel)]
+
+                (should-not-be-nil r1)
+                (should= "kernel-channel" (:id r1)))))
