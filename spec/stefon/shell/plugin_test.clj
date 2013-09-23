@@ -1,6 +1,7 @@
 (ns stefon.shell.plugin-test
 
   (:require [speclj.core :refer :all]
+            [clojure.core.async :as async :refer :all]
             [stefon.shell.plugin :as plugin]))
 
 
@@ -31,4 +32,16 @@
                     r1 (plugin/generate-kernel-channel)]
 
                 (should-not-be-nil r1)
-                (should= "kernel-channel" (:id r1)))))
+                (should= "kernel-channel" (:id r1))))
+
+          (it "Should be able to generate a send function"
+
+              (let [new-channel (chan)
+
+                    sendfn (plugin/generate-send-fn new-channel)
+                    xx (sendfn {:fu :bar})
+
+                    rvalue (<!! new-channel)]
+
+                (should (fn? sendfn))
+                (should= {:fu :bar} rvalue))))
