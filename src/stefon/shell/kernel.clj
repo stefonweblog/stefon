@@ -33,15 +33,17 @@
                                               (s/required-key :channel) s/Any}]
   (add-to-generic :channel-list new-channel))
 
-(s/defn add-to-recievefns [recievefn]
-  {:pre [(fn? recievefn)]}
+(s/defn add-to-recievefns [recieve-map :- { (s/required-key :id) s/String
+                                            (s/required-key :fn) s/Any}]
+  {:pre [(fn? (:fn recieve-map))]}
 
-  (add-to-generic :recieve-fns recievefn))
+  (add-to-generic :recieve-fns recieve-map))
 
-(s/defn add-to-sendfns [sendfn]
-  {:pre [(fn? sendfn)]}
+(s/defn add-to-sendfns [send-map :- { (s/required-key :id) s/String
+                                      (s/required-key :fn) s/Any}]
+  {:pre [(fn? (:fn send-map))]}
 
-  (add-to-generic :send-fns sendfn))
+  (add-to-generic :send-fns send-map))
 
 
 
@@ -105,13 +107,16 @@
         xx (recievefn handlerfn)]
 
     ;; KERNEL binding
-    (add-to-sendfns kernel-send)
+    (add-to-sendfns {:id (:id new-channel) :fn kernel-send})
 
     ;; PLUGIN binding
-    {:sendfn sendfn
+    {:channel (:id new-channel)
+     :sendfn sendfn
      :recievefn recievefn}))
 
-(defn kernel-handler [message]
+
+(s/defn kernel-handler [message :- {(s/required-key :id) s/String
+                                    (s/required-key :message) s/Any}]
   (println (str ">> kernel-handler CALLED > " message)))
 
 
@@ -130,7 +135,9 @@
      ;; Kernel RECIEVEs
      (let [krecieve (plugin/generate-recieve-fn (:channel (get-kernel-channel)))
            xx (krecieve khandler)
-           xx (add-to-recievefns krecieve)])
+
+           xx (add-to-recievefns {:id (:id (get-kernel-channel))
+                                  :fn krecieve})])
 
 
      ;; Setup the system atom & attach plugin channels

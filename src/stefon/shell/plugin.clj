@@ -31,8 +31,10 @@
   (fn [msg]
     (go (>! chanl msg))))
 
+
 (defn generate-recieve-fn [chanl]
   (fn [handlefn]
+
     (go (loop [msg (<! chanl)]
           (handlefn msg)
           (recur (<! chanl))))))

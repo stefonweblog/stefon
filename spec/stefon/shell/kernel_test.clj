@@ -51,26 +51,65 @@
               (let [xx (kernel/start-system) ]
 
                 (should-not (empty? (:recieve-fns @kernel/*SYSTEM*)))
-                (should (fn? (-> @kernel/*SYSTEM* :recieve-fns first)))))
+                (should (fn? (-> @kernel/*SYSTEM* :recieve-fns first :fn)))
+
+                ;; sending on the kernel channel should spark the kernel retrieve
+                ;; ...
+                ))
 
           (it "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel"
 
-              (let [handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+              (let [xx (kernel/start-system)
+
+                    handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
                     result (kernel/attach-plugin handlerfn)]
 
 
-                ((:sendfn result) {:fu :bar})
-                ((first (:send-fns @kernel/*SYSTEM*)) {:from :kernel})
+                ((:sendfn result) {:id "asdf" :message {:fu :bar}})
+                ((first (:send-fns @kernel/*SYSTEM*)) {:id "kernel-id" :message {:from :kernel}})
 
                 (should (fn? (:sendfn result)))
-                (should (fn? (:recievefn result)))))
 
-          #_(it "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel")
-          #_(it "on attaching a plugin, kernel SHOULD have 1 new send fn on the new-channel")
+                ;; using the send fn should spark the kernel retrieve
+                ;; ...
+                ))
+
+          (it "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel"
+
+              (let [xx (kernel/start-system)
+
+                    handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+                    result (kernel/attach-plugin handlerfn)]
+
+                (should (fn? (:recievefn result)))
+
+                ;; sending on new channel, should spark plugin's rettrieve
+                ;; ...
+                ))
+
+
+          (it "on attaching a plugin, kernel SHOULD have 1 new send fn on the new-channel"
+
+              (let [xx (kernel/start-system)
+                    xx (should (empty? (:send-fns @kernel/*SYSTEM*)))
+
+                    handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+                    result (kernel/attach-plugin handlerfn)]
+
+                (should-not (empty? (:send-fns @kernel/*SYSTEM*)))
+                (should (fn? (:fn (first (:send-fns @kernel/*SYSTEM*)))))
+
+                ;; using new send fn, should spark plugin's rettrieve
+                ;; ...
+                ))
+
 
           ;; PLUGIN
-          #_(it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)")
-          #_(it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
+          (it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
+
+              )
+
+          (it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
 
           #_(it "Should send a message from plugin to kernel, and get a return value")
           #_(it "Should send a message from kernel to plugin(s), and each plugin should give a response to JUST kernel")

@@ -39,12 +39,12 @@
               (let [new-channel (chan)
 
                     sendfn (plugin/generate-send-fn new-channel)
-                    xx (sendfn {:fu :bar})
+                    xx (sendfn {:id "asdf" :message {:fu :bar}})
 
                     rvalue (<!! new-channel)]
 
                 (should (fn? sendfn))
-                (should= {:fu :bar} rvalue)))
+                (should= {:id "asdf" :message {:fu :bar}} rvalue)))
 
           (it "Should be able to generate a recieve function"
 
