@@ -105,7 +105,32 @@
 
 
           ;; PLUGIN
+          (it "Should be able to send messages to attached function"
+
+              (let [xx (kernel/start-system)
+
+                    h1 (fn [msg] (println ">> h1 CALLED > " msg))
+                    h2 (fn [msg] (println ">> h2 CALLED > " msg))
+                    h3 (fn [msg] (println ">> h3 CALLED > " msg))
+
+                    r1 (kernel/attach-plugin h1)
+                    r2 (kernel/attach-plugin h2)
+                    r3 (kernel/attach-plugin h3)
+
+                    kchannel (:channel (kernel/get-kernel-channel))
+                    ]
+
+                (kernel/send-message-raw [(:id r2) (:id r3)] {:id "asdf" :message {:id "qwerty-1234" :fu :bar}})))
+
+
           (it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
+
+              (let [xx (kernel/start-system)
+
+                    handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+                    result (kernel/attach-plugin handlerfn)]
+
+                ((:sendfn result) {:id (:id result) :message {:stefon.post.create "qwerty"}}))
 
               )
 

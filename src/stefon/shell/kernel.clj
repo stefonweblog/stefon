@@ -110,14 +110,88 @@
     (add-to-sendfns {:id (:id new-channel) :fn kernel-send})
 
     ;; PLUGIN binding
-    {:channel (:id new-channel)
+    {:id (:id new-channel)
      :sendfn sendfn
      :recievefn recievefn}))
 
 
-(s/defn kernel-handler [message :- {(s/required-key :id) s/String
-                                    (s/required-key :message) s/Any}]
-  (println (str ">> kernel-handler CALLED > " message)))
+(defn send-message-raw [idlist message]
+
+  ;;(select-keys {:fu :bar :qwerty "asdf" :thing 2} '(:thing :a :b :fu))
+  ;;(some #{:posts :assets :tags} (keys (:domain system)))
+
+  (let [all-send-ids (map :id (:send-fns @*SYSTEM*))
+
+        filtered-sends (filter #(some #{(:id %)} idlist)
+                               (:send-fns @*SYSTEM*))]
+
+    (reduce (fn [rslt echf]
+              ((:fn echf) message))
+            []
+            filtered-sends)))
+
+(defn send-message
+  ([message] (send-message {:include :all} message))
+  ([conditions message]
+
+     #_(if-not conditions)))
+
+
+(s/defn kernel-handler
+    "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.edn.
+
+     {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
+  [message :- {(s/required-key :id) s/String
+               (s/required-key :message) s/Any}]
+
+  (println (str ">> kernel-handler CALLED > " message))
+
+  (let [action-config (:action-mappings (load-config))
+        action-keys (keys action-config)
+
+        eventF (:message message)
+        sendF (:send-handler message)
+        filtered-event-keys (keys (select-keys eventF action-keys))]
+
+    (println ">> RECOGNIZE? > " filtered-event-keys)
+
+    (if filtered-event-keys
+      nil
+      nil)
+
+
+    ;; ====
+    ;; perform actions, based on keys
+    ;;(println (str ">> filtered-event-keys[" filtered-event-keys "] / action-config[" action-config "]"))
+    #_(reduce (fn [rslt ekey]
+
+              (let [afn (ekey action-config)
+                    params (-> eventF ekey :parameters vals)]
+
+
+                ;; TODO - operations should occur in 1 place.. so data doesn't separate
+
+                ;; execute the mapped action
+                (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
+                (let [eval-result (eval `(~afn ~@params) )]
+
+                  ;; send evaluation result back to sender
+                  (sendF eval-result))
+
+                ;; notify other plugins what has taken place; replacing :stefon... with :plugin...
+                #_(send-message {(keyword (string/replace (name ekey) #"stefon" "plugin"))
+                                 {:parameters (-> eventF ekey :parameters)}})))
+            []
+            filtered-event-keys)
+
+    ;; ====
+    ;; pass along any event(s) for which we do not have mappings
+    #_(let [event-less-known-mappings (eval `(~dissoc ~eventF ~@action-keys))]
+
+      (if-not (empty? event-less-known-mappings)
+
+        (do (println (str ">> forwarding unknown events > " event-less-known-mappings))
+            #_(send-message event-less-known-mappings))))))
 
 
 
@@ -135,17 +209,8 @@
      ;; Kernel RECIEVEs
      (let [krecieve (plugin/generate-recieve-fn (:channel (get-kernel-channel)))
            xx (krecieve khandler)
-
            xx (add-to-recievefns {:id (:id (get-kernel-channel))
-                                  :fn krecieve})])
-
-
-     ;; Setup the system atom & attach plugin channels
-     #_(swap! *SYSTEM* (fn [inp]
-
-                       #_(let [with-plugin-system (plugin/create-plugin-system system)]
-                           (attach-kernel with-plugin-system khandler)
-                           with-plugin-system)))))
+                                  :fn krecieve})])))
 
 
 
