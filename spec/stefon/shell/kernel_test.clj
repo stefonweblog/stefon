@@ -50,9 +50,21 @@
 
               (let [xx (kernel/start-system) ]
 
-                (should-not (empty? (:recieve-fns @kernel/*SYSTEM*)))))
+                (should-not (empty? (:recieve-fns @kernel/*SYSTEM*)))
+                (should (fn? (-> @kernel/*SYSTEM* :recieve-fns first)))))
 
-          #_(it "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel")
+          (it "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel"
+
+              (let [handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+                    result (kernel/attach-plugin handlerfn)]
+
+
+                ((:sendfn result) {:fu :bar})
+                ((first (:send-fns @kernel/*SYSTEM*)) {:from :kernel})
+
+                (should (fn? (:sendfn result)))
+                (should (fn? (:recievefn result)))))
+
           #_(it "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel")
           #_(it "on attaching a plugin, kernel SHOULD have 1 new send fn on the new-channel")
 

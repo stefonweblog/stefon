@@ -15,7 +15,7 @@
 
 
 ;; SYSTEM structure & functions
-(def ^{:doc "In memory representation of the running system structures"} *SYSTEM* (atom nil))
+(def ^{:doc "In memory representation of the running system structures"} ^:dynamic *SYSTEM* (atom nil))
 
 (defn generate-system []
   {:system nil
@@ -31,14 +31,19 @@
 
 (s/defn add-to-channel-list [new-channel :- { (s/required-key :id) s/String
                                               (s/required-key :channel) s/Any}]
-  #_(swap! *SYSTEM* (fn [inp]
-                      (update-in inp [:channel-list] (fn [ii] (into [] (conj ii new-channel))))))
   (add-to-generic :channel-list new-channel))
 
 (s/defn add-to-recievefns [recievefn]
   {:pre [(fn? recievefn)]}
 
   (add-to-generic :recieve-fns recievefn))
+
+(s/defn add-to-sendfns [sendfn]
+  {:pre [(fn? sendfn)]}
+
+  (add-to-generic :send-fns sendfn))
+
+
 
 ;; CREATE Channels
 (defn generate-channel
@@ -87,9 +92,31 @@
   (-> @(get-system) :domain :tags))
 
 
+
+;; PLUGIN Handling
+(defn attach-plugin [handlerfn]
+
+  ;; plugin gets 1 send fn and 1 recieve fn
+  (let [new-channel (generate-channel)
+        kernel-send (plugin/generate-send-fn (:channel new-channel))
+
+        sendfn (plugin/generate-send-fn (:channel (get-kernel-channel)))
+        recievefn (plugin/generate-recieve-fn (:channel new-channel))
+        xx (recievefn handlerfn)]
+
+    ;; KERNEL binding
+    (add-to-sendfns kernel-send)
+
+    ;; PLUGIN binding
+    {:sendfn sendfn
+     :recievefn recievefn}))
+
 (defn kernel-handler [message]
   (println (str ">> kernel-handler CALLED > " message)))
 
+
+
+;; START System
 (defn start-system
   ([] (start-system @*SYSTEM* kernel-handler))
   ([system khandler]
@@ -101,7 +128,9 @@
      (add-to-channel-list (generate-kernel-channel))
 
      ;; Kernel RECIEVEs
-     (add-to-recievefns khandler)
+     (let [krecieve (plugin/generate-recieve-fn (:channel (get-kernel-channel)))
+           xx (krecieve khandler)
+           xx (add-to-recievefns krecieve)])
 
 
      ;; Setup the system atom & attach plugin channels
