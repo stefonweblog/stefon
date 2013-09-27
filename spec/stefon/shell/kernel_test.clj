@@ -20,6 +20,9 @@
 
               ;;
               (let [new-channel (chan)
+
+                    xx (kernel/start-system)
+
                     add-result (try (kernel/add-to-channel-list new-channel) (catch Exception e e))
                     add-result-2 (try (kernel/add-to-channel-list {:id 2 :channel new-channel}) (catch Exception e e))
                     add-result-3 (try (kernel/add-to-channel-list {:id "ID" :channel new-channel}) (catch Exception e e))]
@@ -42,7 +45,12 @@
                 (should-not-be-nil result)
                 (should= "kernel-channel" (:id result))))
 
-          #_(it "on kernel bootstrap, SHOULD have 1 kernel-recieve function")
+
+          (it "on kernel bootstrap, SHOULD have 1 kernel-recieve function"
+
+              (let [xx (kernel/start-system) ]
+
+                (should-not (empty? (:recieve-fns @kernel/*SYSTEM*)))))
 
           #_(it "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel")
           #_(it "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel")

@@ -25,11 +25,20 @@
    :recieve-fns []})
 
 
+(defn- add-to-generic [lookup-key thing]
+  (swap! *SYSTEM* (fn [inp]
+                    (update-in inp [lookup-key] (fn [ii] (into [] (conj ii thing)))))))
+
 (s/defn add-to-channel-list [new-channel :- { (s/required-key :id) s/String
                                               (s/required-key :channel) s/Any}]
-  (swap! *SYSTEM* (fn [inp]
-                    (update-in inp [:channel-list] (fn [ii] (into [] (conj ii new-channel)))))))
+  #_(swap! *SYSTEM* (fn [inp]
+                      (update-in inp [:channel-list] (fn [ii] (into [] (conj ii new-channel))))))
+  (add-to-generic :channel-list new-channel))
 
+(s/defn add-to-recievefns [recievefn]
+  {:pre [(fn? recievefn)]}
+
+  (add-to-generic :recieve-fns recievefn))
 
 ;; CREATE Channels
 (defn generate-channel
@@ -90,6 +99,10 @@
 
      ;; Kernel CHANNEL
      (add-to-channel-list (generate-kernel-channel))
+
+     ;; Kernel RECIEVEs
+     (add-to-recievefns khandler)
+
 
      ;; Setup the system atom & attach plugin channels
      #_(swap! *SYSTEM* (fn [inp]
