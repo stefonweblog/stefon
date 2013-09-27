@@ -10,8 +10,10 @@
 
           (it "Should already have a core channel-list "
 
-              (should-not-be-nil kernel/channel-list)
-              (should (vector? @kernel/channel-list)))
+              (println ">> Huh ?? > " @kernel/*SYSTEM*)
+
+              (should-not-be-nil (:channel-list @kernel/*SYSTEM*))
+              (should (vector? (:channel-list @kernel/*SYSTEM*))))
 
           (it "Should be able to add channels to a list"
 
@@ -28,8 +30,8 @@
                 (should-not (empty? add-result-3))
                 (should (vector? add-result-3))
 
-                (should-not (empty? @kernel/channel-list))
-                (should (map? (first @kernel/channel-list)))))
+                (should-not (empty? (:channel-list @kernel/*SYSTEM*)))
+                (should (map? (first (:channel-list @kernel/*SYSTEM*))))))
 
           (it "on kernel bootstrap, SHOULD have kernel channel"
 

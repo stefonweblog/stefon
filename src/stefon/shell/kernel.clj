@@ -12,17 +12,23 @@
 
 
 (ss/turn-on-validation)
-(def channel-list (atom []))
+
 
 ;; SYSTEM structure & functions
-(def  ^{:doc "In memory representation of the running system structures"}
-      ^:dynamic *SYSTEM* (atom nil))
+(def
+  ^{:doc "In memory representation of the running system structures"}
+  ^:dynamic *SYSTEM* (atom {:system nil
+                            :channel-list []
+
+                            :send-fns []
+                            :recieve-fns []}))
 
 
 
 (s/defn add-to-channel-list [new-channel :- { (s/required-key :id) s/String
                                               (s/required-key :channel) s/Any}]
-  (swap! channel-list (fn [inp] (conj inp new-channel))))
+  (swap! *SYSTEM* (fn [inp]
+                    (update-in inp [:channel-list] conj new-channel))))
 
 
 ;; CREATE Channels
@@ -39,7 +45,7 @@
 
 ;; GET a Channel
 (defn get-channel [ID]
-  (->> @channel-list (filter #(= ID (:id %))) first))
+  (->> (:channel-list @*SYSTEM*) (filter #(= ID (:id %))) first))
 
 (defn get-kernel-channel []
   (get-channel "kernel-channel"))
