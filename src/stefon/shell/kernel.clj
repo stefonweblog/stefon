@@ -14,8 +14,14 @@
 (ss/turn-on-validation)
 (def channel-list (atom []))
 
-(s/defn add-to-channel-list [new-channel :- { (s/required-key :id) s/String (s/required-key :channel) s/Any}]
+;; SYSTEM structure & functions
+(def  ^{:doc "In memory representation of the running system structures"}
+      ^:dynamic *SYSTEM* (atom nil))
 
+
+
+(s/defn add-to-channel-list [new-channel :- { (s/required-key :id) s/String
+                                              (s/required-key :channel) s/Any}]
   (swap! channel-list (fn [inp] (conj inp new-channel))))
 
 
@@ -47,13 +53,7 @@
 (def load-config (memoize load-config-raw))
 
 
-;; SYSTEM structure & functions
-(def  ^{:doc "In memory representation of the running system structures"}
-      ^:dynamic *SYSTEM* (atom nil))
-
-
 (defn get-system [] *SYSTEM*)
-
 (defn get-domain []
   (:domain @(get-system)))
 
@@ -72,14 +72,22 @@
   (-> @(get-system) :domain :tags))
 
 
-(defn start-system [system kernel-handler]
+(defn kernel-handler [message]
+  (println (str ">> kernel-handler CALLED > " message)))
 
-  ;; Setup the system atom & attach plugin channels
-  (swap! *SYSTEM* (fn [inp]
+(defn start-system
+  ([] (start-system @*SYSTEM* kernel-handler))
+  ([system khandler]
 
-                    #_(let [with-plugin-system (plugin/create-plugin-system system)]
-                      (attach-kernel with-plugin-system kernel-handler)
-                      with-plugin-system))))
+     ;; Kernel CHANNEL
+     (add-to-channel-list (generate-kernel-channel))
+
+     ;; Setup the system atom & attach plugin channels
+     (swap! *SYSTEM* (fn [inp]
+
+                       #_(let [with-plugin-system (plugin/create-plugin-system system)]
+                           (attach-kernel with-plugin-system khandler)
+                           with-plugin-system)))))
 
 
 

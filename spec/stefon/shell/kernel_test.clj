@@ -31,18 +31,25 @@
                 (should-not (empty? @kernel/channel-list))
                 (should (map? (first @kernel/channel-list)))))
 
-          (it "on kernel bootstrap, SHOULD have kernel channel")
-          (it "on kernel bootstrap, SHOULD have 1 kernel-recieve function")
+          (it "on kernel bootstrap, SHOULD have kernel channel"
 
-          (it "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel")
-          (it "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel")
-          (it "on attaching a plugin, kernel SHOULD have 1 new send fn on the new-channel")
+              (let [xx (kernel/start-system)
+                    result (kernel/get-kernel-channel)]
+
+                (should-not-be-nil result)
+                (should= "kernel-channel" (:id result))))
+
+          #_(it "on kernel bootstrap, SHOULD have 1 kernel-recieve function")
+
+          #_(it "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel")
+          #_(it "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel")
+          #_(it "on attaching a plugin, kernel SHOULD have 1 new send fn on the new-channel")
 
           ;; PLUGIN
-          (it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)")
-          (it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
+          #_(it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)")
+          #_(it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
 
-          (it "Should send a message from plugin to kernel, and get a return value")
-          (it "Should send a message from kernel to plugin(s), and each plugin should give a response to JUST kernel")
-          (it "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1")
-          (it "Should test CASCADE results with datomic plugin"))
+          #_(it "Should send a message from plugin to kernel, and get a return value")
+          #_(it "Should send a message from kernel to plugin(s), and each plugin should give a response to JUST kernel")
+          #_(it "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1")
+          #_(it "Should test CASCADE results with datomic plugin"))
