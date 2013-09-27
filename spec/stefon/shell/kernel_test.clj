@@ -10,10 +10,11 @@
 
           (it "Should already have a core channel-list "
 
-              (println ">> Huh ?? > " @kernel/*SYSTEM*)
+              (let [xx (kernel/start-system)]
 
-              (should-not-be-nil (:channel-list @kernel/*SYSTEM*))
-              (should (vector? (:channel-list @kernel/*SYSTEM*))))
+                (should-not-be-nil (:channel-list @kernel/*SYSTEM*))
+                (should (vector? (:channel-list @kernel/*SYSTEM*)))))
+
 
           (it "Should be able to add channels to a list"
 
@@ -21,14 +22,14 @@
               (let [new-channel (chan)
                     add-result (try (kernel/add-to-channel-list new-channel) (catch Exception e e))
                     add-result-2 (try (kernel/add-to-channel-list {:id 2 :channel new-channel}) (catch Exception e e))
-                    add-result-3 (try (kernel/add-to-channel-list {:id "ID" :channel new-channel}))]
+                    add-result-3 (try (kernel/add-to-channel-list {:id "ID" :channel new-channel}) (catch Exception e e))]
 
                 (should-not-be-nil add-result)
                 (should (= RuntimeException (type add-result)))
                 (should (= RuntimeException (type add-result-2)))
 
-                (should-not (empty? add-result-3))
-                (should (vector? add-result-3))
+                (should-not (empty? (:channel-list add-result-3)))
+                (should (vector? (:channel-list add-result-3)))
 
                 (should-not (empty? (:channel-list @kernel/*SYSTEM*)))
                 (should (map? (first (:channel-list @kernel/*SYSTEM*))))))

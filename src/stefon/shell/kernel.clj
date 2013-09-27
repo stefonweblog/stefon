@@ -15,20 +15,20 @@
 
 
 ;; SYSTEM structure & functions
-(def
-  ^{:doc "In memory representation of the running system structures"}
-  ^:dynamic *SYSTEM* (atom {:system nil
-                            :channel-list []
+(def ^{:doc "In memory representation of the running system structures"} *SYSTEM* (atom nil))
 
-                            :send-fns []
-                            :recieve-fns []}))
+(defn generate-system []
+  {:system nil
+   :channel-list []
 
+   :send-fns []
+   :recieve-fns []})
 
 
 (s/defn add-to-channel-list [new-channel :- { (s/required-key :id) s/String
                                               (s/required-key :channel) s/Any}]
   (swap! *SYSTEM* (fn [inp]
-                    (update-in inp [:channel-list] conj new-channel))))
+                    (update-in inp [:channel-list] (fn [ii] (into [] (conj ii new-channel)))))))
 
 
 ;; CREATE Channels
@@ -85,11 +85,14 @@
   ([] (start-system @*SYSTEM* kernel-handler))
   ([system khandler]
 
+     ;; CREATE System
+     (swap! *SYSTEM* (fn [inp] (generate-system)))
+
      ;; Kernel CHANNEL
      (add-to-channel-list (generate-kernel-channel))
 
      ;; Setup the system atom & attach plugin channels
-     (swap! *SYSTEM* (fn [inp]
+     #_(swap! *SYSTEM* (fn [inp]
 
                        #_(let [with-plugin-system (plugin/create-plugin-system system)]
                            (attach-kernel with-plugin-system khandler)
@@ -98,28 +101,28 @@
 
 
 ;; Posts
-(defn create-post [title content content-type created-date modified-date assets tags]
+#_(defn create-post [title content content-type created-date modified-date assets tags]
   (functions/create *SYSTEM* :posts 'stefon.domain.Post title content content-type created-date modified-date assets tags))
-(defn retrieve-post [ID] (functions/retrieve *SYSTEM* :posts ID))
-(defn update-post [ID update-map] (functions/update *SYSTEM* :posts ID update-map))
-(defn delete-post [ID] (functions/delete *SYSTEM* :posts ID))
-(defn find-posts [param-map] (functions/find *SYSTEM* :posts param-map))
-(defn list-posts [] (functions/list *SYSTEM* :posts))
+#_(defn retrieve-post [ID] (functions/retrieve *SYSTEM* :posts ID))
+#_(defn update-post [ID update-map] (functions/update *SYSTEM* :posts ID update-map))
+#_(defn delete-post [ID] (functions/delete *SYSTEM* :posts ID))
+#_(defn find-posts [param-map] (functions/find *SYSTEM* :posts param-map))
+#_(defn list-posts [] (functions/list *SYSTEM* :posts))
 
 
 ;; Assets
-(defn create-asset [name type asset] (functions/create *SYSTEM* :assets 'stefon.domain.Asset name type asset))
-(defn retrieve-asset [ID] (functions/retrieve *SYSTEM* :assets ID))
-(defn update-asset [ID update-map] (functions/update *SYSTEM* :assets ID update-map))
-(defn delete-asset [ID] (functions/delete *SYSTEM* :assets ID))
-(defn find-assets [param-map] (functions/find *SYSTEM* :assets param-map))
-(defn list-assets [] (functions/list *SYSTEM* :assets))
+#_(defn create-asset [name type asset] (functions/create *SYSTEM* :assets 'stefon.domain.Asset name type asset))
+#_(defn retrieve-asset [ID] (functions/retrieve *SYSTEM* :assets ID))
+#_(defn update-asset [ID update-map] (functions/update *SYSTEM* :assets ID update-map))
+#_(defn delete-asset [ID] (functions/delete *SYSTEM* :assets ID))
+#_(defn find-assets [param-map] (functions/find *SYSTEM* :assets param-map))
+#_(defn list-assets [] (functions/list *SYSTEM* :assets))
 
 
 ;; Tags
-(defn create-tag [name] (functions/create *SYSTEM* :tags 'stefon.domain.Tag name))
-(defn retrieve-tag [ID] (functions/retrieve *SYSTEM* :tags ID))
-(defn update-tag [ID update-map] (functions/update *SYSTEM* :tags ID update-map))
-(defn delete-tag [ID] (functions/delete *SYSTEM* :tags ID))
-(defn find-tags [param-map] (functions/find *SYSTEM* :tags param-map))
-(defn list-tags [] (functions/list *SYSTEM* :tags))
+#_(defn create-tag [name] (functions/create *SYSTEM* :tags 'stefon.domain.Tag name))
+#_(defn retrieve-tag [ID] (functions/retrieve *SYSTEM* :tags ID))
+#_(defn update-tag [ID update-map] (functions/update *SYSTEM* :tags ID update-map))
+#_(defn delete-tag [ID] (functions/delete *SYSTEM* :tags ID))
+#_(defn find-tags [param-map] (functions/find *SYSTEM* :tags param-map))
+#_(defn list-tags [] (functions/list *SYSTEM* :tags))
