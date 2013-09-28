@@ -61,7 +61,7 @@
 
               (let [xx (kernel/start-system)
 
-                    handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+                    handlerfn (fn [msg] )
                     result (kernel/attach-plugin handlerfn)]
 
 
@@ -78,7 +78,7 @@
 
               (let [xx (kernel/start-system)
 
-                    handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+                    handlerfn (fn [msg] )
                     result (kernel/attach-plugin handlerfn)]
 
                 (should (fn? (:recievefn result)))
@@ -93,13 +93,13 @@
               (let [xx (kernel/start-system)
                     xx (should (empty? (:send-fns @kernel/*SYSTEM*)))
 
-                    handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+                    handlerfn (fn [msg] )
                     result (kernel/attach-plugin handlerfn)]
 
                 (should-not (empty? (:send-fns @kernel/*SYSTEM*)))
                 (should (fn? (:fn (first (:send-fns @kernel/*SYSTEM*)))))
 
-                ;; using new send fn, should spark plugin's rettrieve
+                ;; using new send fn, should spark plugin's retrieve
                 ;; ...
                 ))
 
@@ -183,6 +183,9 @@
                 (should-not (realized? p3))))
 
 
+          ;; include TEE infrastructure
+          ;; ...
+
           (it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
 
               (let [xx (kernel/start-system)
@@ -208,9 +211,15 @@
                 (should-not-be-nil (:result @p1))
                 (should (= stefon.domain.Post (type (:result @p1))))))
 
-          #_(it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
 
+          #_(it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
           #_(it "Should send a message from plugin to kernel, and get a return value")
+
+
           #_(it "Should send a message from kernel to plugin(s), and each plugin should give a response to JUST kernel")
+
+
           #_(it "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1")
+
+
           #_(it "Should test CASCADE results with datomic plugin"))

@@ -179,7 +179,6 @@
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
 
-    (println ">> RECOGNIZE? > " filtered-event-keys)
     (if filtered-event-keys
 
       ;; yes
@@ -192,10 +191,9 @@
                   (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
                   (let [eval-result (eval `(~afn ~@params) )]
 
-                    ;; send evaluation result back to sender
+                    ;; SEND evaluation result back to sender
                     (send-message {:include [(:id message)]}
-                                  {:result eval-result})
-                    )
+                                  {:result eval-result}))
 
                   ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
                   (send-message {:exclude [(:id message)]}
