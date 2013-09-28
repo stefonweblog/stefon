@@ -1,6 +1,7 @@
 (ns stefon.shell.kernel
 
   (:require [clojure.java.io :as io]
+            [clojure.set :as set]
             [clojure.string :as string]
             [clojure.core.async :as async :refer :all]
             [schema.core :as s]
@@ -117,9 +118,6 @@
 
 (defn send-message-raw [idlist message]
 
-  ;;(select-keys {:fu :bar :qwerty "asdf" :thing 2} '(:thing :a :b :fu))
-  ;;(some #{:posts :assets :tags} (keys (:domain system)))
-
   (let [all-send-ids (map :id (:send-fns @*SYSTEM*))
 
         filtered-sends (filter #(some #{(:id %)} idlist)
@@ -134,7 +132,30 @@
   ([message] (send-message {:include :all} message))
   ([conditions message]
 
-     #_(if-not conditions)))
+     ;; only :include || :exclude
+     {:pre [(map? conditions)
+            (set/subset? (keys conditions) #{:include :exclude})]}
+
+     (let [all-send-ids (map :id (:send-fns @*SYSTEM*))
+
+           ;; INCLUDE
+           include (:include conditions)
+
+           ;; EXCLUDE
+           exclude (:exclude conditions)
+
+           filtered-list (into [] (if include
+                                    (if (= :all include)
+                                      all-send-ids
+                                      (set/intersection (into #{} all-send-ids)
+                                                        (into #{} include)))
+                                    (if (= :all exclude)
+                                      []
+                                      (set/difference (into #{} all-send-ids)
+                                                      (into #{} exclude)))))
+           ]
+
+       (send-message-raw filtered-list message))))
 
 
 (s/defn kernel-handler

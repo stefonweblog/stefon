@@ -105,7 +105,7 @@
 
 
           ;; PLUGIN
-          (it "Should be able to send messages to attached function"
+          (it "Should be able to send-message-raw to attached functions"
 
               (let [xx (kernel/start-system)
 
@@ -130,6 +130,57 @@
 
                 (should= {:id "qwerty-1234" :fu :bar} @p2)
                 (should= {:id "qwerty-1234" :fu :bar} @p3)))
+
+
+          (it "Should be able to send-message to attached functions :include"
+
+              (let [xx (kernel/start-system)
+
+                    p1 (promise)
+                    p2 (promise)
+                    p3 (promise)
+
+                    h1 (fn [msg] (deliver p1 msg))
+                    h2 (fn [msg] (deliver p2 msg))
+                    h3 (fn [msg] (deliver p3 msg))
+
+                    r1 (kernel/attach-plugin h1)
+                    r2 (kernel/attach-plugin h2)
+                    r3 (kernel/attach-plugin h3)]
+
+                (kernel/send-message {:include [(:id r2) (:id r3)]}
+                                     {:id "qwerty-1234" :fu :bar})
+
+                (should-not (realized? p1))
+                (should-not-be-nil @p2)
+                (should-not-be-nil @p3)
+
+                (should= {:id "qwerty-1234" :fu :bar} @p2)
+                (should= {:id "qwerty-1234" :fu :bar} @p3)))
+
+
+          (it "Should be able to send-message to attached functions :exclude"
+
+              (let [xx (kernel/start-system)
+
+                    p1 (promise)
+                    p2 (promise)
+                    p3 (promise)
+
+                    h1 (fn [msg] (deliver p1 msg))
+                    h2 (fn [msg] (deliver p2 msg))
+                    h3 (fn [msg] (deliver p3 msg))
+
+                    r1 (kernel/attach-plugin h1)
+                    r2 (kernel/attach-plugin h2)
+                    r3 (kernel/attach-plugin h3)]
+
+                (kernel/send-message {:exclude [(:id r2) (:id r3)]}
+                                     {:id "qwerty-1234" :fu :bar})
+
+                (should (realized? p1))
+                (should-not (realized? @p2))
+                (should-not (realized? @p3))))
 
 
           (it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
