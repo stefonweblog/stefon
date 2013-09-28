@@ -19,7 +19,9 @@
 (def ^{:doc "In memory representation of the running system structures"} ^:dynamic *SYSTEM* (atom nil))
 
 (defn generate-system []
-  {:system nil
+  {:system {:domain {:posts []
+                     :assets []
+                     :tags []}}
    :channel-list []
 
    :send-fns []
