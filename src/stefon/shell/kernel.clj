@@ -129,6 +129,9 @@
             filtered-sends)))
 
 (defn send-message
+  "Send a message to attached plugins. You can pass in conditions with:
+   {:include [ :all || [ id1 id2 ] ]}
+   {:exclude [ :all || [ id1 id2 ] ]}"
   ([message] (send-message {:include :all} message))
   ([conditions message]
 
@@ -171,49 +174,37 @@
         action-keys (keys action-config)
 
         eventF (:message message)
-        sendF (:send-handler message)
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
+
     (println ">> RECOGNIZE? > " filtered-event-keys)
-
     (if filtered-event-keys
-      nil
-      nil)
 
+      ;; yes
+      (reduce (fn [rslt ekey]
 
-    ;; ====
-    ;; perform actions, based on keys
-    ;;(println (str ">> filtered-event-keys[" filtered-event-keys "] / action-config[" action-config "]"))
-    #_(reduce (fn [rslt ekey]
+                (let [afn (ekey action-config)
+                      params (-> eventF ekey :parameters vals)]
 
-              (let [afn (ekey action-config)
-                    params (-> eventF ekey :parameters vals)]
+                  ;; EXECUTE the mapped action
+                  (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
+                  (let [eval-result (eval `(~afn ~@params) )]
 
+                    ;; send evaluation result back to sender
+                    (send-message {:include [(:id message)]}
+                                  {:result eval-result})
+                    )
 
-                ;; TODO - operations should occur in 1 place.. so data doesn't separate
-
-                ;; execute the mapped action
-                (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
-                (let [eval-result (eval `(~afn ~@params) )]
-
-                  ;; send evaluation result back to sender
-                  (sendF eval-result))
-
-                ;; notify other plugins what has taken place; replacing :stefon... with :plugin...
-                #_(send-message {(keyword (string/replace (name ekey) #"stefon" "plugin"))
+                  ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
+                  (send-message {:exclude [(:id message)]}
+                                {(keyword (string/replace (name ekey) #"stefon" "plugin"))
                                  {:parameters (-> eventF ekey :parameters)}})))
-            []
-            filtered-event-keys)
+              []
+              filtered-event-keys)
 
-    ;; ====
-    ;; pass along any event(s) for which we do not have mappings
-    #_(let [event-less-known-mappings (eval `(~dissoc ~eventF ~@action-keys))]
-
-      (if-not (empty? event-less-known-mappings)
-
-        (do (println (str ">> forwarding unknown events > " event-less-known-mappings))
-            #_(send-message event-less-known-mappings))))))
-
+      ;; no
+      (send-message {:exclude [(:id message)]}
+                    message)) ))
 
 
 ;; START System
@@ -236,28 +227,28 @@
 
 
 ;; Posts
-#_(defn create-post [title content content-type created-date modified-date assets tags]
+(defn create-post [title content content-type created-date modified-date assets tags]
   (functions/create *SYSTEM* :posts 'stefon.domain.Post title content content-type created-date modified-date assets tags))
-#_(defn retrieve-post [ID] (functions/retrieve *SYSTEM* :posts ID))
-#_(defn update-post [ID update-map] (functions/update *SYSTEM* :posts ID update-map))
-#_(defn delete-post [ID] (functions/delete *SYSTEM* :posts ID))
-#_(defn find-posts [param-map] (functions/find *SYSTEM* :posts param-map))
-#_(defn list-posts [] (functions/list *SYSTEM* :posts))
+(defn retrieve-post [ID] (functions/retrieve *SYSTEM* :posts ID))
+(defn update-post [ID update-map] (functions/update *SYSTEM* :posts ID update-map))
+(defn delete-post [ID] (functions/delete *SYSTEM* :posts ID))
+(defn find-posts [param-map] (functions/find *SYSTEM* :posts param-map))
+(defn list-posts [] (functions/list *SYSTEM* :posts))
 
 
 ;; Assets
-#_(defn create-asset [name type asset] (functions/create *SYSTEM* :assets 'stefon.domain.Asset name type asset))
-#_(defn retrieve-asset [ID] (functions/retrieve *SYSTEM* :assets ID))
-#_(defn update-asset [ID update-map] (functions/update *SYSTEM* :assets ID update-map))
-#_(defn delete-asset [ID] (functions/delete *SYSTEM* :assets ID))
-#_(defn find-assets [param-map] (functions/find *SYSTEM* :assets param-map))
-#_(defn list-assets [] (functions/list *SYSTEM* :assets))
+(defn create-asset [name type asset] (functions/create *SYSTEM* :assets 'stefon.domain.Asset name type asset))
+(defn retrieve-asset [ID] (functions/retrieve *SYSTEM* :assets ID))
+(defn update-asset [ID update-map] (functions/update *SYSTEM* :assets ID update-map))
+(defn delete-asset [ID] (functions/delete *SYSTEM* :assets ID))
+(defn find-assets [param-map] (functions/find *SYSTEM* :assets param-map))
+(defn list-assets [] (functions/list *SYSTEM* :assets))
 
 
 ;; Tags
-#_(defn create-tag [name] (functions/create *SYSTEM* :tags 'stefon.domain.Tag name))
-#_(defn retrieve-tag [ID] (functions/retrieve *SYSTEM* :tags ID))
-#_(defn update-tag [ID update-map] (functions/update *SYSTEM* :tags ID update-map))
-#_(defn delete-tag [ID] (functions/delete *SYSTEM* :tags ID))
-#_(defn find-tags [param-map] (functions/find *SYSTEM* :tags param-map))
-#_(defn list-tags [] (functions/list *SYSTEM* :tags))
+(defn create-tag [name] (functions/create *SYSTEM* :tags 'stefon.domain.Tag name))
+(defn retrieve-tag [ID] (functions/retrieve *SYSTEM* :tags ID))
+(defn update-tag [ID update-map] (functions/update *SYSTEM* :tags ID update-map))
+(defn delete-tag [ID] (functions/delete *SYSTEM* :tags ID))
+(defn find-tags [param-map] (functions/find *SYSTEM* :tags param-map))
+(defn list-tags [] (functions/list *SYSTEM* :tags))

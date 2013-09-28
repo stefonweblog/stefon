@@ -179,22 +179,36 @@
                                      {:id "qwerty-1234" :fu :bar})
 
                 (should (realized? p1))
-                (should-not (realized? @p2))
-                (should-not (realized? @p3))))
+                (should-not (realized? p2))
+                (should-not (realized? p3))))
 
 
           (it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
 
               (let [xx (kernel/start-system)
 
-                    handlerfn (fn [msg] (println ">> plugin handler CALLED > " msg))
+                    p1 (promise)
+                    handlerfn (fn [msg]
+                                (println ">> plugin handler CALLED > " msg)
+                                (deliver p1 msg))
                     result (kernel/attach-plugin handlerfn)]
 
-                ((:sendfn result) {:id (:id result) :message {:stefon.post.create "qwerty"}}))
+                ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
+                                                                                                :content "Lorem ipsum."
+                                                                                                :content-type "txt"
+                                                                                                :created-date "0000"
+                                                                                                :modified-date "0000"
+                                                                                                :assets []
+                                                                                                :tags []}} }})
 
-              )
+                ;; check for recursive message
+                ;; ...
 
-          (it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
+                (should (realized? p1))
+                (should-not-be-nil (:result @p1))
+                (should (= stefon.domain.Post (type (:result @p1))))))
+
+          #_(it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
 
           #_(it "Should send a message from plugin to kernel, and get a return value")
           #_(it "Should send a message from kernel to plugin(s), and each plugin should give a response to JUST kernel")
