@@ -170,7 +170,8 @@
        (send-message-raw filtered-list message))))
 
 
-(defn process-original-message [action-keys action-config message]
+(s/defn process-original-message [action-keys action-config message :- {(s/required-key :id) s/String
+                                                                        (s/required-key :message) s/Any}]
 
   (let [eventF (:message message)
 
@@ -203,10 +204,15 @@
 
       ;; no
       (send-message {:exclude [(:id message)]}
-                    message)) ))
+                    message))))
 
 
-(defn process-result-message [])
+(s/defn process-result-message [message :- {(s/required-key :id) s/String
+                                            (s/required-key :origin) s/String
+                                            (s/required-key :result) s/Any}]
+
+  (send-message {:include [(:origin message)]}
+                {:from (:id message) :result (:result message)}))
 
 
 (s/defn kernel-handler
@@ -220,7 +226,7 @@
                      (s/required-key :message) s/Any}
                     {(s/required-key :id) s/String
                      (s/required-key :origin) s/String
-                     (s/required-key :message) s/Any})]
+                     (s/required-key :result) s/Any})]
 
   ;;(println (str ">> kernel-handler CALLED > " message))
 
@@ -237,12 +243,14 @@
         action-keys (keys action-config)]
 
 
-    ;; TODO - check if it's an original or response message
-    ;; ...
+    (if-not (= '(:id :origin :message) (keys message))
 
-    (process-original-message action-keys action-config message)
+      ;; original messages
+      (process-original-message action-keys action-config message)
 
-    ))
+      ;; response messages
+      (process-result-message message))))
+
 
 
 ;; START System
