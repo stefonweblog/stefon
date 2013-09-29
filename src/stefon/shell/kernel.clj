@@ -170,37 +170,12 @@
        (send-message-raw filtered-list message))))
 
 
-(s/defn kernel-handler
-    "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.edn.
+(defn process-original-message [action-keys action-config message]
 
-     An original message can be sent with A. A response can be sent with B.
+  (let [eventF (:message message)
 
-     A) {:id plugin1 :message {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}}
-     B) {:id plugin2 :origin plugin1 :result {:fu :bar}}"
-  [message :- {(s/required-key :id) s/String
-               (s/required-key :message) s/Any}]
-
-  ;;(println (str ">> kernel-handler CALLED > " message))
-
-
-  ;; NOTIFY tee-fns
-  (reduce (fn [rslt echF]
-            (echF message)
-            rslt)
-          []
-          (:tee-fns @*SYSTEM*))
-
-
-  ;; TODO - check if it's an original or response message
-  ;; ...
-
-  ;; FILTER known message(s)
-  (let [action-config (:action-mappings (load-config))
-        action-keys (keys action-config)
-
-        eventF (:message message)
+        ;; FILTER known message(s)
         filtered-event-keys (keys (select-keys eventF action-keys))]
-
 
     ;; DO
     (if filtered-event-keys
@@ -217,7 +192,7 @@
 
                     ;; SEND evaluation result back to sender
                     (send-message {:include [(:id message)]}
-                                  {:result eval-result}))
+                                  {:from "kernel" :result eval-result}))
 
                   ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
                   (send-message {:exclude [(:id message)]}
@@ -229,6 +204,45 @@
       ;; no
       (send-message {:exclude [(:id message)]}
                     message)) ))
+
+
+(defn process-result-message [])
+
+
+(s/defn kernel-handler
+    "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.edn.
+
+     An original message can be sent with A. A response can be sent with B.
+
+     A) {:id plugin1 :message {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}}
+     B) {:id plugin2 :origin plugin1 :result {:fu :bar}}"
+    [message :- (or {(s/required-key :id) s/String
+                     (s/required-key :message) s/Any}
+                    {(s/required-key :id) s/String
+                     (s/required-key :origin) s/String
+                     (s/required-key :message) s/Any})]
+
+  ;;(println (str ">> kernel-handler CALLED > " message))
+
+
+  ;; NOTIFY tee-fns
+  (reduce (fn [rslt echF]
+            (echF message)
+            rslt)
+          []
+          (:tee-fns @*SYSTEM*))
+
+
+  (let [action-config (:action-mappings (load-config))
+        action-keys (keys action-config)]
+
+
+    ;; TODO - check if it's an original or response message
+    ;; ...
+
+    (process-original-message action-keys action-config message)
+
+    ))
 
 
 ;; START System
