@@ -180,6 +180,16 @@
 
   (println (str ">> kernel-handler CALLED > " message))
 
+
+  ;; NOTIFY tee-fns
+  (reduce (fn [rslt echF]
+            (echF message)
+            rslt)
+          []
+          (:tee-fns @*SYSTEM*))
+
+
+  ;; FILTER known message(s)
   (let [action-config (:action-mappings (load-config))
         action-keys (keys action-config)
 
@@ -187,6 +197,7 @@
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
 
+    ;; DO
     (if filtered-event-keys
 
       ;; yes
