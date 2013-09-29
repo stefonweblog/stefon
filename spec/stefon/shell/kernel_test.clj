@@ -214,7 +214,34 @@
                 (should= '(:id :message) (keys @ptee))))
 
 
-          #_(it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)")
+          (it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)"
+
+              (let [xx (kernel/start-system)
+
+                    p1 (promise)
+                    p2 (promise)
+                    p3 (promise)
+
+                    h1 (fn [msg] (deliver p1 msg))
+                    h2 (fn [msg] (deliver p2 msg))
+                    h3 (fn [msg] (deliver p3 msg))
+
+                    r1 (kernel/attach-plugin h1)
+                    r2 (kernel/attach-plugin h2)
+                    r3 (kernel/attach-plugin h3)
+
+                    message {:id (:id r1) :message {:fu :bar}}]
+
+                ((:sendfn r1) message)
+
+                (should-not (realized? p1))
+                (should (realized? p2))
+                (should (realized? p3))
+
+                ;; message should be unmodified
+                (should= message @p2)))
+
+
           (it "Should send a message from plugin to kernel, and get a return value (check for recursive message)"
 
               (let [xx (kernel/start-system)
