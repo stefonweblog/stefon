@@ -19,13 +19,15 @@
 (def ^{:doc "In memory representation of the running system structures"} ^:dynamic *SYSTEM* (atom nil))
 
 (defn generate-system []
-  {:system {:domain {:posts []
-                     :assets []
-                     :tags []}}
+  {:domain {:posts []
+            :assets []
+            :tags []}
    :channel-list []
 
    :send-fns []
-   :recieve-fns []})
+   :recieve-fns []
+
+   :tee-fns []})
 
 
 (defn- add-to-generic [lookup-key thing]
@@ -47,6 +49,12 @@
   {:pre [(fn? (:fn send-map))]}
 
   (add-to-generic :send-fns send-map))
+
+;; Useful for testing purposes - get alerted when plugin receives a message
+(defn add-receive-tee [recievefn]
+  (swap! *SYSTEM* (fn [inp]
+                    (println ">> input > " inp)
+                    (update-in inp [:tee-fns] (fn [ii] (into [] (conj ii recievefn)))))))
 
 
 
@@ -80,7 +88,7 @@
 
 (defn get-system [] *SYSTEM*)
 (defn get-domain []
-  (:domain @(get-system)))
+  (-> @(get-system) :domain))
 
 (defn get-domain-schema []
   {:posts (domain/post-schema)
