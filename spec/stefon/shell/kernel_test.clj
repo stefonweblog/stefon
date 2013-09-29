@@ -192,7 +192,7 @@
 
                     ptee (promise)
                     teefn (fn [msg]
-                            (println ">> tee handler CALLED > " msg)
+                            ;;(println ">> tee handler CALLED > " msg)
                             (deliver ptee msg))
                     xx (kernel/add-receive-tee teefn)
 

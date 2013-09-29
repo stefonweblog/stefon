@@ -53,7 +53,6 @@
 ;; Useful for testing purposes - get alerted when plugin receives a message
 (defn add-receive-tee [recievefn]
   (swap! *SYSTEM* (fn [inp]
-                    (println ">> input > " inp)
                     (update-in inp [:tee-fns] (fn [ii] (into [] (conj ii recievefn)))))))
 
 
@@ -174,11 +173,14 @@
 (s/defn kernel-handler
     "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.edn.
 
-     {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}"
+     An original message can be sent with A. A response can be sent with B.
+
+     A) {:id plugin1 :message {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}}
+     B) {:id plugin2 :origin plugin1 :result {:fu :bar}}"
   [message :- {(s/required-key :id) s/String
                (s/required-key :message) s/Any}]
 
-  (println (str ">> kernel-handler CALLED > " message))
+  ;;(println (str ">> kernel-handler CALLED > " message))
 
 
   ;; NOTIFY tee-fns
@@ -188,6 +190,9 @@
           []
           (:tee-fns @*SYSTEM*))
 
+
+  ;; TODO - check if it's an original or response message
+  ;; ...
 
   ;; FILTER known message(s)
   (let [action-config (:action-mappings (load-config))
@@ -207,7 +212,7 @@
                       params (-> eventF ekey :parameters vals)]
 
                   ;; EXECUTE the mapped action
-                  (println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
+                  ;;(println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
                   (let [eval-result (eval `(~afn ~@params) )]
 
                     ;; SEND evaluation result back to sender
