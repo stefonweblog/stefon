@@ -289,6 +289,7 @@
 
                          (println ">> h1 CALLED > " msg)
                          (deliver p1 msg))
+
                     h2 (fn [msg] (deliver p2 msg))
                     h3 (fn [msg]
 
@@ -327,7 +328,14 @@
                                                                                       :assets []
                                                                                       :tags []}} }}]
 
-                ((:sendfn r1) message)))
+                ((:sendfn r1) message)
+
+
+                (println ">> TEST Result > " @p1)
+                ;; p1 will be called twice
+                ;; ...
+
+                ))
 
 
           #_(it "Should test CASCADE results with datomic plugin"))

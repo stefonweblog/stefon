@@ -222,12 +222,11 @@
 
      A) {:id plugin1 :message {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}}
      B) {:id plugin2 :origin plugin1 :result {:fu :bar}}"
-    #_[message :- (or {(s/required-key :id) s/String
-                     (s/required-key :message) s/Any}
-                    {(s/required-key :id) s/String
-                     (s/required-key :origin) s/String
-                     (s/required-key :result) s/Any})]
-    [message]
+    [message :- (s/either {(s/required-key :id) s/String
+                           (s/required-key :message) s/Any}
+                          {(s/required-key :id) s/String
+                           (s/required-key :origin) s/String
+                           (s/required-key :result) s/Any})]
 
   ;; NOTIFY tee-fns
   (reduce (fn [rslt echF]
