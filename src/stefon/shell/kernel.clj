@@ -188,7 +188,6 @@
                       params (-> eventF ekey :parameters vals)]
 
                   ;; EXECUTE the mapped action
-                  ;;(println (str ">> execute on key[" ekey "] / payload[" `(~afn ~@params) "]"))
                   (let [eval-result (eval `(~afn ~@params) )]
 
                     ;; SEND evaluation result back to sender
@@ -198,7 +197,8 @@
                   ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
                   (send-message {:exclude [(:id message)]}
                                 {(keyword (string/replace (name ekey) #"stefon" "plugin"))
-                                 {:parameters (-> eventF ekey :parameters)}})))
+                                 message
+                                 #_{:parameters (-> eventF ekey :parameters)}})))
               []
               filtered-event-keys)
 
@@ -222,14 +222,12 @@
 
      A) {:id plugin1 :message {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}}
      B) {:id plugin2 :origin plugin1 :result {:fu :bar}}"
-    [message :- (or {(s/required-key :id) s/String
+    #_[message :- (or {(s/required-key :id) s/String
                      (s/required-key :message) s/Any}
                     {(s/required-key :id) s/String
                      (s/required-key :origin) s/String
                      (s/required-key :result) s/Any})]
-
-  ;;(println (str ">> kernel-handler CALLED > " message))
-
+    [message]
 
   ;; NOTIFY tee-fns
   (reduce (fn [rslt echF]
@@ -243,14 +241,13 @@
         action-keys (keys action-config)]
 
 
-    (if-not (= '(:id :origin :message) (keys message))
+    (if-not (= '(:id :origin :result) (keys message))
 
       ;; original messages
       (process-original-message action-keys action-config message)
 
       ;; response messages
       (process-result-message message))))
-
 
 
 ;; START System

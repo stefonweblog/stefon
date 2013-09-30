@@ -247,9 +247,7 @@
               (let [xx (kernel/start-system)
 
                     p1 (promise)
-                    handlerfn (fn [msg]
-                                (println ">> plugin handler CALLED > " msg)
-                                (deliver p1 msg))
+                    handlerfn (fn [msg] (deliver p1 msg))
                     result (kernel/attach-plugin handlerfn)]
 
                 ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
@@ -271,7 +269,65 @@
           #_(it "Should send a message from kernel to plugin(s), and each plugin should give a response to JUST kernel")
 
 
-          #_(it "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1")
+          (it "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1"
+
+              (let [xx (kernel/start-system)
+
+                    ;; gymnastics SETUP
+                    h3-send (promise)
+                    r3 {}
+
+
+                    ;; PROMISEs
+                    p1 (promise)
+                    p2 (promise)
+                    p3 (promise)
+
+
+                    ;; HANDLERs
+                    h1 (fn [msg]
+
+                         (println ">> h1 CALLED > " msg)
+                         (deliver p1 msg))
+                    h2 (fn [msg] (deliver p2 msg))
+                    h3 (fn [msg]
+
+
+                         ;; make h3 handle 'plugin.post.create'
+                         (let [ppcreate (-> msg :plugin.post.create :message)]
+
+                           (println ">> h3 > " @h3-send)
+                           (@h3-send msg)))
+
+
+                    ;; ATTACH results
+                    r1 (kernel/attach-plugin h1)
+                    r2 (kernel/attach-plugin h2)
+                    r3 (kernel/attach-plugin h3)
+
+
+                    ;; h3-send SETUP
+                    xx (deliver h3-send (fn [msg]
+
+                                          (println ">> h3-send [" {:id (:id r3)
+                                                                   :origin (-> msg :plugin.post.create :id)
+                                                                   :result {:fu :bar}} "]")
+
+                                          ;;(println ">> h3-send > r3 > " r3)
+
+                                          ((:sendfn r3) {:id (:id r3)
+                                                         :origin (-> msg :plugin.post.create :id)
+                                                         :result {:fu :bar}})))
+
+                    message {:id (:id r1) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
+                                                                                      :content "Lorem ipsum."
+                                                                                      :content-type "txt"
+                                                                                      :created-date "0000"
+                                                                                      :modified-date "0000"
+                                                                                      :assets []
+                                                                                      :tags []}} }}]
+
+                ((:sendfn r1) message)))
 
 
           #_(it "Should test CASCADE results with datomic plugin"))
