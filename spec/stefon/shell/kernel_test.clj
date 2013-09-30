@@ -3,6 +3,7 @@
   (:require [speclj.core :refer :all]
             [clojure.core.async :as async :refer :all]
 
+            [stefon.shell :as shell]
             [stefon.shell.kernel :as kernel]))
 
 
@@ -62,7 +63,7 @@
               (let [xx (kernel/start-system)
 
                     handlerfn (fn [msg] )
-                    result (kernel/attach-plugin handlerfn)]
+                    result (shell/attach-plugin handlerfn)]
 
 
                 ((:sendfn result) {:id "asdf" :message {:fu :bar}})
@@ -79,7 +80,7 @@
               (let [xx (kernel/start-system)
 
                     handlerfn (fn [msg] )
-                    result (kernel/attach-plugin handlerfn)]
+                    result (shell/attach-plugin handlerfn)]
 
                 (should (fn? (:recievefn result)))
 
@@ -94,7 +95,7 @@
                     xx (should (empty? (:send-fns @kernel/*SYSTEM*)))
 
                     handlerfn (fn [msg] )
-                    result (kernel/attach-plugin handlerfn)]
+                    result (shell/attach-plugin handlerfn)]
 
                 (should-not (empty? (:send-fns @kernel/*SYSTEM*)))
                 (should (fn? (:fn (first (:send-fns @kernel/*SYSTEM*)))))
@@ -117,9 +118,9 @@
                     h2 (fn [msg] (deliver p2 msg))
                     h3 (fn [msg] (deliver p3 msg))
 
-                    r1 (kernel/attach-plugin h1)
-                    r2 (kernel/attach-plugin h2)
-                    r3 (kernel/attach-plugin h3)]
+                    r1 (shell/attach-plugin h1)
+                    r2 (shell/attach-plugin h2)
+                    r3 (shell/attach-plugin h3)]
 
                 (kernel/send-message-raw [(:id r2) (:id r3)]
                                          {:id "qwerty-1234" :fu :bar})
@@ -144,9 +145,9 @@
                     h2 (fn [msg] (deliver p2 msg))
                     h3 (fn [msg] (deliver p3 msg))
 
-                    r1 (kernel/attach-plugin h1)
-                    r2 (kernel/attach-plugin h2)
-                    r3 (kernel/attach-plugin h3)]
+                    r1 (shell/attach-plugin h1)
+                    r2 (shell/attach-plugin h2)
+                    r3 (shell/attach-plugin h3)]
 
                 (kernel/send-message {:include [(:id r2) (:id r3)]}
                                      {:id "qwerty-1234" :fu :bar})
@@ -171,9 +172,9 @@
                     h2 (fn [msg] (deliver p2 msg))
                     h3 (fn [msg] (deliver p3 msg))
 
-                    r1 (kernel/attach-plugin h1)
-                    r2 (kernel/attach-plugin h2)
-                    r3 (kernel/attach-plugin h3)]
+                    r1 (shell/attach-plugin h1)
+                    r2 (shell/attach-plugin h2)
+                    r3 (shell/attach-plugin h3)]
 
                 (kernel/send-message {:exclude [(:id r2) (:id r3)]}
                                      {:id "qwerty-1234" :fu :bar})
@@ -197,7 +198,7 @@
                     xx (kernel/add-receive-tee teefn)
 
                     handlerfn (fn [msg])
-                    result (kernel/attach-plugin handlerfn)]
+                    result (shell/attach-plugin handlerfn)]
 
                 ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
                                                                                                 :content "Lorem ipsum."
@@ -226,9 +227,9 @@
                     h2 (fn [msg] (deliver p2 msg))
                     h3 (fn [msg] (deliver p3 msg))
 
-                    r1 (kernel/attach-plugin h1)
-                    r2 (kernel/attach-plugin h2)
-                    r3 (kernel/attach-plugin h3)
+                    r1 (shell/attach-plugin h1)
+                    r2 (shell/attach-plugin h2)
+                    r3 (shell/attach-plugin h3)
 
                     message {:id (:id r1) :message {:fu :bar}}]
 
@@ -248,7 +249,7 @@
 
                     p1 (promise)
                     handlerfn (fn [msg] (deliver p1 msg))
-                    result (kernel/attach-plugin handlerfn)]
+                    result (shell/attach-plugin handlerfn)]
 
                 ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
                                                                                                 :content "Lorem ipsum."
@@ -302,9 +303,9 @@
 
 
                     ;; ATTACH results
-                    r1 (kernel/attach-plugin h1)
-                    r2 (kernel/attach-plugin h2)
-                    r3 (kernel/attach-plugin h3)
+                    r1 (shell/attach-plugin h1)
+                    r2 (shell/attach-plugin h2)
+                    r3 (shell/attach-plugin h3)
 
 
                     ;; h3-send SETUP

@@ -105,26 +105,7 @@
 
 
 
-;; PLUGIN Handling
-(defn attach-plugin [handlerfn]
-
-  ;; plugin gets 1 send fn and 1 recieve fn
-  (let [new-channel (generate-channel)
-        kernel-send (plugin/generate-send-fn (:channel new-channel))
-
-        sendfn (plugin/generate-send-fn (:channel (get-kernel-channel)))
-        recievefn (plugin/generate-recieve-fn (:channel new-channel))
-        xx (recievefn handlerfn)]
-
-    ;; KERNEL binding
-    (add-to-sendfns {:id (:id new-channel) :fn kernel-send})
-
-    ;; PLUGIN binding
-    {:id (:id new-channel)
-     :sendfn sendfn
-     :recievefn recievefn}))
-
-
+;; MESSAGE Handling
 (defn send-message-raw [idlist message]
 
   (let [all-send-ids (map :id (:send-fns @*SYSTEM*))
