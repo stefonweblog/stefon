@@ -266,6 +266,8 @@
            xx (add-to-recievefns {:id (:id (get-kernel-channel))
                                   :fn krecieve})])))
 
+(defn stop-system []
+  (swap! *SYSTEM* (fn [inp] nil)))
 
 
 ;; Posts
