@@ -177,7 +177,7 @@
                     r3 (shell/attach-plugin h3)]
 
                 (kernel/send-message {:exclude [(:id r2) (:id r3)]}
-                                     {:id "qwerty-1234" :fu :bar})
+                                     {:id "qwerty-1234" :message {:fu :bar}})
 
                 (should (realized? p1))
                 (should-not (realized? p2))
