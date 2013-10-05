@@ -188,8 +188,8 @@
                   ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
                   (send-message {:exclude [(:id message)]}
                                 {(keyword (string/replace (name ekey) #"stefon" "plugin"))
-                                 message
-                                 #_{:parameters (-> eventF ekey :parameters)}})))
+                                 #_message
+                                 {:parameters (-> eventF ekey :parameters)}})))
               []
               filtered-event-keys)
 
