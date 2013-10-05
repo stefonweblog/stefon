@@ -38,6 +38,8 @@
   (fn [handlefn]
 
     (go (loop [msg (<! chanl)]
+
+          ;;(println ">> generated recieve CALLED > " msg)
           (handlefn msg)
           (recur (<! chanl))))))
 
@@ -64,6 +66,4 @@
                                                    :fn kernel-send}))))))
 
     ;; PLUGIN binding
-    {:id (:id new-channel)
-     :sendfn sendfn
-     :recievefn recievefn}))
+    (assoc new-channel :sendfn sendfn :recievefn recievefn)))

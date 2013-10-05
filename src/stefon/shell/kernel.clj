@@ -108,12 +108,17 @@
 ;; MESSAGE Handling
 (defn send-message-raw [idlist message]
 
+
+  ;;(println ">> send-message-raw CALLED > idlist [" idlist "] > message [" message "]")
+
   (let [all-send-ids (map :id (:send-fns @*SYSTEM*))
 
         filtered-sends (filter #(some #{(:id %)} idlist)
                                (:send-fns @*SYSTEM*))]
 
     (reduce (fn [rslt echf]
+
+              ;;(println ">> calling fn > " (:fn echf))
               ((:fn echf) message))
             []
             filtered-sends)))
@@ -159,6 +164,7 @@
         ;; FILTER known message(s)
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
+
     ;; DO
     (if filtered-event-keys
 
@@ -168,8 +174,12 @@
                 (let [afn (ekey action-config)
                       params (-> eventF ekey :parameters vals)]
 
+                  ;;(println ">> execute command [" afn "] > params [" params "]")
+
                   ;; EXECUTE the mapped action
                   (let [eval-result (eval `(~afn ~@params) )]
+
+                    ;;(println ">> execute result [" eval-result "] / ID [" (:id message) "]")
 
                     ;; SEND evaluation result back to sender
                     (send-message {:include [(:id message)]}
@@ -209,25 +219,28 @@
                            (s/required-key :origin) s/String
                            (s/required-key :result) s/Any})]
 
+    ;;(println ">> kernel-handler CALLED > " message)
+
+
   ;; NOTIFY tee-fns
-  (reduce (fn [rslt echF]
-            (echF message)
-            rslt)
-          []
-          (:tee-fns @*SYSTEM*))
+    (reduce (fn [rslt echF]
+              (echF message)
+              rslt)
+            []
+            (:tee-fns @*SYSTEM*))
 
 
-  (let [action-config (:action-mappings (load-config))
-        action-keys (keys action-config)]
+    (let [action-config (:action-mappings (load-config))
+          action-keys (keys action-config)]
 
 
-    (if-not (= '(:id :origin :result) (keys message))
+      (if-not (= '(:id :origin :result) (keys message))
 
-      ;; original messages
-      (process-original-message action-keys action-config message)
+        ;; original messages
+        (process-original-message action-keys action-config message)
 
-      ;; response messages
-      (process-result-message message))))
+        ;; response messages
+        (process-result-message message))))
 
 
 ;; START System
@@ -245,7 +258,9 @@
      (let [krecieve (plugin/generate-recieve-fn (:channel (get-kernel-channel)))
            xx (krecieve khandler)
            xx (add-to-recievefns {:id (:id (get-kernel-channel))
-                                  :fn krecieve})])))
+                                  :fn krecieve})]
+
+       *SYSTEM*)))
 
 (defn stop-system []
   (swap! *SYSTEM* (fn [inp] nil)))
