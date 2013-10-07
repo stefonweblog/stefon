@@ -26,7 +26,7 @@
   {:pre (map? update-map)}
 
   (let [indexed-entry (seq (first (filter #(= (-> % second :id) ID)
-                                          (map-indexed (fn [idx itm] [idx itm]) (-> @system-atom :system :domain dkey)))))]
+                                          (map-indexed (fn [idx itm] [idx itm]) (-> @system-atom :domain dkey)))))]
 
     (swap! system-atom
            update-in

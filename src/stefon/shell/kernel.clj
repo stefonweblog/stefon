@@ -174,7 +174,7 @@
                 (let [afn (ekey action-config)
                       params (-> eventF ekey :parameters vals)]
 
-                  ;;(println ">> execute command [" afn "] > params [" params "]")
+                  (println ">> execute command [" afn "] > params [" params "]")
 
                   ;; EXECUTE the mapped action
                   (let [eval-result (eval `(~afn ~@params) )]
@@ -222,7 +222,7 @@
     ;;(println ">> kernel-handler CALLED > " message)
 
 
-  ;; NOTIFY tee-fns
+    ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]
               (echF message)
               rslt)
