@@ -179,7 +179,7 @@
                   ;; EXECUTE the mapped action
                   (let [eval-result (eval `(~afn ~@params) )]
 
-                    ;;(println ">> execute result [" eval-result "] / ID [" (:id message) "]")
+                    (println ">> execute result [" eval-result "] / ID [" (:id message) "]")
 
                     ;; SEND evaluation result back to sender
                     (send-message {:include [(:id message)]}

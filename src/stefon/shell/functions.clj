@@ -25,15 +25,24 @@
 
   {:pre (map? update-map)}
 
-  (let [indexed-entry (seq (first (filter #(= (-> % second :id) ID)
-                                          (map-indexed (fn [idx itm] [idx itm]) (-> @system-atom :domain dkey)))))]
+  (let [indexed-entry (ffirst (filter #(= (-> % second :id) ID)
+                                      (map-indexed (fn [idx itm] [idx itm]) (-> @system-atom :system :domain dkey))))]
 
     (swap! system-atom
            update-in
-           [:system :domain dkey (first indexed-entry)]
+           [:system :domain dkey]
            (fn [inp]
 
-             (into inp update-map)))))
+             (reduce (fn [rslt ech]
+                       (conj rslt
+                             (if (= (:id ech) ID)
+                                (merge ech update-map)
+                                ech)))
+                     []
+                     inp)
+             ))
+
+    @system-atom))
 
 (defn delete [system-atom dkey ID]
 
