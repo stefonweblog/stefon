@@ -47,7 +47,8 @@
 (defn delete [system-atom dkey ID]
 
   (swap! system-atom update-in [:system :domain dkey] (fn [inp]
-                                       (remove #(= (:id %) ID) inp))))
+                                                        (remove #(= (:id %) ID) inp)))
+  {})
 
 (defn find
   "Applies key value searching using an AND condition"

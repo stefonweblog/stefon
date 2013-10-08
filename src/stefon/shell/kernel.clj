@@ -174,13 +174,13 @@
                 (let [afn (ekey action-config)
                       params (-> eventF ekey :parameters vals)]
 
-                  ;;(println ">> execute command [" afn "] > params [" params "]")
+                  (println ">> execute command [" afn "] > params [" params "]")
 
                   ;; EXECUTE the mapped action
                   (let [eval-result (eval `(~afn ~@params) )]
 
 
-                    ;;(println ">> execute result [" eval-result "] / ID [" (:id message) "] / message [" message "]")
+                    (println ">> execute result [" eval-result "] / ID [" (:id message) "] / message [" message "]")
 
 
                     ;; SEND evaluation result back to sender
@@ -220,8 +220,8 @@
     [message :- (s/either {(s/required-key :id) s/String
                            (s/required-key :message) s/Any}
                           {(s/required-key :id) s/String
-                           (s/required-key :action) s/Keyword
                            (s/required-key :origin) s/String
+                           (s/required-key :action) s/Keyword
                            (s/required-key :result) s/Any})]
 
 
