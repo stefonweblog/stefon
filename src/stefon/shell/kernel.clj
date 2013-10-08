@@ -174,22 +174,25 @@
                 (let [afn (ekey action-config)
                       params (-> eventF ekey :parameters vals)]
 
-                  (println ">> execute command [" afn "] > params [" params "]")
+                  ;;(println ">> execute command [" afn "] > params [" params "]")
 
                   ;; EXECUTE the mapped action
                   (let [eval-result (eval `(~afn ~@params) )]
 
-                    (println ">> execute result [" eval-result "] / ID [" (:id message) "]")
+
+                    ;;(println ">> execute result [" eval-result "] / ID [" (:id message) "] / message [" message "]")
+
 
                     ;; SEND evaluation result back to sender
                     (send-message {:include [(:id message)]}
-                                  {:from "kernel" :result eval-result}))
+                                  {:from "kernel" :action ekey :result eval-result})
 
-                  ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
-                  (send-message {:exclude [(:id message)]}
-                                {(keyword (string/replace (name ekey) #"stefon" "plugin"))
-                                 message
-                                 #_{:parameters (-> eventF ekey :parameters)}})))
+
+                    ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
+                    (send-message {:exclude [(:id message)]}
+                                  {(keyword (string/replace (name ekey) #"stefon" "plugin"))
+                                   {:id (:id message) :message {ekey {:parameters (merge (-> message :message ekey :parameters) eval-result)}}}
+                                   }))))
               []
               filtered-event-keys)
 
@@ -200,10 +203,11 @@
 
 (s/defn process-result-message [message :- {(s/required-key :id) s/String
                                             (s/required-key :origin) s/String
+                                            (s/required-key :action) s/Keyword
                                             (s/required-key :result) s/Any}]
 
   (send-message {:include [(:origin message)]}
-                {:from (:id message) :result (:result message)}))
+                {:from (:id message) :origin (:origin message) :action (:action message) :result (:result message)}))
 
 
 (s/defn kernel-handler
@@ -216,11 +220,12 @@
     [message :- (s/either {(s/required-key :id) s/String
                            (s/required-key :message) s/Any}
                           {(s/required-key :id) s/String
+                           (s/required-key :action) s/Keyword
                            (s/required-key :origin) s/String
                            (s/required-key :result) s/Any})]
 
-    ;;(println ">> kernel-handler CALLED > " message)
 
+    ;;(println ">> kernel-handler CALLED > " message)
 
     ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]
@@ -234,7 +239,7 @@
           action-keys (keys action-config)]
 
 
-      (if-not (= '(:id :origin :result) (keys message))
+      (if-not (= '(:id :origin :action :result) (keys message))
 
         ;; original messages
         (process-original-message action-keys action-config message)
