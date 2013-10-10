@@ -1,4 +1,4 @@
-(defproject stefon "0.1.1"
+(defproject stefon "0.1.1-SNAPSHOT"
   :description "A composable blogging engine in Clojure."
   :url "https://github.com/twashing/stefon"
   :license {:name "Eclipse Public License"
@@ -12,7 +12,7 @@
                   :exclusions [org.slf4j/slf4j-nop org.slf4j/log4j-over-slf4j]]
 
                  ;; Plugins
-                 #_[stefon-datomic "0.1.0-SNAPSHOT"]]
+                 [stefon-datomic "0.1.1-SNAPSHOT"]]
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]

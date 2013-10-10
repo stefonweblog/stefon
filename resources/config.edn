@@ -26,5 +26,5 @@
                    :stefon.domain.schema 'stefon.shell.kernel/get-domain-schema
                    }
 
- :plugins [['stefon-datomic]]
+ :plugins ['stefon-datomic]
  }

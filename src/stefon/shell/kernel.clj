@@ -229,7 +229,7 @@
                            (s/required-key :result) s/Any})]
 
 
-    ;;(println ">> kernel-handler CALLED > " message)
+    (println ">> kernel-handler CALLED > " message)
 
     ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]
@@ -269,7 +269,20 @@
                                   :fn krecieve})]
 
        ;; load 3rd party PLUGINs
-       ;; ...
+       (let [plugin-list (:plugins (load-config))]
+
+         (reduce (fn [rslt ech]
+
+                   #_(println "... " ech)
+
+                   #_(require (symbol (str (name ech) ".plugin")))
+
+                   #_(let [pfn (get (ns-publics (find-ns ech)) 'plugin)]
+
+                     (println ">> plugin-fn > " pfn)))
+                 []
+                 plugin-list)
+         )
 
        {:system-started? (fn []
                            (if-not (nil? @(get-system))

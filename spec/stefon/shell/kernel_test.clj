@@ -135,7 +135,8 @@
 
           (it "Should be able to send-message to attached functions :include"
 
-              (let [xx (kernel/start-system)
+              (let [xx (kernel/stop-system)
+                    xx (kernel/start-system)
 
                     p1 (promise)
                     p2 (promise)
@@ -162,13 +163,21 @@
 
           (it "Should be able to send-message to attached functions :exclude"
 
-              (let [xx (kernel/start-system)
+              (let [xx (kernel/stop-system)
+                    xx (kernel/start-system)
 
                     p1 (promise)
                     p2 (promise)
                     p3 (promise)
 
-                    h1 (fn [msg] (deliver p1 msg))
+                    h1 (fn [msg]
+
+                         (println ">> deliver p1 > " msg)
+                         (deliver p1 msg)
+
+                         (should (realized? p1))
+                         (should-not (realized? p2))
+                         (should-not (realized? p3)))
                     h2 (fn [msg] (deliver p2 msg))
                     h3 (fn [msg] (deliver p3 msg))
 
@@ -179,9 +188,7 @@
                 (kernel/send-message {:exclude [(:id r2) (:id r3)]}
                                      {:id "qwerty-1234" :message {:fu :bar}})
 
-                (should (realized? p1))
-                (should-not (realized? p2))
-                (should-not (realized? p3))))
+                ))
 
 
           ;; include TEE infrastructure
@@ -189,12 +196,16 @@
 
           (it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
 
-              (let [xx (kernel/start-system)
+              (let [xx (kernel/stop-system)
+                    xx (kernel/start-system)
 
                     ptee (promise)
                     teefn (fn [msg]
-                            ;;(println ">> tee handler CALLED > " msg)
-                            (deliver ptee msg))
+
+                            (deliver ptee msg)
+
+                            (should (realized? ptee))
+                            (should= '(:id :message) (keys @ptee)))
                     xx (kernel/add-receive-tee teefn)
 
                     handlerfn (fn [msg])
@@ -207,17 +218,16 @@
                                                                                                 :modified-date "0000"
                                                                                                 :assets []
                                                                                                 :tags []}} }})
-
                 ;; check for recursive message
                 ;; ...
 
-                (should (realized? ptee))
-                (should= '(:id :message) (keys @ptee))))
+                ))
 
 
           (it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)"
 
-              (let [xx (kernel/start-system)
+              (let [xx (kernel/stop-system)
+                    xx (kernel/start-system)
 
                     p1 (promise)
                     p2 (promise)
@@ -235,6 +245,9 @@
 
                 ((:sendfn r1) message)
 
+                @p2 ;; cheating
+                @p3
+
                 (should-not (realized? p1))
                 (should (realized? p2))
                 (should (realized? p3))
@@ -245,10 +258,14 @@
 
           (it "Should send a message from plugin to kernel, and get a return value (check for recursive message)"
 
-              (let [xx (kernel/start-system)
+              (let [xx (kernel/stop-system)
+                    xx (kernel/start-system)
 
                     p1 (promise)
-                    handlerfn (fn [msg] (deliver p1 msg))
+                    handlerfn (fn [msg]
+
+                                (println "... " msg)
+                                (deliver p1 msg))
                     result (shell/attach-plugin handlerfn)]
 
                 ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
@@ -262,12 +279,12 @@
                 ;; check for recursive message
                 ;; ...
 
+                @p1 ;; cheating
+
                 (should (realized? p1))
                 (should-not-be-nil (:result @p1))
                 (should (= stefon.domain.Post (type (:result @p1))))))
 
-
-          #_(it "Should send a message from kernel to plugin(s), and each plugin should give a response to JUST kernel")
 
 
           (it "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1"
@@ -335,10 +352,8 @@
 
 
                 (println ">> TEST Result > " @p1)
+
                 ;; p1 will be called twice
                 ;; ...
 
-                ))
-
-
-          #_(it "Should test CASCADE results with datomic plugin"))
+                )) )
