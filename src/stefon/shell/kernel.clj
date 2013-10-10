@@ -268,6 +268,9 @@
            xx (add-to-recievefns {:id (:id (get-kernel-channel))
                                   :fn krecieve})]
 
+       ;; load 3rd party PLUGINs
+       ;; ...
+
        *SYSTEM*)))
 
 (defn stop-system []

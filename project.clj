@@ -1,4 +1,4 @@
-(defproject stefon "0.1.0-SNAPSHOT"
+(defproject stefon "0.1.1"
   :description "A composable blogging engine in Clojure."
   :url "https://github.com/twashing/stefon"
   :license {:name "Eclipse Public License"
