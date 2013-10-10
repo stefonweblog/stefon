@@ -190,9 +190,15 @@
 
                     ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
                     (send-message {:exclude [(:id message)]}
-                                  {(keyword (string/replace (name ekey) #"stefon" "plugin"))
-                                   {:id (:id message) :message {ekey {:parameters (merge (-> message :message ekey :parameters) eval-result)}}}
-                                   }))))
+                                  (if-not (= :stefon.post.find ekey)
+                                    {
+                                     (keyword (string/replace (name ekey) #"stefon" "plugin"))
+                                     {:id (:id message) :message {ekey {:parameters (merge (-> message :message ekey :parameters) eval-result)}}}
+                                     }
+                                    {
+                                     (keyword (string/replace (name ekey) #"stefon" "plugin"))
+                                     message
+                                     })))))
               []
               filtered-event-keys)
 

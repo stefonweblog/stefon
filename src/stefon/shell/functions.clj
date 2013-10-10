@@ -54,8 +54,10 @@
   "Applies key value searching using an AND condition"
   [system-atom dkey param-map]
 
+  ;;(println ">> find [" param-map "]")
   (let [entries (seq param-map)]
 
+    ;;(println ">> entries [" entries "]")
     (seq (set/join [param-map] (-> @system-atom :system :domain dkey)))))
 
 (defn list [system-atom dkey]
