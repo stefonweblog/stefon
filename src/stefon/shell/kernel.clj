@@ -271,6 +271,13 @@
        ;; load 3rd party PLUGINs
        ;; ...
 
+       {:system-started? (fn []
+                           (if-not (nil? @(get-system))
+                             true
+                             false))
+        :start-system start-system
+        :attach-plugin (fn [] plugin/attach-plugin *SYSTEM* khandler)}
+
        *SYSTEM*)))
 
 (defn stop-system []
