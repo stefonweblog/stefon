@@ -174,19 +174,12 @@
                 (let [afn (ekey action-config)
                       params (-> eventF ekey :parameters vals)]
 
-                  (println ">> execute command [" afn "] > params [" params "]")
+                  ;;(println ">> execute command [" afn "] > params [" params "]")
 
                   ;; EXECUTE the mapped action
                   (let [eval-result (eval `(~afn ~@params) )]
 
-
                     ;;(println ">> execute result [" eval-result "] / ID [" (:id message) "] / message [" message "]")
-
-                    (if (= :stefon.post.create-relationship ekey)
-                      (println "Huh ?? " {
-                                          (keyword (string/replace (name ekey) #"stefon" "plugin"))
-                                          {:id (:id message) :message {ekey {:parameters (merge (-> message :message ekey :parameters) eval-result)}}}
-                                          }))
 
                     ;; SEND evaluation result back to sender
                     (send-message {:include [(:id message)]}
@@ -236,7 +229,7 @@
                            (s/required-key :result) s/Any})]
 
 
-    (println ">> kernel-handler CALLED > " message)
+    ;;(println ">> kernel-handler CALLED > " message)
 
     ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]
@@ -248,9 +241,6 @@
 
     (let [action-config (:action-mappings (load-config))
           action-keys (keys action-config)]
-
-
-      (println "?? action-keys [" action-keys "]")
 
       (if-not (= '(:id :origin :action :result) (keys message))
 
