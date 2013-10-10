@@ -1,6 +1,7 @@
 {
  :action-mappings {
                    :stefon.post.create 'stefon.shell.kernel/create-post
+                   :stefon.post.create-relationship 'stefon.shell.kernel/create-relationship
                    :stefon.post.retrieve 'stefon.shell.kernel/retrieve-post
                    :stefon.post.update 'stefon.shell.kernel/update-post
                    :stefon.post.delete 'stefon.shell.kernel/delete-post
