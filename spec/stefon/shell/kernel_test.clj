@@ -288,7 +288,7 @@
                     ;; HANDLERs
                     h1 (fn [msg]
 
-                         (println ">> h1 CALLED > " msg)
+                         ;;(println ">> h1 CALLED > " msg)
                          (deliver p1 msg))
 
                     h2 (fn [msg] (deliver p2 msg))
@@ -298,7 +298,7 @@
                          ;; make h3 handle 'plugin.post.create'
                          (let [ppcreate (-> msg :plugin.post.create :message)]
 
-                           (println ">> h3 > " @h3-send)
+                           ;;(println ">> h3 > " @h3-send)
                            (@h3-send msg)))
 
 
@@ -311,14 +311,16 @@
                     ;; h3-send SETUP
                     xx (deliver h3-send (fn [msg]
 
-                                          (println ">> h3-send [" {:id (:id r3)
+                                          #_(println ">> h3-send [" {:id (:id r3)
                                                                    :origin (-> msg :plugin.post.create :id)
+                                                                   :action :noop
                                                                    :result {:fu :bar}} "]")
 
                                           ;;(println ">> h3-send > r3 > " r3)
 
                                           ((:sendfn r3) {:id (:id r3)
                                                          :origin (-> msg :plugin.post.create :id)
+                                                         :action :noop
                                                          :result {:fu :bar}})))
 
                     message {:id (:id r1) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
