@@ -15,7 +15,8 @@
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
                                   [speclj "2.5.0"]
-                                  [midje "1.5.1"]]}}
+                                  [midje "1.5.1"]]
+                   :resource-paths ["dev-resources"]}}
 
   :plugins [[speclj "2.5.0"]]
 
