@@ -92,7 +92,9 @@
           (it "on attaching a plugin, kernel SHOULD have 1 new send fn on the new-channel"
 
               (let [xx (kernel/start-system)
-                    xx (should (empty? (:send-fns @kernel/*SYSTEM*)))
+
+                    ;; not necissarily tru if we are loading plugins
+                    ;;xx (should (empty? (:send-fns @kernel/*SYSTEM*)))
 
                     handlerfn (fn [msg] )
                     result (shell/attach-plugin handlerfn)]
@@ -209,13 +211,15 @@
                     xx (kernel/add-receive-tee teefn)
 
                     handlerfn (fn [msg])
-                    result (shell/attach-plugin handlerfn)]
+                    result (shell/attach-plugin handlerfn)
+
+                    date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))]
 
                 ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
                                                                                                 :content "Lorem ipsum."
                                                                                                 :content-type "txt"
-                                                                                                :created-date "0000"
-                                                                                                :modified-date "0000"
+                                                                                                :created-date date-one
+                                                                                                :modified-date date-one
                                                                                                 :assets []
                                                                                                 :tags []}} }})
                 ;; check for recursive message
@@ -263,16 +267,16 @@
 
                     p1 (promise)
                     handlerfn (fn [msg]
-
-                                (println "... " msg)
                                 (deliver p1 msg))
-                    result (shell/attach-plugin handlerfn)]
+                    result (shell/attach-plugin handlerfn)
+
+                    date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))]
 
                 ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
                                                                                                 :content "Lorem ipsum."
                                                                                                 :content-type "txt"
-                                                                                                :created-date "0000"
-                                                                                                :modified-date "0000"
+                                                                                                :created-date date-one
+                                                                                                :modified-date date-one
                                                                                                 :assets []
                                                                                                 :tags []}} }})
 
@@ -340,11 +344,12 @@
                                                          :action :noop
                                                          :result {:fu :bar}})))
 
+                    date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))
                     message {:id (:id r1) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
                                                                                       :content "Lorem ipsum."
                                                                                       :content-type "txt"
-                                                                                      :created-date "0000"
-                                                                                      :modified-date "0000"
+                                                                                      :created-date date-one
+                                                                                      :modified-date date-one
                                                                                       :assets []
                                                                                       :tags []}} }}]
 

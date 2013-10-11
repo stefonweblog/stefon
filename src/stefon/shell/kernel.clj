@@ -274,22 +274,25 @@
          (reduce (fn [rslt ech]
 
                    #_(println "... " ech)
-
                    #_(require (symbol (str (name ech) ".plugin")))
-
                    #_(let [pfn (get (ns-publics (find-ns ech)) 'plugin)]
+                       (println ">> plugin-fn > " pfn))
 
-                     (println ">> plugin-fn > " pfn)))
+                   (let [plugin-ns (symbol (str (name ech) ".plugin"))
+                         plugin-fn (get (ns-publics plugin-ns) 'plugin) ]
+
+                     (println ">> plugin-fn > plugin-ns [" plugin-ns "] > plugin-fn [" plugin-fn "]" )
+
+                     (require plugin-ns)
+                     (plugin-fn {:system-started? (fn []
+                                                    (if-not (nil? @(get-system))
+                                                      true
+                                                      false))
+                                 :start-system start-system
+                                 :attach-plugin (fn [khandler] (plugin/attach-plugin *SYSTEM* khandler))}
+                                :dev)))
                  []
-                 plugin-list)
-         )
-
-       {:system-started? (fn []
-                           (if-not (nil? @(get-system))
-                             true
-                             false))
-        :start-system start-system
-        :attach-plugin (fn [] plugin/attach-plugin *SYSTEM* khandler)}
+                 plugin-list))
 
        *SYSTEM*)))
 
