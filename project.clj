@@ -10,7 +10,7 @@
                  [org.clojure/core.async "0.1.222.0-83d0c2-alpha"]
 
                  ;; Plugins
-                 [stefon-datomic "0.1.1-SNAPSHOT"]]
+                 #_[stefon-datomic "0.1.1-SNAPSHOT"]]
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
