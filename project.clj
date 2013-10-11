@@ -8,8 +8,6 @@
                  [cljs-uuid "0.0.4"]
                  [prismatic/schema "0.1.3"]
                  [org.clojure/core.async "0.1.222.0-83d0c2-alpha"]
-                 [com.datomic/datomic "0.8.3335"
-                  :exclusions [org.slf4j/slf4j-nop org.slf4j/log4j-over-slf4j]]
 
                  ;; Plugins
                  [stefon-datomic "0.1.1-SNAPSHOT"]]
