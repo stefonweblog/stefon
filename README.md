@@ -1,12 +1,12 @@
 # Stefon
 
-## Overview 
+## Overview
 
-Stefon is a composable blog engine. This project will *try* to approach the feature set of [Wordpress](http://codex.wordpress.org/WordPress_Features). The architecture is a small kernel with a plugin system wrapped around it. And composable means you could choose to only use a core server component, posting txt entries, let's say with an in-memory data store. If you want a little more, you can choose to add a DB adapter out to Datomic, Import / Export support, etc. This is all still within a running Clojure repl. So additionally, you might choose to add a Web UI (or tablet or smartphone UI), and so on. 
+Stefon is a composable blog engine written in Clojure. This project will *try* to approach the feature set of [Wordpress](http://codex.wordpress.org/WordPress_Features). The architecture is a small kernel with a plugin system wrapped around it. And composable means you could choose to only use a core server component, posting txt entries, let's say with an in-memory data store. If you want a little more, you can choose to add a DB adapter out to Datomic, Import / Export support, etc. This is all still within a running Clojure repl. So additionally, you might choose to add a Web UI (or tablet or smartphone UI), and so on.
 
 
 
-## Functionality 
+## Functionality
 
  * Core Data Model
    * posts (txt, rtf, md)
