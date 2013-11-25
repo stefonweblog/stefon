@@ -34,11 +34,13 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
 ### Plugin Inclusion 
 1. Write a ***plugin.clj*** file under your root namespace 
 2. Give it a plugin function like this. Here's [an example](https://github.com/stefonweblog/stefon-datomic/blob/master/src/stefon_datomic/plugin.clj#l249)
+
   ```clojure
   (defn plugin
     ([function-map])
     ([function-map env]))
   ```
+
 3. The function-map passed to your function will have these functions for your use 
   ```clojure
   { :system-started? shell/system-started? :start-system shell/start-system :attach-plugin shell/attach-plugin }
