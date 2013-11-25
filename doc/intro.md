@@ -31,6 +31,26 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
   * `(list :tag)`
 
 
+### Plugin Inclusion 
+1. Write a ***plugin.clj*** file under your root namespace 
+2. Give it a plugin function like [this](https://github.com/stefonweblog/stefon-datomic/blob/master/src/stefon_datomic/plugin.clj#l249). The function-map passed to your function will have these functions for your use 
+
+```clojure
+{ :system-started? shell/system-started? :start-system shell/start-system :attach-plugin shell/attach-plugin }
+```
+
+
+### Plugin Attaching
+... 
+
+
+### Plugin Interface
+After attaching, you will receive a map of functions like below. Expect to send and receive message in the shape described here. 
+```clojure
+{ :id your-channel-id :channel ch :sendfn sfn :recievefn rfn }
+```
+
+
 ### Plugin CRUD functions
 
 This just provides first pass examples of calling CRUD from a plugin
@@ -58,20 +78,5 @@ This just provides first pass examples of calling CRUD from a plugin
            :message {:stefon.tag.create
                      {:parameters {:name name}}}}))))
   ```
-
-
-### Plugin Interface
-After attaching, you will receive a map of functions like below. Expect to send and receive message in the shape described here. 
-```clojure
-{ :id your-channel-id :channel ch :sendfn sfn :recievefn rfn }
-```
-
-### Plugin Inclusion 
-1. Write a ***plugin.clj*** file under your root namespace 
-2. Give it a plugin function like [this](https://github.com/stefonweblog/stefon-datomic/blob/master/src/stefon_datomic/plugin.clj#l249). The function-map passed to your function will have these functions for your use 
-
-```clojure
-{ :system-started? shell/system-started? :start-system shell/start-system :attach-plugin shell/attach-plugin }
-```
 
 
