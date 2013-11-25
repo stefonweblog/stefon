@@ -45,19 +45,19 @@ This just provides first pass examples of calling CRUD from a plugin
 
 2. Assets
 
-```clojure
-(sendfn {:id id
-         :message {:stefon.asset.create
-                   {:parameters {:name name :type type :asset asset}}}}))))
-```
+  ```clojure
+  (sendfn {:id id
+           :message {:stefon.asset.create
+                     {:parameters {:name name :type type :asset asset}}}}))))
+  ```
 
 3. Tags
 
-```clojure
-(sendfn {:id id
-         :message {:stefon.tag.create
-                   {:parameters {:name name}}}}))))
-```
+  ```clojure
+  (sendfn {:id id
+           :message {:stefon.tag.create
+                     {:parameters {:name name}}}}))))
+  ```
 
 
 ### Plugin Interface
