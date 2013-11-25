@@ -37,11 +37,11 @@ This just provides first pass examples of calling CRUD from a plugin
 
 1. Posts
 
-```clojure
-(sendfn {:id id
-         :message {:stefon.post.create
-                   {:parameters {:title title :content content :content-type content-type :created-date cdate :modified-date mdate :assets [] :tags []}}}}))))
-```
+  ```clojure
+  (sendfn {:id id
+           :message {:stefon.post.create
+                     {:parameters {:title title :content content :content-type content-type :created-date cdate :modified-date mdate :assets [] :tags []}}}}))))
+  ```
 
 2. Assets
 
@@ -55,7 +55,7 @@ This just provides first pass examples of calling CRUD from a plugin
 
 ```clojure
 (sendfn {:id id
-         :message {:stefon.post.create
+         :message {:stefon.tag.create
                    {:parameters {:name name}}}}))))
 ```
 
