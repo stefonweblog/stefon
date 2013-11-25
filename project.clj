@@ -24,3 +24,11 @@
 
   :resource-paths ["resources/"]
   )
+
+;; To run tests
+;; lein midje
+
+;; To autorun tests
+;; lein midje :autotest :config test/etc/midje.clj
+
+

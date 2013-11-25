@@ -51,15 +51,7 @@ This is just an initial poke at the plugins I'd like to see for the working syst
    * Multi-lang / Internationalization
 
 
-## Usage
-
-   ;; To run tests
-   lein midje
-
-   ;; To autorun tests
-   lein midje :autotest :config test/etc/midje.clj
-
-## License
+# License
 
 Copyright © 2013 FIXME
 
