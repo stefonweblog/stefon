@@ -9,26 +9,26 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
 
 ### Shell CRUD functions
 1. Posts
-  * (create :post title content content-type created-date modified-date assets tags)
-  * (retrieve :post id)
-  * (update :post id update-map)
-  * (delete :post id)
-  * (find :post param-map)
-  * (list :post)
+  * `(create :post title content content-type created-date modified-date assets tags)`
+  * `(retrieve :post id)`
+  * `(update :post id update-map)`
+  * `(delete :post id)`
+  * `(find :post param-map)`
+  * `(list :post)`
 2. Assets
-  * (create :asset name type asset)
-  * (retrieve :asset id)
-  * (update :asset id update-map)
-  * (delete :asset id)
-  * (find :asset param-map)
-  * (list :asset)
+  * `(create :asset name type asset)`
+  * `(retrieve :asset id)`
+  * `(update :asset id update-map)`
+  * `(delete :asset id)`
+  * `(find :asset param-map)`
+  * `(list :asset)`
 3. Tags
-  * (create :tag name)
-  * (retrieve :tag id)
-  * (update :tag id update-map)
-  * (delete :tag id)
-  * (find :tag param-map)
-  * (list :tag)
+  * `(create :tag name)`
+  * `(retrieve :tag id)`
+  * `(update :tag id update-map)`
+  * `(delete :tag id)`
+  * `(find :tag param-map)`
+  * `(list :tag)`
 
 
 ### Plugin CRUD functions
