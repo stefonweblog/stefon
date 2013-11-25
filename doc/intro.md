@@ -41,7 +41,7 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
     ([function-map env]))
   ```
 
-3. The function-map passed to your function will have these functions for your use 
+3. When Stefon starts up, the function-map passed to your function will have these functions for your use 
   ```clojure
   { :system-started? shell/system-started? :start-system shell/start-system :attach-plugin shell/attach-plugin }
   ```
