@@ -33,18 +33,16 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
 
 ### Plugin Inclusion 
 1. Write a ***plugin.clj*** file under your root namespace 
-2. Give it a plugin function like this. 
+2. Give it a plugin function like this. Here's [an example](https://github.com/stefonweblog/stefon-datomic/blob/master/src/stefon_datomic/plugin.clj#l249)
   ```clojure
   (defn plugin
     ([function-map])
     ([function-map env]))
   ```
-
 3. The function-map passed to your function will have these functions for your use 
-
-```clojure
-{ :system-started? shell/system-started? :start-system shell/start-system :attach-plugin shell/attach-plugin }
-```
+  ```clojure
+  { :system-started? shell/system-started? :start-system shell/start-system :attach-plugin shell/attach-plugin }
+  ```
 
 
 ### Plugin Attaching
@@ -53,9 +51,9 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
 
 ### Plugin Interface
 After attaching, you will receive a map of functions like below. Expect to send and receive message in the shape described here. 
-```clojure
-{ :id your-channel-id :channel ch :sendfn sfn :recievefn rfn }
-```
+  ```clojure
+  { :id your-channel-id :channel ch :sendfn sfn :recievefn rfn }
+  ```
 
 
 ### Plugin CRUD functions
@@ -63,7 +61,6 @@ After attaching, you will receive a map of functions like below. Expect to send 
 This just provides first pass examples of calling CRUD from a plugin
 
 1. Posts
-
   ```clojure
   (sendfn {:id id
            :message {:stefon.post.create
@@ -71,7 +68,6 @@ This just provides first pass examples of calling CRUD from a plugin
   ```
 
 2. Assets
-
   ```clojure
   (sendfn {:id id
            :message {:stefon.asset.create
@@ -79,7 +75,6 @@ This just provides first pass examples of calling CRUD from a plugin
   ```
 
 3. Tags
-
   ```clojure
   (sendfn {:id id
            :message {:stefon.tag.create
