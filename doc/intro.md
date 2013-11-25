@@ -3,9 +3,9 @@
 Stefon ***i)*** can be used as a stand alone product. Or ***ii)*** it can be embedded in your Clojure (or JVM) web architecture. The most basic use is from the repl, saving posts, with tags and assets. From there, you can add plugins for Database and Web Interface functions.
 
 
-
 ### Install / Run 
 Execute `git clone git@github.com:twashing/stefon.git`. Then go to that directory, run the repl, and start using the functions in ***'stefon.shell***
+
 
 ### Shell CRUD functions
 1. Posts
@@ -30,6 +30,34 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
   * (find :tag param-map)
   * (list :tag)
 
+
+### Plugin CRUD functions
+
+This just provides first pass examples of calling CRUD from a plugin
+
+1. Posts
+
+```clojure
+(sendfn {:id id
+         :message {:stefon.post.create
+                   {:parameters {:title title :content content :content-type content-type :created-date cdate :modified-date mdate :assets [] :tags []}}}}))))
+```
+
+2. Assets
+
+```clojure
+(sendfn {:id id
+         :message {:stefon.asset.create
+                   {:parameters {:name name :type type :asset asset}}}}))))
+```
+
+3. Tags
+
+```clojure
+(sendfn {:id id
+         :message {:stefon.post.create
+                   {:parameters {:name name}}}}))))
+```
 
 
 ### Plugin Interface
