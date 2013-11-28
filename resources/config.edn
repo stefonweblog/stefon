@@ -24,6 +24,7 @@
 
                    :stefon.domain 'stefon.shell.kernel/get-domain
                    :stefon.domain.schema 'stefon.shell.kernel/get-domain-schema
+                   :stefon.domain.channel 'stefon.shell.kernel/get-channel
                    }
 
  :plugins [;;'stefon-datomic

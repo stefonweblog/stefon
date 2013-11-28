@@ -60,10 +60,16 @@
                          (update-in inp
                                     [:send-fns]
                                     (fn [ii]
-                                      (into []
-                                            (conj ii
-                                                  {:id (:id new-channel)
-                                                   :fn kernel-send}))))))
+                                      (into [] (conj ii
+                                                     {:id (:id new-channel)
+                                                      :fn kernel-send}))))))
+
+    ;; TODO - send-fns and channels are related, but exist in 2 lists
+    (swap! system-atom (fn [inp]
+                         (update-in inp
+                                    [:channel-list]
+                                    (fn [ii]
+                                      (into [] (conj ii new-channel))))))
 
     ;; PLUGIN binding
     (assoc new-channel :sendfn sendfn :recievefn recievefn)))

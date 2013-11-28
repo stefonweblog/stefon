@@ -174,7 +174,6 @@
 
                     h1 (fn [msg]
 
-                         (println ">> deliver p1 > " msg)
                          (deliver p1 msg)
 
                          (should (realized? p1))
@@ -356,9 +355,30 @@
                 ((:sendfn r1) message)
 
 
-                (println ">> TEST Result > " @p1)
+                #_(println ">> TEST Result > " @p1)
 
                 ;; p1 will be called twice
                 ;; ...
 
-                )) )
+                ))
+
+          (it "Should be able to get a channel, after we attach a plugin"
+
+              (let [xx (kernel/stop-system)
+                    xx (kernel/start-system)
+
+                    p1 (promise)
+                    h1 (fn [msg]
+                          (deliver p1 msg))
+                    r1 (shell/attach-plugin h1)
+                    rid (:id r1)
+
+                    message {:id rid :message {:stefon.domain.channel {:parameters {:ID rid}}}}]
+
+                (def one ((:sendfn r1) message))
+
+                (should (realized? p1))
+                (should (map? (:result @p1)))
+                (should (= rid (-> @p1 :result :id)))
+                (should (= clojure.core.async.impl.channels.ManyToManyChannel
+                           (type (-> @p1 :result :channel)))) )))
