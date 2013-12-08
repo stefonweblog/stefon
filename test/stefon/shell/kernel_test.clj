@@ -1,12 +1,18 @@
 (ns stefon.shell.kernel-test
   (:use clojure.test
-        midje.sweet))
+        midje.sweet)
+  (:require [stefon.shell.kernel :as kernel]))
 
 (deftest test-app
 
-  (testing "main route"
+  ;; Create & Manage the System
+  (testing "System generation"
 
-    (is (= 0 0))
-    (is (= 5 5)))
+    (is (not (nil? (kernel/generate-system)))))
 
-)
+
+  ;; Commuincating with Plugins
+  (testing "Communicating with Plugins"
+
+    )
+  )

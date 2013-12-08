@@ -12,7 +12,7 @@
                  ;; Plugins
                  #_[stefon-datomic "0.1.1-SNAPSHOT"]]
 
-  :profiles {:dev {:source-paths ["dev"]
+  :profiles {:dev {:source-paths ["dev" "plugins"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
                                   [speclj "2.5.0"]
                                   [midje "1.5.1"]
