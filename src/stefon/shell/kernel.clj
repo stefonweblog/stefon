@@ -16,10 +16,13 @@
   "The system state"
   nil)
 
+
 (defn start-system
   "Start the system and state"
 
-  ([] (start-system (generate-system)))
+  ([]
+     (let [component (stefon.core.Component. nil)]
+       (start-system (.init component {}))))
   ([system-state]
      (alter-var-root #'*SYSTEM* (fn [inp] system-state))))
 
