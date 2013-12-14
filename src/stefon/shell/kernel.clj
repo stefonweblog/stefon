@@ -1,5 +1,4 @@
-(ns stefon.shell.kernel
-  (:require user))
+(ns stefon.shell.kernel)
 
 (defn generate-system []
   {:domain {:posts []
@@ -12,19 +11,25 @@
 
    :tee-fns []})
 
-(def *SYSTEM*
-  "The system state"
-  nil)
+(def ^:dynamic *SYSTEM* "The system state" nil)
 
 
 (defn start-system
   "Start the system and state"
 
   ([]
-     (let [component (stefon.core.Component. nil)]
-       (start-system (.init component {}))))
+     (start-system {:stefon/system (generate-system)}))
   ([system-state]
      (alter-var-root #'*SYSTEM* (fn [inp] system-state))))
 
-(defn get-system []
-  *SYSTEM*)
+(defn get-system [] *SYSTEM*)
+
+(defn get-plugin-fn [plugin-ns]
+  ('plugin (ns-publics plugin-ns)))
+
+(defn load-plugin [plugin-ns]
+
+  (let [plugin-fn (get-plugin-fn plugin-ns)
+        receivefn (plugin-fn)]
+
+    ))

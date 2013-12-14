@@ -2,7 +2,8 @@
   (:use clojure.test
         midje.sweet)
   (:require stefon.core
-            [stefon.shell.kernel :as kernel]))
+            [stefon.shell.kernel :as kernel]
+            [heartbeat.plugin :as heartbeat]))
 
 
 (defn- system-shape []
@@ -16,8 +17,7 @@
   (= input-shape (system-shape)))
 
 (defn- matches-system-shape [input-shape]
-  (= input-shape
-     {:stefon/system (system-shape)}))
+  (= input-shape {:stefon/system (system-shape)}))
 
 (deftest test-app
 
@@ -42,7 +42,33 @@
 
 
   ;; Commuincating with Plugins
-  (testing "Communicating with Plugins"
+  (testing "We can get the Plugin's plugin function"
+    (let [plugin-receive (kernel/get-plugin-fn 'heartbeat.plugin)]
+      (is (fn? @plugin-receive))))
+
+  (testing "Handshake 1: Invoke plugin's (plugin) function"
+
+    (let [plugin-receive (kernel/load-plugin 'heartbeat.plugin)]
+
+      )
+
+    ;; Handshake 2: Return channel and send & receive functions
+
+    ;; Plugin requests Schema - deliver
+
+    ;; Plugin sends heartbeat - deliver
+
+    ;; Plugin adds a post - deliver
+
+    ;; Plugin adds a post; Second Plugin also responds - deliver
+
+    )
+  #_(testing "Handshake 2: Return channel and send & receive functions"
+
+    (let [plugin-receive (kernel/load-plugin 'heartbeat.plugin)
+          plugin-ackack (kernel/plugin-handshake-ack 'heartbeat.plugin)]
+
+      )
 
     )
   )
