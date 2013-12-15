@@ -43,8 +43,12 @@
 
   ;; Commuincating with Plugins
   (testing "We can get the Plugin's plugin function"
-    (let [plugin-receive (kernel/get-plugin-fn 'heartbeat.plugin)]
-      (is (fn? @plugin-receive))))
+    (let [plugin-fn (kernel/get-plugin-fn 'heartbeat.plugin)]
+      (is (fn? @plugin-fn))))
+
+  (testing "We can invoke the Plugin's plugin function"
+    (let [plugin-receive (kernel/invoke-plugin-fn 'heartbeat.plugin)]
+      (is (fn? plugin-receive))))
 
   (testing "Handshake 1: Invoke plugin's (plugin) function"
 

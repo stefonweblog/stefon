@@ -27,9 +27,12 @@
 (defn get-plugin-fn [plugin-ns]
   ('plugin (ns-publics plugin-ns)))
 
+(defn invoke-plugin-fn [plugin-ns]
+  (let [plugin-fn (get-plugin-fn plugin-ns)]
+    (plugin-fn)))
+
 (defn load-plugin [plugin-ns]
 
-  (let [plugin-fn (get-plugin-fn plugin-ns)
-        receivefn (plugin-fn)]
+  (let [receivefn (invoke-plugin-fn plugin-ns)]
 
     ))
