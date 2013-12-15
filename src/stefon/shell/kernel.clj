@@ -25,9 +25,12 @@
   (swap! system-atom (fn [inp]
                        (update-in inp [lookup-key] (fn [ii] (into [] (conj ii thing)))))))
 
-(s/defn add-to-channel-list [system-atom new-channel :- { (s/required-key :id) s/String
-                                                          (s/required-key :channel) s/Any}]
-  (add-to-generic system-atom :channel-list new-channel))
+(s/defn add-to-channel-list
+  ([new-channel]
+     (add-to-channel-list (get-system) new-channel))
+  ([system-atom new-channel :- { (s/required-key :id) s/String
+                                 (s/required-key :channel) s/Any}]
+     (add-to-generic system-atom :channel-list new-channel)))
 
 (defn generate-channel
   ([] (generate-channel (str (java.util.UUID/randomUUID))))

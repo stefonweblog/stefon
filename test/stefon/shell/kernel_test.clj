@@ -1,7 +1,8 @@
 (ns stefon.shell.kernel-test
   (:use clojure.test
         midje.sweet)
-  (:require stefon.core
+  (:require [clojure.core.async :as async :refer :all]
+            [stefon.core :as core]
             [stefon.shell.kernel :as kernel]
             [heartbeat.plugin :as heartbeat]))
 
@@ -41,7 +42,6 @@
         (is (map? @system-state))
         (is (matches-system-shape (dissoc @system-state :channel-list))))))
 
-
   (testing "Should already have a core channel-list "
 
       (let [xx (kernel/start-system)]
@@ -50,26 +50,29 @@
         (is (vector? (:channel-list @kernel/*SYSTEM*)))))
 
 
-  #_(testing "Should be able to add channels to a list"
+  (testing "Should be able to add channels to a list"
 
-      ;;
       (let [new-channel (chan)
 
             xx (kernel/start-system)
 
             add-result (try (kernel/add-to-channel-list new-channel) (catch Exception e e))
-            add-result-2 (try (kernel/add-to-channel-list {:id 2 :channel new-channel}) (catch Exception e e))
-            add-result-3 (try (kernel/add-to-channel-list {:id "ID" :channel new-channel}) (catch Exception e e))]
+            add-result-2 (try
+                           (kernel/add-to-channel-list {:id 2 :channel new-channel})
+                           (catch Exception e e))
+            add-result-3 (try
+                           (kernel/add-to-channel-list {:id "ID" :channel new-channel})
+                           (catch Exception e e))]
 
-        (should-not-be-nil add-result)
-        (should (= RuntimeException (type add-result)))
-        (should (= RuntimeException (type add-result-2)))
+        (is (not (nil? add-result)))
+        (is (= RuntimeException (type add-result)))
+        (is (= RuntimeException (type add-result-2)))
 
-        (should-not (empty? (:channel-list add-result-3)))
-        (should (vector? (:channel-list add-result-3)))
+        (is (not (empty? (:channel-list add-result-3))))
+        (is (vector? (:channel-list add-result-3)))
 
-        (should-not (empty? (:channel-list @kernel/*SYSTEM*)))
-        (should (map? (first (:channel-list @kernel/*SYSTEM*))))))
+        (is (not (empty? (:channel-list @kernel/*SYSTEM*))))
+        (is (map? (first (:channel-list @kernel/*SYSTEM*))))))
 
   #_(testing "on kernel bootstrap, SHOULD have kernel channel"
 
