@@ -26,16 +26,16 @@
         (is (= '(:id :channel) (keys r3)))
         (is (= "kernel-channel" (:id r3)))))
 
-  #_(testing "Should be able to get a channel (incl. kernel channel)"
+  (testing "Should be able to get a channel (incl. kernel channel)"
 
       (let [channel-list [(plugin/generate-kernel-channel)]
 
             r1 (plugin/generate-kernel-channel)]
 
-        (should-not-be-nil r1)
-        (should= "kernel-channel" (:id r1))))
+        (is (not (nil? r1)))
+        (is (= "kernel-channel" (:id r1)))))
 
-  #_(testing "Should be able to generate a send function"
+  (testing "Should be able to generate a send function"
 
       (let [new-channel (chan)
 
@@ -44,10 +44,10 @@
 
             rvalue (<!! new-channel)]
 
-        (should (fn? sendfn))
-        (should= {:id "asdf" :message {:fu :bar}} rvalue)))
+        (is (fn? sendfn))
+        (is (= {:id "asdf" :message {:fu :bar}} rvalue))))
 
-  #_(testing "Should be able to generate a recieve function"
+  (testing "Should be able to generate a recieve function"
 
       (let [new-channel (chan)
 
@@ -57,5 +57,5 @@
             xx (recievefn (fn [msg] (deliver result msg)))
             xx (>!! new-channel {:fu :bar})]
 
-        (should-not-be-nil @result)
-        (should= {:fu :bar} @result))))
+        (is (not (nil? @result)))
+        (is (= {:fu :bar} @result)))))
