@@ -1,7 +1,9 @@
 (ns stefon.shell.plugin
   (:require [clojure.core.async :as async :refer :all]
             [schema.core :as s]
+
             [stefon.schema :as ss]))
+
 
 (ss/turn-on-validation)
 

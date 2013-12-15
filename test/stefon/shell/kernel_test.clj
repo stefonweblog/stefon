@@ -19,7 +19,7 @@
 (defn- matches-system-shape [input-shape]
   (= input-shape {:stefon/system (system-shape)}))
 
-(deftest test-app
+(deftest test-kernel
 
   ;; Create & Manage the System
   (testing "System generation"
