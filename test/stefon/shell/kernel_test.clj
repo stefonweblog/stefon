@@ -56,7 +56,9 @@
 
             xx (kernel/start-system)
 
-            add-result (try (kernel/add-to-channel-list new-channel) (catch Exception e e))
+            add-result (try
+                         (kernel/add-to-channel-list new-channel)
+                         (catch Exception e e))
             add-result-2 (try
                            (kernel/add-to-channel-list {:id 2 :channel new-channel})
                            (catch Exception e e))
@@ -74,13 +76,13 @@
         (is (not (empty? (:channel-list @kernel/*SYSTEM*))))
         (is (map? (first (:channel-list @kernel/*SYSTEM*))))))
 
-  #_(testing "on kernel bootstrap, SHOULD have kernel channel"
+  (testing "on kernel bootstrap, SHOULD have kernel channel"
 
       (let [xx (kernel/start-system)
             result (kernel/get-kernel-channel)]
 
-        (should-not-be-nil result)
-        (should= "kernel-channel" (:id result))))
+        (is (not (nil? result)))
+        (is (= "kernel-channel" (:id result)))))
 
 
   #_(testing "on kernel bootstrap, SHOULD have 1 kernel-recieve function"

@@ -25,6 +25,11 @@
   (swap! system-atom (fn [inp]
                        (update-in inp [lookup-key] (fn [ii] (into [] (conj ii thing)))))))
 
+
+
+;; ====
+;; Channels
+;; ====
 (s/defn add-to-channel-list
   ([new-channel]
      (add-to-channel-list (get-system) new-channel))
@@ -40,6 +45,13 @@
 
 (defn generate-kernel-channel []
   (generate-channel "kernel-channel"))
+
+(defn get-channel [ID]
+  (->> (:channel-list @*SYSTEM*) (filter #(= ID (:id %))) first))
+
+(defn get-kernel-channel []
+  (get-channel "kernel-channel"))
+
 
 
 (defn start-system
@@ -57,7 +69,7 @@
 
 
 ;; ====
-;; Incremental steps in the pluging handshakre process
+;; Incremental steps in the pluging handshake process
 ;; ====
 (defn get-plugin-fn [plugin-ns]
   ('plugin (ns-publics plugin-ns)))
