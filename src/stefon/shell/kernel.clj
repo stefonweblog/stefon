@@ -73,7 +73,6 @@
 
      (add-to-channel-list (get-system) (generate-kernel-channel))
 
-     (println "... " (get-system))
      (generate-kernel-recieve khandler)
 
 

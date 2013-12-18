@@ -32,18 +32,15 @@
   (testing "Kernel Startup"
     (let [start-result (kernel/start-system)]
 
-      (println "1... " (dissoc @start-result :channel-list))
-      (println "2... " {:stefon/system (system-shape)})
-
       (is (not (nil? @start-result)))
       (is (map? @start-result))
-      (is (matches-system-shape (dissoc @start-result :channel-list)))
+      (is (= (keys (system-shape)) (keys (:stefon/system @start-result))) )
 
       (let [system-state (kernel/get-system)]
 
         (is (not (nil? @system-state)))
         (is (map? @system-state))
-        (is (matches-system-shape (dissoc @system-state :channel-list))))))
+        (is (= (keys (system-shape)) (keys (:stefon/system @system-state)))))))
 
   (testing "Should already have a core channel-list "
 
