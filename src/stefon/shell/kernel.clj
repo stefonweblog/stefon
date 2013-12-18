@@ -1,7 +1,8 @@
 (ns stefon.shell.kernel
   (:require [clojure.core.async :as async :refer :all]
+            [schema.core :as s]
             [stefon.shell.plugin :as plugin]
-            [schema.core :as s]))
+            [stefon.shell.kernel-process :as process]))
 
 (defn generate-system []
   {:domain {:posts []
@@ -14,28 +15,34 @@
 
    :tee-fns []})
 
-;; ====
-;; System functions
-;; ====
+
 (def ^:dynamic *SYSTEM* "The system state" (atom nil))
 (defn get-system [] *SYSTEM*)
 
 
 (defn- add-to-generic [system-atom lookup-key thing]
   (swap! system-atom (fn [inp]
-                       (update-in inp [lookup-key] (fn [ii] (into [] (conj ii thing)))))))
+                       (update-in inp [:stefon/system lookup-key] (fn [ii] (into [] (conj ii thing)))))))
 
+(defn get-channel [ID]
+  (->> @*SYSTEM* :stefon/system :channel-list (filter #(= ID (:id %))) first))
 
+(defn get-kernel-channel []
+  (get-channel "kernel-channel"))
 
-;; ====
-;; Channels
-;; ====
 (s/defn add-to-channel-list
   ([new-channel]
      (add-to-channel-list (get-system) new-channel))
   ([system-atom new-channel :- { (s/required-key :id) s/String
                                  (s/required-key :channel) s/Any}]
      (add-to-generic system-atom :channel-list new-channel)))
+
+(s/defn add-to-recievefns [recieve-map :- { (s/required-key :id) s/String
+                                            (s/required-key :fn) s/Any}]
+  {:pre [(fn? (:fn recieve-map))]}
+
+  (add-to-generic (get-system) :recieve-fns recieve-map))
+
 
 (defn generate-channel
   ([] (generate-channel (str (java.util.UUID/randomUUID))))
@@ -46,24 +53,29 @@
 (defn generate-kernel-channel []
   (generate-channel "kernel-channel"))
 
-(defn get-channel [ID]
-  (->> (:channel-list @*SYSTEM*) (filter #(= ID (:id %))) first))
+(defn generate-kernel-recieve [khandler]
 
-(defn get-kernel-channel []
-  (get-channel "kernel-channel"))
-
+  (let [krecieve (plugin/generate-recieve-fn (:channel (get-kernel-channel)))]
+     (krecieve khandler)
+     (add-to-recievefns {:id (:id (get-kernel-channel))
+                         :fn krecieve}) ))
 
 
 (defn start-system
   "Start the system and state"
 
   ([]
-     (start-system {:stefon/system (generate-system)}))
-  ([system-state]
+     (start-system {:stefon/system (generate-system)}
+                   process/kernel-handler))
+  ([system-state khandler]
 
      (swap! *SYSTEM* (fn [inp] system-state))
 
      (add-to-channel-list (get-system) (generate-kernel-channel))
+
+     (println "... " (get-system))
+     (generate-kernel-recieve khandler)
+
 
      (get-system)))
 
