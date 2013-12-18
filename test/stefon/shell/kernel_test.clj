@@ -46,8 +46,8 @@
 
       (let [xx (kernel/start-system)]
 
-        (is (not (nil? (:channel-list @kernel/*SYSTEM*))))
-        (is (vector? (:channel-list @kernel/*SYSTEM*)))))
+        (is (not (nil? (-> @(kernel/get-system) :stefon/system :channel-list))))
+        (is (vector? (-> @(kernel/get-system) :stefon/system :channel-list)))))
 
 
   (testing "Should be able to add channels to a list"
@@ -70,11 +70,11 @@
         (is (= RuntimeException (type add-result)))
         (is (= RuntimeException (type add-result-2)))
 
-        (is (not (empty? (:channel-list add-result-3))))
-        (is (vector? (:channel-list add-result-3)))
+        (is (not (empty? (-> add-result-3 :stefon/system :channel-list))))
+        (is (vector? (-> add-result-3 :stefon/system :channel-list)))
 
-        (is (not (empty? (:channel-list @kernel/*SYSTEM*))))
-        (is (map? (first (:channel-list @kernel/*SYSTEM*))))))
+        (is (not (empty? (-> @(kernel/get-system) :stefon/system :channel-list))))
+        (is (map? (first (-> @(kernel/get-system) :stefon/system :channel-list))))))
 
   (testing "on kernel bootstrap, SHOULD have kernel channel"
 
@@ -89,8 +89,8 @@
 
       (let [xx (kernel/start-system) ]
 
-        (is (not (empty? (:recieve-fns @kernel/*SYSTEM*))))
-        (is (fn? (-> @kernel/*SYSTEM* :recieve-fns first :fn)))
+        (is (not (empty? (-> @(kernel/get-system) :stefon/system :recieve-fns))))
+        (is (fn? (-> @(kernel/get-system) :stefon/system :recieve-fns first :fn)))
 
         ;; sending on the kernel channel should spark the kernel retrieve
         ;; ...
