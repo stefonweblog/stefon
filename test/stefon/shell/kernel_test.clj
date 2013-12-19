@@ -105,11 +105,7 @@
           result (shell/attach-plugin handlerfn)]
 
       ((:sendfn result) {:id "asdf" :message {:fu :bar}})
-
-      #_(println "... "
-               ((first (:send-fns @(kernel/get-system))) {:id "kernel-id" :message {:from :kernel}}))
-
-      #_(is (fn? (:sendfn result)))
+      (is (fn? (:sendfn result)))
 
       ;; using the send fn should spark the kernel retrieve
       ;; ...
