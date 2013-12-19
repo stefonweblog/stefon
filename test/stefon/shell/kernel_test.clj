@@ -3,6 +3,7 @@
         midje.sweet)
   (:require [clojure.core.async :as async :refer :all]
             [stefon.core :as core]
+            [stefon.shell :as shell]
             [stefon.shell.kernel :as kernel]
             [heartbeat.plugin :as heartbeat]))
 
@@ -23,13 +24,13 @@
 (deftest test-kernel-1
 
   ;; Create & Manage the System
-  (testing "System generation"
+  #_(testing "System generation"
     (let [kernel-result (kernel/generate-system)]
       (is (not (nil? kernel-result)))
       (is (map? kernel-result))
       (is (matches-domain-shape kernel-result))))
 
-  (testing "Kernel Startup"
+  #_(testing "Kernel Startup"
     (let [start-result (kernel/start-system)]
 
       (is (not (nil? @start-result)))
@@ -42,7 +43,7 @@
         (is (map? @system-state))
         (is (= (keys (system-shape)) (keys (:stefon/system @system-state)))))))
 
-  (testing "Should already have a core channel-list "
+  #_(testing "Should already have a core channel-list "
 
       (let [xx (kernel/start-system)]
 
@@ -50,7 +51,7 @@
         (is (vector? (-> @(kernel/get-system) :stefon/system :channel-list)))))
 
 
-  (testing "Should be able to add channels to a list"
+  #_(testing "Should be able to add channels to a list"
 
       (let [new-channel (chan)
 
@@ -76,7 +77,7 @@
         (is (not (empty? (-> @(kernel/get-system) :stefon/system :channel-list))))
         (is (map? (first (-> @(kernel/get-system) :stefon/system :channel-list))))))
 
-  (testing "on kernel bootstrap, SHOULD have kernel channel"
+  #_(testing "on kernel bootstrap, SHOULD have kernel channel"
 
       (let [xx (kernel/start-system)
             result (kernel/get-kernel-channel)]
@@ -85,7 +86,7 @@
         (is (= "kernel-channel" (:id result)))))
 
 
-  (testing "on kernel bootstrap, SHOULD have 1 kernel-recieve function"
+  #_(testing "on kernel bootstrap, SHOULD have 1 kernel-recieve function"
 
       (let [xx (kernel/start-system) ]
 
@@ -98,20 +99,21 @@
 
   #_(testing "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel"
 
-      (let [xx (kernel/start-system)
+    (let [xx (kernel/start-system)
 
-            handlerfn (fn [msg] )
-            result (shell/attach-plugin handlerfn)]
+          handlerfn (fn [msg] )
+          result (shell/attach-plugin handlerfn)]
 
+      ((:sendfn result) {:id "asdf" :message {:fu :bar}})
 
-        ((:sendfn result) {:id "asdf" :message {:fu :bar}})
-        ((first (:send-fns @kernel/*SYSTEM*)) {:id "kernel-id" :message {:from :kernel}})
+      #_(println "... "
+               ((first (:send-fns @(kernel/get-system))) {:id "kernel-id" :message {:from :kernel}}))
 
-        (is (fn? (:sendfn result)))
+      #_(is (fn? (:sendfn result)))
 
-        ;; using the send fn should spark the kernel retrieve
-        ;; ...
-        ))
+      ;; using the send fn should spark the kernel retrieve
+      ;; ...
+      ))
 
           #_(it "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel"
 

@@ -3,6 +3,7 @@
   (:require [clojure.test :refer :all]
             [midje.sweet :refer :all]
             [clojure.core.async :as async :refer :all]
+            [stefon.shell.kernel :as kernel]
             [stefon.shell.plugin :as plugin]))
 
 
@@ -50,11 +51,11 @@
   (testing "Should be able to generate a recieve function"
 
       (let [new-channel (chan)
-
             recievefn (plugin/generate-recieve-fn new-channel)
-
+            system-atom (atom {:stefon/system (kernel/generate-system)})
             result (promise)
-            xx (recievefn (fn [msg] (deliver result msg)))
+            xx (recievefn system-atom
+                          (fn [system-atom msg] (deliver result msg)))
             xx (>!! new-channel {:fu :bar})]
 
         (is (not (nil? @result)))

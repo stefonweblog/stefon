@@ -56,7 +56,7 @@
 (defn generate-kernel-recieve [khandler]
 
   (let [krecieve (plugin/generate-recieve-fn (:channel (get-kernel-channel)))]
-     (krecieve khandler)
+     (krecieve (get-system) khandler)
      (add-to-recievefns {:id (:id (get-kernel-channel))
                          :fn krecieve}) ))
 
@@ -78,6 +78,9 @@
 
      (get-system)))
 
+(defn stop-system []
+  (swap! *SYSTEM* (fn [inp] nil)))
+
 
 ;; ====
 ;; Incremental steps in the pluging handshake process
@@ -89,10 +92,9 @@
   (let [plugin-fn (get-plugin-fn plugin-ns)]
     (plugin-fn)))
 
-(defn attach-plugin [plugin-ns]
-  (let [receivefn (invoke-plugin-fn plugin-ns)]
-    (plugin/attach-plugin (get-system) receivefn)))
+(defn attach-plugin [system-atom receivefn]
+  (plugin/attach-plugin system-atom receivefn))
 
 (defn load-plugin [plugin-ns]
-
-)
+  (let [receivefn (invoke-plugin-fn plugin-ns)]
+    (attach-plugin (get-system) receivefn)))

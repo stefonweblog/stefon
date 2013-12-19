@@ -25,7 +25,7 @@
   (->> channel-list (filter #(= ID (:id %))) first))
 
 (defn get-kernel-channel [system-atom]
-  (get-channel (:channel-list @system-atom) "kernel-channel"))
+  (get-channel (-> @system-atom :stefon/system :channel-list) "kernel-channel"))
 
 
 ;; SEND & Recieve Functions on a channel
@@ -35,12 +35,12 @@
 
 
 (defn generate-recieve-fn [chanl]
-  (fn [handlefn]
+  (fn [system-atom handlefn]
 
     (go (loop [msg (<! chanl)]
 
           #_(println ">> generated recieve CALLED > " msg)
-          (handlefn msg)
+          (handlefn system-atom msg)
           (recur (<! chanl))))))
 
 
@@ -53,7 +53,7 @@
 
         sendfn (generate-send-fn (:channel (get-kernel-channel system-atom)))
         recievefn (generate-recieve-fn (:channel new-channel))
-        xx (recievefn handlerfn)]
+        xx (recievefn system-atom handlerfn)]
 
     ;; KERNEL binding
     (swap! system-atom (fn [inp]
