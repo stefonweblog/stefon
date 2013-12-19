@@ -8,19 +8,18 @@
 
 (deftest one
 
-  #_(before (shell/start-system))
-  #_(after (shell/stop-system))
 
+  (testing "Create a Post"
 
-(testing "Create a Post"
+    (let [xx (shell/stop-system)
+          xx (shell/start-system)
+          r1 (kcrud/create-post "t" "c" "c/t" "0000" "1111" nil nil)]
 
-      (let [r1 (kcrud/create-post "t" "c" "c/t" "0000" "1111" nil nil)]
+      (is (not (nil? r1)))
+      (is (= stefon.domain.Post (type r1)))
 
-        (is (not (nil? r1)))
-        (is (= stefon.domain.Post (type r1)))
-
-        (is (= 1 (count (kcrud/get-posts))))
-        (is (= stefon.domain.Post (type (first (kcrud/get-posts)))))))
+      (is (= 1 (count (kcrud/get-posts))))
+      (is (= stefon.domain.Post (type (first (kcrud/get-posts)))))))
 
   #_(it "Retrieve a Post"
 
