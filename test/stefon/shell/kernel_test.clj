@@ -24,13 +24,13 @@
 (deftest test-kernel-1
 
   ;; Create & Manage the System
-  #_(testing "System generation"
+  (testing "System generation"
     (let [kernel-result (kernel/generate-system)]
       (is (not (nil? kernel-result)))
       (is (map? kernel-result))
       (is (matches-domain-shape kernel-result))))
 
-  #_(testing "Kernel Startup"
+  (testing "Kernel Startup"
     (let [start-result (kernel/start-system)]
 
       (is (not (nil? @start-result)))
@@ -43,7 +43,7 @@
         (is (map? @system-state))
         (is (= (keys (system-shape)) (keys (:stefon/system @system-state)))))))
 
-  #_(testing "Should already have a core channel-list "
+  (testing "Should already have a core channel-list "
 
       (let [xx (kernel/start-system)]
 
@@ -51,7 +51,7 @@
         (is (vector? (-> @(kernel/get-system) :stefon/system :channel-list)))))
 
 
-  #_(testing "Should be able to add channels to a list"
+  (testing "Should be able to add channels to a list"
 
       (let [new-channel (chan)
 
@@ -77,7 +77,7 @@
         (is (not (empty? (-> @(kernel/get-system) :stefon/system :channel-list))))
         (is (map? (first (-> @(kernel/get-system) :stefon/system :channel-list))))))
 
-  #_(testing "on kernel bootstrap, SHOULD have kernel channel"
+  (testing "on kernel bootstrap, SHOULD have kernel channel"
 
       (let [xx (kernel/start-system)
             result (kernel/get-kernel-channel)]
@@ -86,7 +86,7 @@
         (is (= "kernel-channel" (:id result)))))
 
 
-  #_(testing "on kernel bootstrap, SHOULD have 1 kernel-recieve function"
+  (testing "on kernel bootstrap, SHOULD have 1 kernel-recieve function"
 
       (let [xx (kernel/start-system) ]
 
@@ -97,11 +97,11 @@
         ;; ...
         ))
 
-  #_(testing "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel"
+  (testing "on attaching a plugin, plugin SHOULD have 1 new send fn on kernel-channel"
 
     (let [xx (kernel/start-system)
 
-          handlerfn (fn [msg] )
+          handlerfn (fn [system-atom msg] )
           result (shell/attach-plugin handlerfn)]
 
       ((:sendfn result) {:id "asdf" :message {:fu :bar}})
