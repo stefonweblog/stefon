@@ -111,36 +111,33 @@
       ;; ...
       ))
 
-          #_(it "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel"
+  (testing "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel"
 
-              (let [xx (kernel/start-system)
+      (let [xx (kernel/start-system)
 
-                    handlerfn (fn [msg] )
-                    result (shell/attach-plugin handlerfn)]
+            handlerfn (fn [system-atom msg] )
+            result (shell/attach-plugin handlerfn)]
 
-                (should (fn? (:recievefn result)))
+        (is (fn? (:recievefn result)))
 
-                ;; sending on new channel, should spark plugin's rettrieve
-                ;; ...
-                ))
+        ;; sending on new channel, should spark plugin's rettrieve
+        ;; ...
+        ))
 
 
-          #_(it "on attaching a plugin, kernel SHOULD have 1 new send fn on the new-channel"
+  (testing "on attaching a plugin, kernel SHOULD have 1 new send fn on the new-channel"
 
-              (let [xx (kernel/start-system)
+      (let [xx (kernel/start-system)
 
-                    ;; not necissarily tru if we are loading plugins
-                    ;;xx (should (empty? (:send-fns @kernel/*SYSTEM*)))
+            handlerfn (fn [system-atom msg] )
+            result (shell/attach-plugin handlerfn)]
 
-                    handlerfn (fn [msg] )
-                    result (shell/attach-plugin handlerfn)]
+        (is (not (empty? (:send-fns @(kernel/get-system)))))
+        (is (fn? (:fn (first (:send-fns @(kernel/get-system))))))
 
-                (should-not (empty? (:send-fns @kernel/*SYSTEM*)))
-                (should (fn? (:fn (first (:send-fns @kernel/*SYSTEM*)))))
-
-                ;; using new send fn, should spark plugin's retrieve
-                ;; ...
-                ))
+        ;; using new send fn, should spark plugin's retrieve
+        ;; ...
+        ))
 
 
           ;; PLUGIN
