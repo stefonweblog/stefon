@@ -21,71 +21,73 @@
       (is (= 1 (count (kcrud/get-posts))))
       (is (= stefon.domain.Post (type (first (kcrud/get-posts)))))))
 
-  #_(it "Retrieve a Post"
+  (testing "Retrieve a Post"
 
-      (let [r1 (kernel/create-post "t" "captain" "c/t" "0000" "1111" nil nil)
+      (let [r1 (kcrud/create-post "t" "captain" "c/t" "0000" "1111" nil nil)
 
             postID (:id r1)
-            r2 (kernel/retrieve-post postID)]
+            r2 (kcrud/retrieve-post postID)]
 
-        (should-not-be-nil r2)
-        (should= stefon.domain.Post (type r2))
-        (should= "captain" (:content r2))))
+        (is (not (nil? r2)))
+        (is (= stefon.domain.Post (type r2)))
+        (is (= "captain" (:content r2)))))
 
-  #_(it "Update a Post"
+  (testing "Update a Post"
 
-      (let [r1 (kernel/create-post "t1" "fubar" "c/t" "0000" "1111" nil nil)
+      (let [r1 (kcrud/create-post "t1" "fubar" "c/t" "0000" "1111" nil nil)
             postID (:id r1)
 
-            r2 (kernel/update-post postID {:content "fubar-two"})
-            r3 (kernel/retrieve-post postID)]
+            r2 (kcrud/update-post postID {:content "fubar-two"})
+            r3 (kcrud/retrieve-post postID)]
 
-        (should= "fubar-two" (:content r3))))
+        (is (= "fubar-two" (:content r3)))))
 
-  #_(it "Delete a Post"
+  (testing "Delete a Post"
 
       ;; inserting and checking
-      (let [r1 (kernel/create-post "t" "thing" "c/t" "0000" "1111" nil nil)
+      (let [r1 (kcrud/create-post "t" "thing" "c/t" "0000" "1111" nil nil)
 
             postID (:id r1)
-            r2 (kernel/retrieve-post postID)]
+            r2 (kcrud/retrieve-post postID)]
 
-        (should-not-be-nil r2)
-        (should= stefon.domain.Post (type r2))
-        (should= "thing" (:content r2))
+        (is (not (nil? r2)))
+        (is (= stefon.domain.Post (type r2)))
+        (is (= "thing" (:content r2)))
 
         ;; deleting and checking
-        (let [r2 (kernel/delete-post postID)]
+        (let [r2 (kcrud/delete-post postID)]
+          (is (nil? (kcrud/retrieve-post postID))))))
 
-          (should-be-nil (kernel/retrieve-post postID)))))
+  (testing "Find Posts"
 
-  #_(it "Find Posts"
+      (let [r1 (kcrud/create-post "fubar one" "c1" "c/t" "0000" "1111" nil nil)
+            r2 (kcrud/create-post "fubar two" "c2" "c/t" "0000" "1111" nil nil)
 
-      (let [r1 (kernel/create-post "fubar one" "c1" "c/t" "0000" "1111" nil nil)
-            r2 (kernel/create-post "fubar two" "c2" "c/t" "0000" "1111" nil nil)
+            r3 (kcrud/find-posts {:title "fubar one"}) ;; This SHOULD work
 
-            r3 (kernel/find-posts {:title "fubar one"}) ;; This SHOULD work
+            r4 (kcrud/find-posts {:content "Zzz"}) ;; this should NOT work
+            r5 (kcrud/find-posts {:content "Zzz" :title "fubar one"})]
 
-            r4 (kernel/find-posts {:content "Zzz"}) ;; this should NOT work
-            r5 (kernel/find-posts {:content "Zzz" :title "fubar one"})]
-
-        (should-not-be-nil r3)
-        (should-be-nil r4)
-        (should-be-nil r5)
+        (is (not (nil? r3)))
+        (is (nil? r4))
+        (is (nil? r5))
 
         ;; ensuring a proper count and the correct result
-        (should= 1 (count r3))
-        (should= (-> r3 first :id) (:id r1))))
+        (is (= 1 (count r3)))
+        (is (= (-> r3 first :id) (:id r1)))))
 
-  #_(it "List all Posts"
+  (testing "List all Posts"
 
-      (let [r1 (kernel/create-post "fubar one" "c1" "c/t" "0000" "1111" nil nil)
-            r2 (kernel/create-post "fubar two" "c2" "c/t" "0000" "1111" nil nil)
+      (let [xx (shell/stop-system)
+            xx (shell/start-system)
 
-            r3 (kernel/list-posts)]
+            r1 (kcrud/create-post "fubar one" "c1" "c/t" "0000" "1111" nil nil)
+            r2 (kcrud/create-post "fubar two" "c2" "c/t" "0000" "1111" nil nil)
+
+            r3 (kcrud/list-posts)]
 
         ;; ensuring not nil, and a proper count
-        (should-not-be-nil r3)
-        (should= 2 (count r3))
+        (is (not (nil? r3)))
+        (is (= 2 (count r3)))
 
-        (should-not (empty? (filter #(= (:id %) (:id r1)) r3))))))
+        (is (not (empty? (filter #(= (:id %) (:id r1)) r3)))))))
