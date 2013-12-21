@@ -171,32 +171,34 @@
         (is (= {:id "qwerty-1234" :fu :bar} @p3))))
 
 
-          #_(it "Should be able to send-message to attached functions :include"
+  (testing "Should be able to send-message to attached functions :include"
 
-              (let [xx (kernel/stop-system)
-                    xx (kernel/start-system)
+    (let [xx (kernel/stop-system)
+          xx (kernel/start-system)
+          system-atom (kernel/get-system)
 
-                    p1 (promise)
-                    p2 (promise)
-                    p3 (promise)
+          p1 (promise)
+          p2 (promise)
+          p3 (promise)
 
-                    h1 (fn [msg] (deliver p1 msg))
-                    h2 (fn [msg] (deliver p2 msg))
-                    h3 (fn [msg] (deliver p3 msg))
+          h1 (fn [system-atom msg] (deliver p1 msg))
+          h2 (fn [system-atom msg] (deliver p2 msg))
+          h3 (fn [system-atom msg] (deliver p3 msg))
 
-                    r1 (shell/attach-plugin h1)
-                    r2 (shell/attach-plugin h2)
-                    r3 (shell/attach-plugin h3)]
+          r1 (shell/attach-plugin h1)
+          r2 (shell/attach-plugin h2)
+          r3 (shell/attach-plugin h3)]
 
-                (kernel/send-message {:include [(:id r2) (:id r3)]}
-                                     {:id "qwerty-1234" :fu :bar})
+      (kprocess/send-message system-atom
+                             {:include [(:id r2) (:id r3)]}
+                             {:id "qwerty-1234" :fu :bar})
 
-                (should-not (realized? p1))
-                (should-not-be-nil @p2)
-                (should-not-be-nil @p3)
+      (is (not (realized? p1)))
+      (is (not (nil? @p2)))
+      (is (not (nil? @p3)))
 
-                (should= {:id "qwerty-1234" :fu :bar} @p2)
-                (should= {:id "qwerty-1234" :fu :bar} @p3)))
+      (is (= {:id "qwerty-1234" :fu :bar} @p2))
+      (is (= {:id "qwerty-1234" :fu :bar} @p3))))
 
 
           #_(it "Should be able to send-message to attached functions :exclude"
