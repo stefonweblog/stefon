@@ -5,6 +5,7 @@
             [stefon.core :as core]
             [stefon.shell :as shell]
             [stefon.shell.kernel :as kernel]
+            [stefon.shell.kernel-process :as kprocess]
             [heartbeat.plugin :as heartbeat]))
 
 
@@ -133,39 +134,41 @@
             result (shell/attach-plugin handlerfn)]
 
         (is (not (empty? (:send-fns @(kernel/get-system)))))
-        (is (fn? (:fn (first (:send-fns @(kernel/get-system))))))
+        (is (fn? (:fn (first (:send-fns @(kernel/get-system
+                                          ))))))
 
         ;; using new send fn, should spark plugin's retrieve
         ;; ...
         ))
 
 
-          ;; PLUGIN
-          #_(it "Should be able to send-message-raw to attached functions"
+  ;; PLUGIN
+  (testing "Should be able to send-message-raw to attached functions"
 
-              (let [xx (kernel/start-system)
+      (let [xx (kernel/start-system)
+            system-atom (kernel/get-system)
+            p1 (promise)
+            p2 (promise)
+            p3 (promise)
 
-                    p1 (promise)
-                    p2 (promise)
-                    p3 (promise)
+            h1 (fn [system-atom msg] (deliver p1 msg))
+            h2 (fn [system-atom msg] (deliver p2 msg))
+            h3 (fn [system-atom msg] (deliver p3 msg))
 
-                    h1 (fn [msg] (deliver p1 msg))
-                    h2 (fn [msg] (deliver p2 msg))
-                    h3 (fn [msg] (deliver p3 msg))
+            r1 (shell/attach-plugin h1)
+            r2 (shell/attach-plugin h2)
+            r3 (shell/attach-plugin h3)]
 
-                    r1 (shell/attach-plugin h1)
-                    r2 (shell/attach-plugin h2)
-                    r3 (shell/attach-plugin h3)]
+        (kprocess/send-message-raw system-atom
+                                   [(:id r2) (:id r3)]
+                                   {:id "qwerty-1234" :fu :bar})
 
-                (kernel/send-message-raw [(:id r2) (:id r3)]
-                                         {:id "qwerty-1234" :fu :bar})
+        (is (not (realized? p1)))
+        (is (not (nil? @p2)))
+        (is (not (nil? @p3)))
 
-                (should-not (realized? p1))
-                (should-not-be-nil @p2)
-                (should-not-be-nil @p3)
-
-                (should= {:id "qwerty-1234" :fu :bar} @p2)
-                (should= {:id "qwerty-1234" :fu :bar} @p3)))
+        (is (= {:id "qwerty-1234" :fu :bar} @p2))
+        (is (= {:id "qwerty-1234" :fu :bar} @p3))))
 
 
           #_(it "Should be able to send-message to attached functions :include"
