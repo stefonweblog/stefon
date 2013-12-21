@@ -201,68 +201,69 @@
       (is (= {:id "qwerty-1234" :fu :bar} @p3))))
 
 
-          #_(it "Should be able to send-message to attached functions :exclude"
+  (testing "Should be able to send-message to attached functions :exclude"
 
-              (let [xx (kernel/stop-system)
-                    xx (kernel/start-system)
+      (let [xx (kernel/stop-system)
+            xx (kernel/start-system)
+            system-atom (kernel/get-system)
 
-                    p1 (promise)
-                    p2 (promise)
-                    p3 (promise)
+            p1 (promise)
+            p2 (promise)
+            p3 (promise)
 
-                    h1 (fn [msg]
+            h1 (fn [system-atom msg]
 
-                         (deliver p1 msg)
+                 (deliver p1 msg)
 
-                         (should (realized? p1))
-                         (should-not (realized? p2))
-                         (should-not (realized? p3)))
-                    h2 (fn [msg] (deliver p2 msg))
-                    h3 (fn [msg] (deliver p3 msg))
+                 (is (realized? p1))
+                 (is (not (realized? p2)))
+                 (is (not (realized? p3))))
+            h2 (fn [system-atom msg] (deliver p2 msg))
+            h3 (fn [system-atom msg] (deliver p3 msg))
 
-                    r1 (shell/attach-plugin h1)
-                    r2 (shell/attach-plugin h2)
-                    r3 (shell/attach-plugin h3)]
+            r1 (shell/attach-plugin h1)
+            r2 (shell/attach-plugin h2)
+            r3 (shell/attach-plugin h3)]
 
-                (kernel/send-message {:exclude [(:id r2) (:id r3)]}
-                                     {:id "qwerty-1234" :message {:fu :bar}})
-
-                ))
+        (kprocess/send-message system-atom
+                               {:exclude [(:id r2) (:id r3)]}
+                               {:id "qwerty-1234" :message {:fu :bar}})))
 
 
           ;; include TEE infrastructure
           ;; ...
 
-          #_(it "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
+  (testing "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
 
-              (let [xx (kernel/stop-system)
-                    xx (kernel/start-system)
+    (let [xx (kernel/stop-system)
+          xx (kernel/start-system)
+          system-atom (kernel/get-system)
 
-                    ptee (promise)
-                    teefn (fn [msg]
+          ptee (promise)
+          teefn (fn [system-atom msg]
 
-                            (deliver ptee msg)
+                  (deliver ptee msg)
 
-                            (should (realized? ptee))
-                            (should= '(:id :message) (keys @ptee)))
-                    xx (kernel/add-receive-tee teefn)
+                  (is (realized? ptee))
+                  (is (= '(:id :message) (keys @ptee))))
+          xx (kernel/add-receive-tee system-atom teefn)
 
-                    handlerfn (fn [msg])
-                    result (shell/attach-plugin handlerfn)
+          handlerfn (fn [system-atom msg])
+          result (shell/attach-plugin handlerfn)
 
-                    date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))]
+          date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))]
 
-                ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
-                                                                                                :content "Lorem ipsum."
-                                                                                                :content-type "txt"
-                                                                                                :created-date date-one
-                                                                                                :modified-date date-one
-                                                                                                :assets []
-                                                                                                :tags []}} }})
-                ;; check for recursive message
-                ;; ...
+      ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
+                                                                                      :content "Lorem ipsum."
+                                                                                      :content-type "txt"
+                                                                                      :created-date date-one
+                                                                                      :modified-date date-one
+                                                                                      :assets []
+                                                                                      :tags []}} }})
+      ;; check for recursive message
+      ;; ...
 
-                ))
+      ))
 
 
           #_(it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)"

@@ -20,6 +20,10 @@
 (defn get-system [] *SYSTEM*)
 
 
+(defn add-receive-tee [system-atom recievefn]
+  (swap! system-atom (fn [inp]
+                       (update-in inp [:steonf/system :tee-fns] (fn [ii] (into [] (conj ii recievefn)))))))
+
 (defn- add-to-generic [system-atom lookup-key thing]
   (swap! system-atom (fn [inp]
                        (update-in inp [:stefon/system lookup-key] (fn [ii] (into [] (conj ii thing)))))))

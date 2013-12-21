@@ -1,30 +1,30 @@
 {
  :action-mappings {
-                   :stefon.post.create 'stefon.shell.kernel/create-post
-                   :stefon.post.create-relationship 'stefon.shell.kernel/create-relationship
-                   :stefon.post.retrieve 'stefon.shell.kernel/retrieve-post
-                   :stefon.post.update 'stefon.shell.kernel/update-post
-                   :stefon.post.delete 'stefon.shell.kernel/delete-post
-                   :stefon.post.find 'stefon.shell.kernel/find-posts
-                   :stefon.post.list 'stefon.shell.kernel/list-posts
+                   :stefon.post.create 'stefon.shell.kernel-crud/create-post
+                   :stefon.post.create-relationship 'stefon.shell.kernel-crud/create-relationship
+                   :stefon.post.retrieve 'stefon.shell.kernel-crud/retrieve-post
+                   :stefon.post.update 'stefon.shell.kernel-crud/update-post
+                   :stefon.post.delete 'stefon.shell.kernel-crud/delete-post
+                   :stefon.post.find 'stefon.shell.kernel-crud/find-posts
+                   :stefon.post.list 'stefon.shell.kernel-crud/list-posts
 
-                   :stefon.asset.create 'stefon.shell.kernel/create-asset
-                   :stefon.asset.retrieve 'stefon.shell.kernel/retrieve-asset
-                   :stefon.asset.update 'stefon.shell.kernel/update-asset
-                   :stefon.asset.delete 'stefon.shell.kernel/delete-asset
-                   :stefon.asset.find 'stefon.shell.kernel/find-assets
-                   :stefon.asset.list 'stefon.shell.kernel/list-assets
+                   :stefon.asset.create 'stefon.shell.kernel-crud/create-asset
+                   :stefon.asset.retrieve 'stefon.shell.kernel-crud/retrieve-asset
+                   :stefon.asset.update 'stefon.shell.kernel-crud/update-asset
+                   :stefon.asset.delete 'stefon.shell.kernel-crud/delete-asset
+                   :stefon.asset.find 'stefon.shell.kernel-crud/find-assets
+                   :stefon.asset.list 'stefon.shell.kernel-crud/list-assets
 
-                   :stefon.tag.create 'stefon.shell.kernel/create-tag
-                   :stefon.tag.retrieve 'stefon.shell.kernel/retrieve-tag
-                   :stefon.tag.update 'stefon.shell.kernel/update-tag
-                   :stefon.tag.delete 'stefon.shell.kernel/delete-tag
-                   :stefon.tag.find 'stefon.shell.kernel/find-tags
-                   :stefon.tag.list 'stefon.shell.kernel/list-tags
+                   :stefon.tag.create 'stefon.shell.kernel-crud/create-tag
+                   :stefon.tag.retrieve 'stefon.shell.kernel-crud/retrieve-tag
+                   :stefon.tag.update 'stefon.shell.kernel-crud/update-tag
+                   :stefon.tag.delete 'stefon.shell.kernel-crud/delete-tag
+                   :stefon.tag.find 'stefon.shell.kernel-crud/find-tags
+                   :stefon.tag.list 'stefon.shell.kernel-crud/list-tags
 
-                   :stefon.domain 'stefon.shell.kernel/get-domain
-                   :stefon.domain.schema 'stefon.shell.kernel/get-domain-schema
-                   :stefon.domain.channel 'stefon.shell.kernel/get-channel
+                   :stefon.domain 'stefon.shell.kernel-crud/get-domain
+                   :stefon.domain.schema 'stefon.shell.kernel-crud/get-domain-schema
+                   :stefon.domain.channel 'stefon.shell.kernel-crud/get-channel
                    }
 
  :plugins [;;'stefon-datomic
