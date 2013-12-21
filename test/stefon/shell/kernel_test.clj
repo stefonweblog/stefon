@@ -266,140 +266,131 @@
       ))
 
 
-          #_(it "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)"
+  (testing "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)"
 
-              (let [xx (kernel/stop-system)
-                    xx (kernel/start-system)
+    (let [xx (kernel/stop-system)
+          xx (kernel/start-system)
 
-                    p1 (promise)
-                    p2 (promise)
-                    p3 (promise)
+          p1 (promise)
+          p2 (promise)
+          p3 (promise)
 
-                    h1 (fn [msg] (deliver p1 msg))
-                    h2 (fn [msg] (deliver p2 msg))
-                    h3 (fn [msg] (deliver p3 msg))
+          h1 (fn [system-atom msg] (deliver p1 msg))
+          h2 (fn [system-atom msg] (deliver p2 msg))
+          h3 (fn [system-atom msg] (deliver p3 msg))
 
-                    r1 (shell/attach-plugin h1)
-                    r2 (shell/attach-plugin h2)
-                    r3 (shell/attach-plugin h3)
+          r1 (shell/attach-plugin h1)
+          r2 (shell/attach-plugin h2)
+          r3 (shell/attach-plugin h3)
 
-                    message {:id (:id r1) :message {:fu :bar}}]
+          message {:id (:id r1) :message {:fu :bar}}]
 
-                ((:sendfn r1) message)
+      ((:sendfn r1) message)
 
-                @p2 ;; cheating
-                @p3
+      @p2 ;; cheating
+      @p3
 
-                (should-not (realized? p1))
-                (should (realized? p2))
-                (should (realized? p3))
+      (is (not (realized? p1)))
+      (is (realized? p2))
+      (is (realized? p3))
 
-                ;; message should be unmodified
-                (should= message @p2)))
-
-
-          #_(it "Should send a message from plugin to kernel, and get a return value (check for recursive message)"
-
-              (let [xx (kernel/stop-system)
-                    xx (kernel/start-system)
-
-                    p1 (promise)
-                    handlerfn (fn [msg]
-                                (deliver p1 msg))
-                    result (shell/attach-plugin handlerfn)
-
-                    date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))]
-
-                ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
-                                                                                                :content "Lorem ipsum."
-                                                                                                :content-type "txt"
-                                                                                                :created-date date-one
-                                                                                                :modified-date date-one
-                                                                                                :assets []
-                                                                                                :tags []}} }})
-
-                ;; check for recursive message
-                ;; ...
-
-                @p1 ;; cheating
-
-                (should (realized? p1))
-                (should-not-be-nil (:result @p1))
-                (should (= stefon.domain.Post (type (:result @p1))))))
+      ;; message should be unmodified
+      (is (= message @p2))))
 
 
+  (testing "Should send a message from plugin to kernel, and get a return value (check for recursive message)"
 
-          #_(it "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1"
+        (let [xx (kernel/stop-system)
+              xx (kernel/start-system)
 
-              (let [xx (kernel/start-system)
+              p1 (promise)
+              handlerfn (fn [system-atom msg]
+                          (deliver p1 msg))
+              result (shell/attach-plugin handlerfn)
 
-                    ;; gymnastics SETUP
-                    h3-send (promise)
-                    r3 {}
+              date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))]
 
+          ((:sendfn result) {:id (:id result) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
+                                                                                          :content "Lorem ipsum."
+                                                                                          :content-type "txt"
+                                                                                          :created-date date-one
+                                                                                          :modified-date date-one
+                                                                                          :assets []
+                                                                                          :tags []}} }})
 
-                    ;; PROMISEs
-                    p1 (promise)
-                    p2 (promise)
-                    p3 (promise)
+          ;; check for recursive message
+          ;; ...
 
+          @p1 ;; cheating
 
-                    ;; HANDLERs
-                    h1 (fn [msg]
-
-                         ;;(println ">> h1 CALLED > " msg)
-                         (deliver p1 msg))
-
-                    h2 (fn [msg] (deliver p2 msg))
-                    h3 (fn [msg]
-
-
-                         ;; make h3 handle 'plugin.post.create'
-                         (let [ppcreate (-> msg :plugin.post.create :message)]
-
-                           ;;(println ">> h3 > " @h3-send)
-                           (@h3-send msg)))
+          (is (realized? p1))
+          (is (not (nil? (:result @p1))))
+          (is (= stefon.domain.Post (type (:result @p1))))))
 
 
-                    ;; ATTACH results
-                    r1 (shell/attach-plugin h1)
-                    r2 (shell/attach-plugin h2)
-                    r3 (shell/attach-plugin h3)
+  (testing "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1"
 
+      (let [xx (kernel/start-system)
 
-                    ;; h3-send SETUP
-                    xx (deliver h3-send (fn [msg]
+            ;; gymnastics SETUP
+            h3-send (promise)
+            r3 {}
 
-                                          #_(println ">> h3-send [" {:id (:id r3)
-                                                                   :origin (-> msg :plugin.post.create :id)
-                                                                   :action :noop
-                                                                   :result {:fu :bar}} "]")
+            ;; PROMISEs
+            p1 (promise)
+            p2 (promise)
+            p3 (promise)
 
-                                          ;;(println ">> h3-send > r3 > " r3)
+            ;; HANDLERs
+            h1 (fn [system-atom msg]
 
-                                          ((:sendfn r3) {:id (:id r3)
-                                                         :origin (-> msg :plugin.post.create :id)
-                                                         :action :noop
-                                                         :result {:fu :bar}})))
+                 ;;(println ">> h1 CALLED > " msg)
+                 (deliver p1 msg))
 
-                    date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))
-                    message {:id (:id r1) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
-                                                                                      :content "Lorem ipsum."
-                                                                                      :content-type "txt"
-                                                                                      :created-date date-one
-                                                                                      :modified-date date-one
-                                                                                      :assets []
-                                                                                      :tags []}} }}]
+            h2 (fn [system-atom msg] (deliver p2 msg))
+            h3 (fn [system-atom msg]
 
-                ((:sendfn r1) message)
+                 ;; make h3 handle 'plugin.post.create'
+                 (let [ppcreate (-> msg :plugin.post.create :message)]
 
+                   #_(println ">> h3 > " @h3-send)
+                   (@h3-send msg)))
 
-                #_(println ">> TEST Result > " @p1)
+            ;; ATTACH results
+            r1 (shell/attach-plugin h1)
+            r2 (shell/attach-plugin h2)
+            r3 (shell/attach-plugin h3)
 
-                ;; p1 will be called twice
-                ;; ...
+            ;; h3-send SETUP
+            xx (deliver h3-send (fn [msg]
 
-                ))
+                                  #_(println ">> h3-send [" {:id (:id r3)
+                                                           :origin (-> msg :plugin.post.create :id)
+                                                           :action :noop
+                                                           :result {:fu :bar}} "]")
+
+                                  #_(println ">> h3-send > r3 > " r3)
+
+                                  ((:sendfn r3) {:id (:id r3)
+                                                 :origin (-> msg :plugin.post.create :id)
+                                                 :action :noop
+                                                 :result {:fu :bar}})))
+
+            date-one (-> (java.text.SimpleDateFormat. "MM/DD/yyyy") (.parse "09/01/2013"))
+            message {:id (:id r1) :message {:stefon.post.create {:parameters {:title "Latest In Biotech"
+                                                                              :content "Lorem ipsum."
+                                                                              :content-type "txt"
+                                                                              :created-date date-one
+                                                                              :modified-date date-one
+                                                                              :assets []
+                                                                              :tags []}} }}]
+
+        ((:sendfn r1) message)
+        #_(println ">> TEST Result > " @p1)
+
+        ;; p1 will be called twice ...
+
+        ))
 
           #_(it "Should be able to get a channel, after we attach a plugin"
 
