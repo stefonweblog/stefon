@@ -1,7 +1,6 @@
 (ns stefon.shell.plugin
   (:require [clojure.core.async :as async :refer :all]
             [schema.core :as s]
-
             [stefon.schema :as ss]))
 
 
@@ -70,9 +69,9 @@
   (add-to-generic system-atom :recieve-fns recieve-map))
 
 
-(defn generate-channel
+(s/defn generate-channel
   ([] (generate-channel (str (java.util.UUID/randomUUID))))
-  ([channelID]
+  ([channelID :- s/String]
      {:id channelID
       :channel (chan)}))
 
