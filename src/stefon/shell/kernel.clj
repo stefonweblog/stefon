@@ -70,3 +70,8 @@
   (let [ack-fn (get-ack-fn plugin-ns)]
     (ack-fn plugin-result)
     :ack))
+
+(defn load-plugin [plugin-ns]
+  (->> plugin-ns
+       attach-plugin-from-ns
+       (attach-plugin-ack plugin-ns)))

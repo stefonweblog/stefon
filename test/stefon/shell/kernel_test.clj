@@ -232,8 +232,8 @@
                                {:id "qwerty-1234" :message {:fu :bar}})))
 
 
-          ;; include TEE infrastructure
-          ;; ...
+  ;; include TEE infrastructure
+  ;; ...
 
   (testing "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
 
@@ -434,7 +434,6 @@
   (testing "We can attach the plugin to our System"
     (let [xx (kernel/stop-system)
           xx (kernel/start-system)
-
           plugin-result (kernel/attach-plugin kprocess/kernel-handler)]
 
       (is (map? plugin-result))
@@ -443,10 +442,8 @@
   (testing "We can invoke plugin's (plugin) function"
 
     (let [plugin-result (kernel/attach-plugin-from-ns 'heartbeat.plugin)]
-
       (is (map? plugin-result))
       (is (= '(:recievefn :sendfn :id :channel) (keys plugin-result)))))
-
 
   (testing "Handshake 2: We can GET the Plugin's ack function"
     (let [ack-fn (kernel/get-ack-fn 'heartbeat.plugin)]
@@ -456,4 +453,9 @@
 
     (let [plugin-result (kernel/attach-plugin-from-ns 'heartbeat.plugin)
           plugin-ackack (kernel/attach-plugin-ack 'heartbeat.plugin plugin-result)]
-      (is (= :ack plugin-ackack)))))
+      (is (= :ack plugin-ackack))))
+
+  (testing "The Handshake process end-to-end"
+
+    (let [result (kernel/load-plugin 'heartbeat.plugin)]
+      (is (= :ack result)))))
