@@ -442,27 +442,18 @@
 
   (testing "We can invoke plugin's (plugin) function"
 
-    (let [plugin-result (kernel/load-plugin 'heartbeat.plugin)]
+    (let [plugin-result (kernel/attach-plugin-from-ns 'heartbeat.plugin)]
 
       (is (map? plugin-result))
-      (is (= '(:recievefn :sendfn :id :channel) (keys plugin-result))))
+      (is (= '(:recievefn :sendfn :id :channel) (keys plugin-result)))))
 
-    ;; Handshake 2: Return channel and send & receive functions
 
-    ;; Plugin requests Schema - deliver
+  (testing "Handshake 2: We can GET the Plugin's ack function"
+    (let [ack-fn (kernel/get-ack-fn 'heartbeat.plugin)]
+      (is (fn? @ack-fn))))
 
-    ;; Plugin sends heartbeat - deliver
+  (testing "Handshake 2: Return channel and send & receive functions"
 
-    ;; Plugin adds a post - deliver
-
-    ;; Plugin adds a post; Second Plugin also responds - deliver
-
-    )
-  #_(testing "Handshake 2: Return channel and send & receive functions"
-
-    (let [plugin-receive (kernel/load-plugin 'heartbeat.plugin)
-          plugin-ackack (kernel/plugin-handshake-ack 'heartbeat.plugin)]
-
-      )
-
-    ))
+    (let [plugin-result (kernel/attach-plugin-from-ns 'heartbeat.plugin)
+          plugin-ackack (kernel/attach-plugin-ack 'heartbeat.plugin plugin-result)]
+      (is (= :ack plugin-ackack)))))

@@ -59,6 +59,14 @@
   ([system-atom receivefn]
      (plugin/attach-plugin system-atom receivefn)))
 
-(defn load-plugin [plugin-ns]
+(defn attach-plugin-from-ns [plugin-ns]
   (let [receivefn (invoke-plugin-fn plugin-ns)]
     (attach-plugin (get-system) receivefn)))
+
+(defn get-ack-fn [plugin-ns]
+  ('plugin-ack (ns-publics plugin-ns)))
+
+(defn attach-plugin-ack [plugin-ns plugin-result]
+  (let [ack-fn (get-ack-fn plugin-ns)]
+    (ack-fn plugin-result)
+    :ack))
