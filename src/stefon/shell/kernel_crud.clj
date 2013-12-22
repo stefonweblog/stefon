@@ -3,7 +3,6 @@
             [stefon.shell.kernel :as kernel]))
 
 
-
 (defn get-posts []
   (-> @(kernel/get-system) :stefon/system :domain :posts))
 
