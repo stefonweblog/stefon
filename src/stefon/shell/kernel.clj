@@ -53,8 +53,11 @@
   (let [plugin-fn (get-plugin-fn plugin-ns)]
     (plugin-fn)))
 
-(defn attach-plugin [system-atom receivefn]
-  (plugin/attach-plugin system-atom receivefn))
+(defn attach-plugin
+  ([receivefn]
+     (attach-plugin (get-system) receivefn))
+  ([system-atom receivefn]
+     (plugin/attach-plugin system-atom receivefn)))
 
 (defn load-plugin [plugin-ns]
   (let [receivefn (invoke-plugin-fn plugin-ns)]

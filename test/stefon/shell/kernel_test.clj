@@ -164,6 +164,7 @@
                                    [(:id r2) (:id r3)]
                                    {:id "qwerty-1234" :fu :bar})
 
+        @p2 ;; cheating by waiting until realised
         (is (not (realized? p1)))
         (is (not (nil? @p2)))
         (is (not (nil? @p3)))
@@ -399,13 +400,19 @@
           xx (kernel/start-system)
 
           p1 (promise)
-          h1 (fn [system-atom msg] (deliver p1 msg))
+          h1 (fn [system-atom msg]
+
+               (deliver p1 msg)
+
+               )
           r1 (shell/attach-plugin h1)
           rid (:id r1)
 
           message {:id rid :message {:stefon.domain.channel {:parameters {:ID rid}}}}]
 
       (def one ((:sendfn r1) message))
+
+      @p1 ;; cheating by blocking until realised
 
       (is (realized? p1))
       (is (map? (:result @p1)))
@@ -416,19 +423,22 @@
 (deftest test-kernel-2
 
   ;; Commuincating with Plugins
-  (testing "We can get the Plugin's plugin function"
+  (testing "We can GET the Plugin's plugin function"
     (let [plugin-fn (kernel/get-plugin-fn 'heartbeat.plugin)]
       (is (fn? @plugin-fn))))
 
-  (testing "We can invoke the Plugin's plugin function"
+  (testing "We can INVOKE the Plugin's plugin function"
     (let [plugin-receive (kernel/invoke-plugin-fn 'heartbeat.plugin)]
       (is (fn? plugin-receive))))
 
-  #_(testing "We can attach the plugin to our System"
-    (let [plugin-result (kernel/attach-plugin 'heartbeat.plugin)]
+  (testing "We can attach the plugin to our System"
+    (let [xx (kernel/stop-system)
+          xx (kernel/start-system)
 
-      (println "... " plugin-result)
-      #_(is (map? plugin-result))))
+          plugin-result (kernel/attach-plugin 'heartbeat.plugin)]
+
+      (is (map? plugin-result))
+      (is (= '(:recievefn :sendfn :id :channel) (keys plugin-result)))))
 
 
   #_(testing "Handshake 1: Invoke plugin's (plugin) function"
