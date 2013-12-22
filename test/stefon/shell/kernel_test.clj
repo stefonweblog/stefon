@@ -144,7 +144,7 @@
 
 
   ;; PLUGIN
-  #_(testing "Should be able to send-message-raw to attached functions"
+  (testing "Should be able to send-message-raw to attached functions"
 
       (let [xx (kernel/start-system)
             system-atom (kernel/get-system)
@@ -172,7 +172,7 @@
         (is (= {:id "qwerty-1234" :fu :bar} @p3))))
 
 
-  #_(testing "Should be able to send-message to attached functions :include"
+  (testing "Should be able to send-message to attached functions :include"
 
     (let [xx (kernel/stop-system)
           xx (kernel/start-system)
@@ -202,7 +202,7 @@
       (is (= {:id "qwerty-1234" :fu :bar} @p3))))
 
 
-  #_(testing "Should be able to send-message to attached functions :exclude"
+  (testing "Should be able to send-message to attached functions :exclude"
 
       (let [xx (kernel/stop-system)
             xx (kernel/start-system)
@@ -234,7 +234,7 @@
           ;; include TEE infrastructure
           ;; ...
 
-  #_(testing "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
+  (testing "Should send a message that the kernel DOES understand, then forwards (check for recursive message)"
 
     (let [xx (kernel/stop-system)
           xx (kernel/start-system)
@@ -267,7 +267,7 @@
       ))
 
 
-  #_(testing "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)"
+  (testing "Should send a message that the kernel DOES NOT understand, just forwards (check for recursive message)"
 
     (let [xx (kernel/stop-system)
           xx (kernel/start-system)
@@ -299,7 +299,7 @@
       (is (= message @p2))))
 
 
-  #_(testing "Should send a message from plugin to kernel, and get a return value (check for recursive message)"
+  (testing "Should send a message from plugin to kernel, and get a return value (check for recursive message)"
 
         (let [xx (kernel/stop-system)
               xx (kernel/start-system)
@@ -329,7 +329,7 @@
           (is (= stefon.domain.Post (type (:result @p1))))))
 
 
-  #_(testing "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1"
+  (testing "Should send a message from plugin1 -> kernel -> plugin2; then cascade return value from plugin2 -> kernel -> plugin1"
 
       (let [xx (kernel/start-system)
 
@@ -393,15 +393,13 @@
 
         ))
 
-  #_(testing "Should be able to get a channel, after we attach a plugin"
+  (testing "Should be able to get a channel, after we attach a plugin"
 
     (let [xx (kernel/stop-system)
           xx (kernel/start-system)
 
           p1 (promise)
-          h1 (fn [system-atom msg]
-               (println "... " msg " ... " system-atom)
-               (deliver p1 msg))
+          h1 (fn [system-atom msg] (deliver p1 msg))
           r1 (shell/attach-plugin h1)
           rid (:id r1)
 
@@ -410,9 +408,9 @@
       (def one ((:sendfn r1) message))
 
       (is (realized? p1))
-      #_(is (map? (:result @p1)))
-      #_(is (= rid (-> @p1 :result :id)))
-      #_(is (= clojure.core.async.impl.channels.ManyToManyChannel
+      (is (map? (:result @p1)))
+      (is (= rid (-> @p1 :result :id)))
+      (is (= clojure.core.async.impl.channels.ManyToManyChannel
                  (type (-> @p1 :result :channel)))) )))
 
 (deftest test-kernel-2

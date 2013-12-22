@@ -19,7 +19,7 @@
   (let [all-send-ids (map :id (:send-fns @system-atom))
 
         filtered-sends (filter #(some #{(:id %)} idlist)
-                               (:send-fns @system-atom))]
+                               (-> @system-atom :stefon/system :send-fns))]
 
     (reduce (fn [rslt echf]
 
@@ -39,7 +39,7 @@
      {:pre [(map? conditions)
             (set/subset? (keys conditions) #{:include :exclude})]}
 
-     (let [all-send-ids (map :id (:send-fns @system-atom))
+     (let [all-send-ids (map :id (-> @system-atom :stefon/system :send-fns))
 
            ;; INCLUDE
            include (:include conditions)

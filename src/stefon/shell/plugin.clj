@@ -36,13 +36,6 @@
 
 
 ;; Channel
-#_(defn get-channel [channel-list ID]
-  (->> channel-list (filter #(= ID (:id %))) first))
-
-#_(defn get-kernel-channel [system-atom]
-  (get-channel (-> @system-atom :stefon/system :channel-list) "kernel-channel"))
-
-
 (defn add-receive-tee [system-atom recievefn]
   (swap! system-atom (fn [inp]
                        (update-in inp [:steonf/system :tee-fns] (fn [ii] (into [] (conj ii recievefn)))))))

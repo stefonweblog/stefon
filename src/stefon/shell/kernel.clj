@@ -20,6 +20,9 @@
 (defn get-system [] *SYSTEM*)
 
 
+(defn get-channel [ID]
+  (plugin/get-channel (get-system) ID))
+
 (defn start-system
   "Start the system and state"
 
