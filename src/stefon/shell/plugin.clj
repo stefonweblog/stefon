@@ -9,23 +9,15 @@
 
 
 ;; CREATE Channels
-(s/defn generate-channel
+#_(s/defn generate-channel
   ([]
      (generate-channel (str (java.util.UUID/randomUUID))))
   ([channelID :- s/String]
      {:id channelID
       :channel (chan)}))
 
-(defn generate-kernel-channel []
+#_(defn generate-kernel-channel []
   (generate-channel "kernel-channel"))
-
-
-;; GET a Channel
-(defn get-channel [channel-list ID]
-  (->> channel-list (filter #(= ID (:id %))) first))
-
-(defn get-kernel-channel [system-atom]
-  (get-channel (-> @system-atom :stefon/system :channel-list) "kernel-channel"))
 
 
 ;; SEND & Recieve Functions on a channel
@@ -44,6 +36,58 @@
           (recur (<! chanl))))))
 
 
+;; Channel
+#_(defn get-channel [channel-list ID]
+  (->> channel-list (filter #(= ID (:id %))) first))
+
+#_(defn get-kernel-channel [system-atom]
+  (get-channel (-> @system-atom :stefon/system :channel-list) "kernel-channel"))
+
+
+(defn add-receive-tee [system-atom recievefn]
+  (swap! system-atom (fn [inp]
+                       (update-in inp [:steonf/system :tee-fns] (fn [ii] (into [] (conj ii recievefn)))))))
+
+(defn- add-to-generic [system-atom lookup-key thing]
+  (swap! system-atom (fn [inp]
+                       (update-in inp [:stefon/system lookup-key] (fn [ii] (into [] (conj ii thing)))))))
+
+(defn get-channel [system-atom ID]
+  (->> @system-atom :stefon/system :channel-list (filter #(= ID (:id %))) first))
+
+(defn get-kernel-channel [system-atom]
+  (get-channel system-atom "kernel-channel"))
+
+(s/defn add-to-channel-list
+  [system-atom new-channel :- { (s/required-key :id) s/String
+                                (s/required-key :channel) s/Any}]
+  (add-to-generic system-atom :channel-list new-channel))
+
+(s/defn add-to-recievefns [system-atom recieve-map :- { (s/required-key :id) s/String
+                                                        (s/required-key :fn) s/Any}]
+  {:pre [(fn? (:fn recieve-map))]}
+
+  (add-to-generic system-atom :recieve-fns recieve-map))
+
+
+(defn generate-channel
+  ([] (generate-channel (str (java.util.UUID/randomUUID))))
+  ([channelID]
+     {:id channelID
+      :channel (chan)}))
+
+(defn generate-kernel-channel []
+  (generate-channel "kernel-channel"))
+
+(defn generate-kernel-recieve [system-atom khandler]
+
+  (let [krecieve (generate-recieve-fn (:channel (get-kernel-channel system-atom)))]
+     (krecieve system-atom khandler)
+     (add-to-recievefns system-atom
+                        {:id (:id (get-kernel-channel system-atom))
+                         :fn krecieve}) ))
+
+
 ;; PLUGIN Handling
 (defn attach-plugin [system-atom handlerfn]
 
@@ -58,7 +102,7 @@
     ;; KERNEL binding
     (swap! system-atom (fn [inp]
                          (update-in inp
-                                    [:send-fns]
+                                    [:stefon/system :send-fns]
                                     (fn [ii]
                                       (into [] (conj ii
                                                      {:id (:id new-channel)
@@ -67,7 +111,7 @@
     ;; TODO - send-fns and channels are related, but exist in 2 lists
     (swap! system-atom (fn [inp]
                          (update-in inp
-                                    [:channel-list]
+                                    [:stefon/system :channel-list]
                                     (fn [ii]
                                       (into [] (conj ii new-channel))))))
 

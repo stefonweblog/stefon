@@ -20,51 +20,6 @@
 (defn get-system [] *SYSTEM*)
 
 
-(defn add-receive-tee [system-atom recievefn]
-  (swap! system-atom (fn [inp]
-                       (update-in inp [:steonf/system :tee-fns] (fn [ii] (into [] (conj ii recievefn)))))))
-
-(defn- add-to-generic [system-atom lookup-key thing]
-  (swap! system-atom (fn [inp]
-                       (update-in inp [:stefon/system lookup-key] (fn [ii] (into [] (conj ii thing)))))))
-
-(defn get-channel [ID]
-  (->> @*SYSTEM* :stefon/system :channel-list (filter #(= ID (:id %))) first))
-
-(defn get-kernel-channel []
-  (get-channel "kernel-channel"))
-
-(s/defn add-to-channel-list
-  ([new-channel]
-     (add-to-channel-list (get-system) new-channel))
-  ([system-atom new-channel :- { (s/required-key :id) s/String
-                                 (s/required-key :channel) s/Any}]
-     (add-to-generic system-atom :channel-list new-channel)))
-
-(s/defn add-to-recievefns [recieve-map :- { (s/required-key :id) s/String
-                                            (s/required-key :fn) s/Any}]
-  {:pre [(fn? (:fn recieve-map))]}
-
-  (add-to-generic (get-system) :recieve-fns recieve-map))
-
-
-(defn generate-channel
-  ([] (generate-channel (str (java.util.UUID/randomUUID))))
-  ([channelID]
-     {:id channelID
-      :channel (chan)}))
-
-(defn generate-kernel-channel []
-  (generate-channel "kernel-channel"))
-
-(defn generate-kernel-recieve [khandler]
-
-  (let [krecieve (plugin/generate-recieve-fn (:channel (get-kernel-channel)))]
-     (krecieve (get-system) khandler)
-     (add-to-recievefns {:id (:id (get-kernel-channel))
-                         :fn krecieve}) ))
-
-
 (defn start-system
   "Start the system and state"
 
@@ -73,12 +28,11 @@
                    process/kernel-handler))
   ([system-state khandler]
 
-     (swap! *SYSTEM* (fn [inp] system-state))
+     (swap! (get-system) (fn [inp] system-state))
 
-     (add-to-channel-list (get-system) (generate-kernel-channel))
+     (plugin/add-to-channel-list (get-system) (plugin/generate-kernel-channel))
 
-     (generate-kernel-recieve khandler)
-
+     (plugin/generate-kernel-recieve (get-system) khandler)
 
      (get-system)))
 

@@ -29,9 +29,8 @@
 
   (testing "Should be able to get a channel (incl. kernel channel)"
 
-      (let [channel-list [(plugin/generate-kernel-channel)]
-
-            r1 (plugin/generate-kernel-channel)]
+    (let [channel-list [(plugin/generate-kernel-channel)]
+          r1 (plugin/generate-kernel-channel)]
 
         (is (not (nil? r1)))
         (is (= "kernel-channel" (:id r1)))))

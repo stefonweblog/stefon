@@ -82,7 +82,7 @@
                 (let [afn (ekey action-config)
                       params (-> eventF ekey :parameters vals)]
 
-                  ;;(println ">> execute command [" afn "] > params [" params "]")
+                  #_(println ">> execute command [" afn "] > params [" params "]")
 
                   ;; EXECUTE the mapped action
                   (let [eval-result (eval `(~afn ~@params) )]
