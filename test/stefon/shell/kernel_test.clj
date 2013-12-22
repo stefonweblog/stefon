@@ -146,31 +146,31 @@
   ;; PLUGIN
   (testing "Should be able to send-message-raw to attached functions"
 
-      (let [xx (kernel/start-system)
-            system-atom (kernel/get-system)
-            p1 (promise)
-            p2 (promise)
-            p3 (promise)
+    (let [xx (kernel/stop-system)
+          xx (kernel/start-system)
+          system-atom (kernel/get-system)
+          p1 (promise)
+          p2 (promise)
+          p3 (promise)
 
-            h1 (fn [system-atom msg] (deliver p1 msg))
-            h2 (fn [system-atom msg] (deliver p2 msg))
-            h3 (fn [system-atom msg] (deliver p3 msg))
+          h1 (fn [system-atom msg] (deliver p1 msg))
+          h2 (fn [system-atom msg] (deliver p2 msg))
+          h3 (fn [system-atom msg] (deliver p3 msg))
 
-            r1 (shell/attach-plugin h1)
-            r2 (shell/attach-plugin h2)
-            r3 (shell/attach-plugin h3)]
+          r1 (shell/attach-plugin h1)
+          r2 (shell/attach-plugin h2)
+          r3 (shell/attach-plugin h3)]
 
-        (kprocess/send-message-raw system-atom
-                                   [(:id r2) (:id r3)]
-                                   {:id "qwerty-1234" :fu :bar})
+      (kprocess/send-message-raw system-atom
+                                 [(:id r2) (:id r3)]
+                                 {:id "qwerty-1234" :fu :bar})
 
-        @p2 ;; cheating by waiting until realised
-        (is (not (realized? p1)))
-        (is (not (nil? @p2)))
-        (is (not (nil? @p3)))
+      (is (not (= "qwerty-1234" (:id p1))))
+      (is (not (nil? @p2)))
+      (is (not (nil? @p3)))
 
-        (is (= {:id "qwerty-1234" :fu :bar} @p2))
-        (is (= {:id "qwerty-1234" :fu :bar} @p3))))
+      (is (= {:id "qwerty-1234" :fu :bar} @p2))
+      (is (= {:id "qwerty-1234" :fu :bar} @p3))))
 
 
   (testing "Should be able to send-message to attached functions :include"
@@ -435,17 +435,17 @@
     (let [xx (kernel/stop-system)
           xx (kernel/start-system)
 
-          plugin-result (kernel/attach-plugin 'heartbeat.plugin)]
+          plugin-result (kernel/attach-plugin kprocess/kernel-handler)]
 
       (is (map? plugin-result))
       (is (= '(:recievefn :sendfn :id :channel) (keys plugin-result)))))
 
+  (testing "We can invoke plugin's (plugin) function"
 
-  #_(testing "Handshake 1: Invoke plugin's (plugin) function"
+    (let [plugin-result (kernel/load-plugin 'heartbeat.plugin)]
 
-    (let [plugin-receive (kernel/load-plugin 'heartbeat.plugin)]
-
-      )
+      (is (map? plugin-result))
+      (is (= '(:recievefn :sendfn :id :channel) (keys plugin-result))))
 
     ;; Handshake 2: Return channel and send & receive functions
 
