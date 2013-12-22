@@ -7,18 +7,6 @@
 (ss/turn-on-validation)
 
 
-;; CREATE Channels
-#_(s/defn generate-channel
-  ([]
-     (generate-channel (str (java.util.UUID/randomUUID))))
-  ([channelID :- s/String]
-     {:id channelID
-      :channel (chan)}))
-
-#_(defn generate-kernel-channel []
-  (generate-channel "kernel-channel"))
-
-
 ;; SEND & Recieve Functions on a channel
 (defn generate-send-fn [chanl]
   (fn [msg]
