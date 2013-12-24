@@ -8,7 +8,6 @@
 
 (deftest one
 
-
   (testing "Create a Post"
 
     (let [xx (shell/stop-system)

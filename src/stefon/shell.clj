@@ -22,6 +22,11 @@
 (defn attach-plugin [handlerfn]
   (kernel/attach-plugin (kernel/get-system) handlerfn))
 
+(defn attach-plugin-from-ns [plugin-ns]
+  (kernel/attach-plugin-from-ns plugin-ns))
+
+(defn load-plugin [plugin-ns]
+  (kernel/load-plugin plugin-ns))
 
 
 ;; CRUD Wrappers around kernel functions
