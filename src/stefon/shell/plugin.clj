@@ -10,16 +10,16 @@
 ;; SEND & Recieve Functions on a channel
 (defn generate-send-fn [chanl]
   (fn [msg]
+    (println ">> generated send CALLED > " msg)
     (go (>! chanl msg))))
 
 
 (defn generate-recieve-fn [chanl]
   (fn [system-atom handlefn]
 
+    (println "sanity check: " system-atom)
     (go (loop [msg (<! chanl)]
-
-          #_(println ">> generated recieve CALLED > " msg)
-          (handlefn system-atom msg)
+          (handlefn nil msg)
           (recur (<! chanl))))))
 
 
