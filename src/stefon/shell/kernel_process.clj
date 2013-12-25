@@ -2,7 +2,8 @@
   (:require [clojure.java.io :as io]
             [clojure.set :as set]
             [clojure.string :as string]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [stefon.shell.kernel-crud :as kcrud]))
 
 
 (defn load-config-raw []
@@ -67,52 +68,53 @@
                                   message :- {(s/required-key :id) s/String
                                               (s/required-key :message) s/Any}]
 
-  (println "WTF... " message)
   (let [eventF (:message message)
 
         ;; FILTER known message(s)
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
-
     ;; DO
     (if filtered-event-keys
 
       ;; yes
-      (reduce (fn [rslt ekey]
+      (let [process-fn (fn [rslt ekey]
 
-                (let [afn (ekey action-config)
-                      params (-> eventF ekey :parameters vals)]
+                         (println "WTF... rslt[" rslt "] ekey[" ekey "]")
+                         (let [afn (ekey action-config)
+                               params (->> eventF ekey :parameters vals (cons system-atom))]
 
-                  (println ">> execute command [" afn "] > params [" params "]")
+                           (println ">> execute command [" afn "] > params [" params "]")
 
-                  ;; EXECUTE the mapped action
-                  (let [eval-result (eval `(~afn ~@params))]
+                           ;; EXECUTE the mapped action
+                           (let [eval-result (eval `(~afn ~@params))]
 
-                    (println ">> execute result [" eval-result "] / ID [" (:id message) "] / message [" message "]")
+                             (println ">> execute result [" eval-result "] / ID ["
+                                      (:id message) "] / message [" message "]")
 
-                    ;; SEND evaluation result back to sender
-                    (send-message system-atom
-                                  {:include [(:id message)]}
-                                  {:from "kernel" :action ekey :result eval-result})
+                             ;; SEND evaluation result back to sender
+                             (send-message system-atom
+                                           {:include [(:id message)]}
+                                           {:from "kernel" :action ekey :result eval-result})
 
-
-                    ;; NOTIFY other plugins what has taken place; replacing :stefon... with :plugin...
-                    (send-message system-atom
-                                  {:exclude [(:id message)]}
-                                  (if-not (= :stefon.post.find ekey)
-                                    {
-                                     (keyword (string/replace (name ekey) #"stefon" "plugin"))
-                                     {:id (:id message)
-                                      :message {ekey {:parameters
-                                                      (merge (-> message :message ekey :parameters)
-                                                             eval-result)}}}
-                                     }
-                                    {
-                                     (keyword (string/replace (name ekey) #"stefon" "plugin"))
-                                     message
-                                     })))))
-              []
-              filtered-event-keys)
+                             ;; NOTIFY other plugins what has taken place;
+                             ;;  replacing :stefon... with :plugin...
+                             (send-message system-atom
+                                           {:exclude [(:id message)]}
+                                           (if-not (= :stefon.post.find ekey)
+                                             {
+                                              (keyword (string/replace (name ekey) #"stefon" "plugin"))
+                                              {:id (:id message)
+                                               :message {ekey {:parameters
+                                                               (merge (-> message :message ekey :parameters)
+                                                                      eval-result)}}}
+                                              }
+                                             {
+                                              (keyword (string/replace (name ekey) #"stefon" "plugin"))
+                                              message
+                                              })))))]
+        (if (= 1 (count filtered-event-keys))
+          (process-fn [] (first filtered-event-keys))
+          (reduce process-fn [] filtered-event-keys)))
 
       ;; no
       (send-message system-atom

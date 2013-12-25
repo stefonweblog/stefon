@@ -1,6 +1,5 @@
 (ns stefon.shell.kernel
-  (:require [clojure.core.async :as async :refer :all]
-            [schema.core :as s]
+  (:require [schema.core :as s]
             [stefon.shell.plugin :as plugin]
             [stefon.shell.kernel-process :as process]))
 

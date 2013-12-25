@@ -1,5 +1,5 @@
 (ns stefon.shell.plugin
-  (:require [clojure.core.async :as async :refer :all]
+  (:require [clojure.core.async :as async]
             [schema.core :as s]
             [stefon.schema :as ss]))
 
@@ -10,17 +10,20 @@
 ;; SEND & Recieve Functions on a channel
 (defn generate-send-fn [chanl]
   (fn [msg]
-    (println ">> generated send CALLED > " msg)
-    (go (>! chanl msg))))
-
+    (async/go (async/>! chanl msg))))
 
 (defn generate-recieve-fn [chanl]
   (fn [system-atom handlefn]
+    (async/go (loop [msg (async/<! chanl)
+                     satom system-atom]
 
-    (println "sanity check: " system-atom)
-    (go (loop [msg (<! chanl)]
-          (handlefn nil msg)
-          (recur (<! chanl))))))
+                #_(println "2... " system-atom)
+                #_(require 'stefon-compojure.plugin)
+                #_(stefon-compojure.plugin/generic-handler :dev nil msg)
+
+                (handlefn system-atom msg)
+                (recur (async/<! chanl)
+                       satom)))))
 
 
 ;; Channel
@@ -61,7 +64,7 @@
   ([] (generate-channel (str (java.util.UUID/randomUUID))))
   ([channelID :- s/String]
      {:id channelID
-      :channel (chan)}))
+      :channel (async/chan)}))
 
 (defn generate-kernel-channel []
   (generate-channel "kernel-channel"))
