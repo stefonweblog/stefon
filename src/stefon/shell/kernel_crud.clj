@@ -1,5 +1,6 @@
 (ns stefon.shell.kernel-crud
-  (:require [stefon.shell.functions :as functions]
+  (:require [stefon.domain :as domain]
+            [stefon.shell.functions :as functions]
             [stefon.shell.kernel :as kernel]))
 
 
@@ -11,6 +12,11 @@
 
 (defn get-tags []
   (-> @(kernel/get-system) :stefon/system :domain :tags))
+
+(defn get-domain-schema []
+  {:posts (domain/post-schema)
+   :assets (domain/asset-schema)
+   :tags (domain/tag-schema)})
 
 
 ;; Posts

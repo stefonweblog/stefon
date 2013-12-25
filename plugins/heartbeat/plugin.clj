@@ -7,6 +7,6 @@
   []
   receivefn)
 (defn plugin-ack
-  "We're going to expect an acknowledgement with the following keys:
+  "Step 2: We're going to expect an acknowledgement with the following keys:
    '(:id :sendfn :recievefn :channel)"
     [result-map])

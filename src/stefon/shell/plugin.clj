@@ -28,12 +28,20 @@
   (swap! system-atom (fn [inp]
                        (update-in inp [:steonf/system :tee-fns] (fn [ii] (into [] (conj ii recievefn)))))))
 
-(defn- add-to-generic [system-atom lookup-key thing]
+(defn- add-to-generic [system-atom lookup-key thing-to-add]
   (swap! system-atom (fn [inp]
-                       (update-in inp [:stefon/system lookup-key] (fn [ii] (into [] (conj ii thing)))))))
+                       (update-in inp
+                                  [:stefon/system lookup-key]
+                                  (fn [ii] (conj ii thing-to-add))))))
 
 (defn get-channel [system-atom ID]
-  (->> @system-atom :stefon/system :channel-list (filter #(= ID (:id %))) first))
+
+  (println "get-channel CALLED: " @system-atom)
+  (->> @system-atom
+       :stefon/system
+       :channel-list
+       (filter #(= ID (:id %)))
+       first))
 
 (defn get-kernel-channel [system-atom]
   (get-channel system-atom "kernel-channel"))
@@ -62,10 +70,10 @@
 (defn generate-kernel-recieve [system-atom khandler]
 
   (let [krecieve (generate-recieve-fn (:channel (get-kernel-channel system-atom)))]
-     (krecieve system-atom khandler)
-     (add-to-recievefns system-atom
-                        {:id (:id (get-kernel-channel system-atom))
-                         :fn krecieve}) ))
+    (krecieve system-atom khandler)
+    (add-to-recievefns system-atom
+                       {:id (:id (get-kernel-channel system-atom))
+                        :fn krecieve}) ))
 
 
 ;; PLUGIN Handling

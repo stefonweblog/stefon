@@ -67,6 +67,7 @@
                                   message :- {(s/required-key :id) s/String
                                               (s/required-key :message) s/Any}]
 
+  (println "WTF... " message)
   (let [eventF (:message message)
 
         ;; FILTER known message(s)
@@ -82,12 +83,12 @@
                 (let [afn (ekey action-config)
                       params (-> eventF ekey :parameters vals)]
 
-                  #_(println ">> execute command [" afn "] > params [" params "]")
+                  (println ">> execute command [" afn "] > params [" params "]")
 
                   ;; EXECUTE the mapped action
-                  (let [eval-result (eval `(~afn ~@params) )]
+                  (let [eval-result (eval `(~afn ~@params))]
 
-                    ;;(println ">> execute result [" eval-result "] / ID [" (:id message) "] / message [" message "]")
+                    (println ">> execute result [" eval-result "] / ID [" (:id message) "] / message [" message "]")
 
                     ;; SEND evaluation result back to sender
                     (send-message system-atom
