@@ -14,16 +14,11 @@
 
 (defn generate-recieve-fn [chanl]
   (fn [system-atom handlefn]
-    (async/go (loop [msg (async/<! chanl)
-                     satom system-atom]
+    (async/go-loop  [msg (async/<! chanl) satom system-atom]
 
-                #_(println "2... " system-atom)
-                #_(require 'stefon-compojure.plugin)
-                #_(stefon-compojure.plugin/generic-handler :dev nil msg)
-
-                (handlefn system-atom msg)
-                (recur (async/<! chanl)
-                       satom)))))
+                    #_(println "2: handlefn[" handlefn "] msg[" msg "] satom[" satom "]")
+                    (handlefn satom msg)
+                    (recur (async/<! chanl) satom))))
 
 
 ;; Channel
@@ -34,13 +29,12 @@
 (defn- add-to-generic [system-atom lookup-key thing-to-add]
   (swap! system-atom (fn [inp]
                        (update-in inp
-                                  [:stefon/system lookup-key]
+                                  [lookup-key]
                                   (fn [ii] (conj ii thing-to-add))))))
 
 (defn get-channel [system-atom ID]
 
   (->> @system-atom
-       :stefon/system
        :channel-list
        (filter #(= ID (:id %)))
        first))
@@ -58,6 +52,12 @@
   {:pre [(fn? (:fn recieve-map))]}
 
   (add-to-generic system-atom :recieve-fns recieve-map))
+
+(s/defn add-to-sendfns [system-atom send-map :- { (s/required-key :id) s/String
+                                                  (s/required-key :fn) s/Any}]
+  {:pre [(fn? (:fn send-map))]}
+
+  (add-to-generic system-atom :send-fns send-map))
 
 
 (s/defn generate-channel
@@ -87,22 +87,26 @@
 
         sendfn (generate-send-fn (:channel (get-kernel-channel system-atom)))
         recievefn (generate-recieve-fn (:channel new-channel))
-        xx (recievefn system-atom handlerfn)]
+        x (recievefn system-atom handlerfn)]
 
     ;; KERNEL binding
-    (swap! system-atom (fn [inp]
+    (add-to-recievefns system-atom {:id (:id new-channel) :fn kernel-send})
+    (add-to-sendfns system-atom {:id (:id new-channel) :fn kernel-send})
+    (add-to-channel-list system-atom new-channel)
+
+    ;; PLUGIN binding
+    (assoc new-channel :sendfn sendfn :recievefn recievefn)
+
+
+    ;; TODO - send-fns and channels are related, but exist in 2 lists
+    #_(swap! system-atom (fn [inp]
                          (update-in inp
                                     [:stefon/system :send-fns]
                                     (fn [ii]
                                       (conj ii
                                             {:id (:id new-channel)
                                              :fn kernel-send})))))
-
-    ;; TODO - send-fns and channels are related, but exist in 2 lists
-    (swap! system-atom (fn [inp]
+    #_(swap! system-atom (fn [inp]
                          (update-in inp
                                     [:stefon/system :channel-list]
-                                    (fn [ii] (conj ii new-channel)))))
-
-    ;; PLUGIN binding
-    (assoc new-channel :sendfn sendfn :recievefn recievefn)))
+                                    (fn [ii] (conj ii new-channel)))))))

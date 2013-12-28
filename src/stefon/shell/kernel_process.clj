@@ -79,7 +79,6 @@
       ;; yes
       (let [process-fn (fn [rslt ekey]
 
-                         (println "WTF... rslt[" rslt "] ekey[" ekey "]")
                          (let [afn (ekey action-config)
                                params (->> eventF ekey :parameters vals (cons system-atom))]
 
@@ -149,7 +148,7 @@
                                        (s/required-key :result) s/Any})]
 
 
-    ;;(println ">> kernel-handler CALLED > " message)
+    #_(println ">> kernel-handler CALLED > " message)
 
     ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]
