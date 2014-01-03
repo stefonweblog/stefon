@@ -14,9 +14,7 @@
 
 (defn send-message-raw [system-atom idlist message]
 
-
   #_(println ">> send-message-raw CALLED > idlist [" idlist "] > message [" message "]")
-
   (let [all-send-ids (map :id (:send-fns @system-atom))
 
         filtered-sends (filter #(some #{(:id %)} idlist)
@@ -63,14 +61,11 @@
 
 
 (s/defn process-original-message
-
   [system-atom
-     action-keys
-     action-config
-     message :- {(s/required-key :id) s/String
-                 (s/required-key :message) s/Any}]
-
-  #_[system-atom action-keys action-config message]
+   action-keys
+   action-config
+   message :- {(s/required-key :id) s/String
+               (s/required-key :message) s/Any}]
 
   (let [eventF (:message message)
 
@@ -78,10 +73,6 @@
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
     (require 'stefon.shell.kernel-crud)
-    #_(def result (stefon.shell.kernel-crud/get-domain-schema))
-    #_(send-message system-atom
-                  {:include [(:id message)]}
-                  {:from "kernel" :action "fubar" :result result})
 
     ;; DO
     (if filtered-event-keys
@@ -90,9 +81,10 @@
       (let [process-fn (fn [rslt ekey]
 
                          (let [afn (ekey action-config)
-                               params (->> eventF ekey :parameters vals (cons {}))]
+                               params (->> eventF ekey :parameters vals (cons {}))
+                               p2 (->> eventF ekey :parameters vals)]
 
-                           #_(println ">> execute command [" afn "] > params [" params "]")
+                           (println ">> p2 params[" p2 "]")
                            (println ">> execute command [" `(~afn ~@params) "]")
 
                            ;; EXECUTE the mapped action
@@ -135,12 +127,11 @@
                     message))))
 
 
-(defn process-result-message
-  #_[system-atom message :- {(s/required-key :id) s/String
+(s/defn process-result-message
+  [system-atom message :- {(s/required-key :id) s/String
                                                         (s/required-key :origin) s/String
                                                         (s/required-key :action) s/Keyword
                                                         (s/required-key :result) s/Any}]
-  [system-atom message]
 
   (println "process-result-message CALLED")
   (send-message system-atom
@@ -149,25 +140,19 @@
                  :origin (:origin message) :action (:action message) :result (:result message)}))
 
 
-(defn kernel-handler2 []
-  (fn [one two]
-    (println "kernel-handler2 CALLED > one[" one "] > two[" two "]")))
-
-(defn kernel-handler
+(s/defn kernel-handler
     "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.edn.
 
      An original message can be sent with A. A response can be sent with B.
 
      A) {:id plugin1 :message {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}}
      B) {:id plugin2 :origin plugin1 :result {:fu :bar}}"
-    [system-atom message]
-    #_[system-atom message :- (s/either {(s/required-key :id) s/String
+    [system-atom message :- (s/either {(s/required-key :id) s/String
                                        (s/required-key :message) s/Any}
                                       {(s/required-key :id) s/String
                                        (s/required-key :origin) s/String
                                        (s/required-key :action) s/Keyword
                                        (s/required-key :result) s/Any})]
-
 
     #_(println ">> kernel-handler CALLED > " message)
 
