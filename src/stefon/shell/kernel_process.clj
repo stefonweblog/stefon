@@ -62,11 +62,15 @@
        (send-message-raw system-atom filtered-list message))))
 
 
-(s/defn process-original-message [system-atom
-                                  action-keys
-                                  action-config
-                                  message :- {(s/required-key :id) s/String
-                                              (s/required-key :message) s/Any}]
+(defn process-original-message
+
+  #_[system-atom
+     action-keys
+     action-config
+     message :- {(s/required-key :id) s/String
+                 (s/required-key :message) s/Any}]
+
+  [system-atom action-keys action-config message]
 
   (let [eventF (:message message)
 
@@ -121,10 +125,12 @@
                     message))))
 
 
-(s/defn process-result-message [system-atom message :- {(s/required-key :id) s/String
+(defn process-result-message
+  #_[system-atom message :- {(s/required-key :id) s/String
                                                         (s/required-key :origin) s/String
                                                         (s/required-key :action) s/Keyword
                                                         (s/required-key :result) s/Any}]
+  [system-atom message]
 
   (send-message system-atom
                 {:include [(:origin message)]}
@@ -132,15 +138,19 @@
                  :origin (:origin message) :action (:action message) :result (:result message)}))
 
 
+(defn kernel-handler2 []
+  (fn [one two]
+    (println "kernel-handler2 CALLED > one[" one "] > two[" two "]")))
 
-(s/defn kernel-handler
+(defn kernel-handler
     "Goes through all the keys and passes associated values to system mapped action. Event structures should look like below. Full mappings can be found in resources/config.edn.
 
      An original message can be sent with A. A response can be sent with B.
 
      A) {:id plugin1 :message {:stefon.post.create {:parameters {:title \"Latest In Biotechnology\" :content \"Lorem ipsum.\" :created-date \"0000\" }}}}
      B) {:id plugin2 :origin plugin1 :result {:fu :bar}}"
-    [system-atom message :- (s/either {(s/required-key :id) s/String
+    [system-atom message]
+    #_[system-atom message :- (s/either {(s/required-key :id) s/String
                                        (s/required-key :message) s/Any}
                                       {(s/required-key :id) s/String
                                        (s/required-key :origin) s/String
@@ -148,7 +158,7 @@
                                        (s/required-key :result) s/Any})]
 
 
-    #_(println ">> kernel-handler CALLED > " message)
+    (println ">> kernel-handler CALLED > " message)
 
     ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]
@@ -168,3 +178,6 @@
 
         ;; response messages
         (process-result-message system-atom message))))
+
+(defn get-kernel-handler []
+  kernel-handler)

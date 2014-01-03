@@ -7,12 +7,7 @@
   {:domain {:posts []
             :assets []
             :tags []}
-   :channel-list []
-
-   :send-fns []
-   :recieve-fns []
-
-   :tee-fns []})
+   :channel-list []})
 
 
 (def ^:dynamic *SYSTEM* "The system state" (atom nil))
@@ -34,7 +29,7 @@
 
      (plugin/add-to-channel-list (get-system) (plugin/generate-kernel-channel))
 
-     (plugin/generate-kernel-recieve (get-system) khandler)
+     (plugin/generate-kernel-receive (get-system) khandler)
 
      (get-system)))
 
