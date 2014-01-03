@@ -15,16 +15,16 @@
 (defn send-message-raw [system-atom idlist message]
 
 
-  ;;(println ">> send-message-raw CALLED > idlist [" idlist "] > message [" message "]")
+  #_(println ">> send-message-raw CALLED > idlist [" idlist "] > message [" message "]")
 
   (let [all-send-ids (map :id (:send-fns @system-atom))
 
         filtered-sends (filter #(some #{(:id %)} idlist)
-                               (-> @system-atom :stefon/system :send-fns))]
+                               (-> @system-atom :send-fns))]
 
     (reduce (fn [rslt echf]
 
-              ;;(println ">> calling fn > " (:fn echf))
+              #_(println ">> calling fn > " (:fn echf))
               ((:fn echf) message))
             []
             filtered-sends)))
@@ -40,7 +40,7 @@
      {:pre [(map? conditions)
             (set/subset? (keys conditions) #{:include :exclude})]}
 
-     (let [all-send-ids (map :id (-> @system-atom :stefon/system :send-fns))
+     (let [all-send-ids (map :id (-> @system-atom :send-fns))
 
            ;; INCLUDE
            include (:include conditions)
@@ -77,6 +77,12 @@
         ;; FILTER known message(s)
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
+    #_(require 'stefon.shell.kernel-crud)
+    #_(def result (stefon.shell.kernel-crud/get-domain-schema))
+    #_(send-message system-atom
+                  {:include [(:id message)]}
+                  {:from "kernel" :action "fubar" :result result})
+
     ;; DO
     (if filtered-event-keys
 
@@ -89,7 +95,7 @@
                            (println ">> execute command [" afn "] > params [" params "]")
 
                            ;; EXECUTE the mapped action
-                           (let [eval-result (eval `(~afn ~@params))]
+                           (let [eval-result (stefon.shell.kernel-crud/get-domain-schema) #_(eval `(~afn ~@params))]
 
                              (println ">> execute result [" eval-result "] / ID ["
                                       (:id message) "] / message [" message "]")
@@ -132,6 +138,7 @@
                                                         (s/required-key :result) s/Any}]
   [system-atom message]
 
+  (println "process-result-message CALLED")
   (send-message system-atom
                 {:include [(:origin message)]}
                 {:from (:id message)

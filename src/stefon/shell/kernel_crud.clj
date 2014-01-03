@@ -13,12 +13,6 @@
   (-> @system-atom :stefon/system :domain :tags))
 
 (defn get-domain-schema
-  [one two]
-  {:posts (domain/post-schema)
-   :assets (domain/asset-schema)
-   :tags (domain/tag-schema)})
-
-#_(defn get-domain-schema
   ([] (get-domain-schema nil))
   ([sistem-atom]
      {:posts (domain/post-schema)
