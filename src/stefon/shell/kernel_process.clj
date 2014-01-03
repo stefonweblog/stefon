@@ -62,22 +62,22 @@
        (send-message-raw system-atom filtered-list message))))
 
 
-(defn process-original-message
+(s/defn process-original-message
 
-  #_[system-atom
+  [system-atom
      action-keys
      action-config
      message :- {(s/required-key :id) s/String
                  (s/required-key :message) s/Any}]
 
-  [system-atom action-keys action-config message]
+  #_[system-atom action-keys action-config message]
 
   (let [eventF (:message message)
 
         ;; FILTER known message(s)
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
-    #_(require 'stefon.shell.kernel-crud)
+    (require 'stefon.shell.kernel-crud)
     #_(def result (stefon.shell.kernel-crud/get-domain-schema))
     #_(send-message system-atom
                   {:include [(:id message)]}
@@ -90,14 +90,18 @@
       (let [process-fn (fn [rslt ekey]
 
                          (let [afn (ekey action-config)
-                               params (->> eventF ekey :parameters vals (cons system-atom))]
+                               params (->> eventF ekey :parameters vals (cons {}))]
 
-                           (println ">> execute command [" afn "] > params [" params "]")
+                           #_(println ">> execute command [" afn "] > params [" params "]")
+                           (println ">> execute command [" `(~afn ~@params) "]")
 
                            ;; EXECUTE the mapped action
-                           (let [eval-result (stefon.shell.kernel-crud/get-domain-schema) #_(eval `(~afn ~@params))]
+                           (let [eval-result
+                                 #_(stefon.shell.kernel-crud/get-domain-schema)
+                                 (try (eval `(~afn ~@params))
+                                      (catch Exception e (println "Exception: " (.getMessage e))))]
 
-                             (println ">> execute result [" eval-result "] / ID ["
+                             #_(println ">> execute result [" eval-result "] / ID ["
                                       (:id message) "] / message [" message "]")
 
                              ;; SEND evaluation result back to sender
@@ -165,7 +169,7 @@
                                        (s/required-key :result) s/Any})]
 
 
-    (println ">> kernel-handler CALLED > " message)
+    #_(println ">> kernel-handler CALLED > " message)
 
     ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]
