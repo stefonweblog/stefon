@@ -81,16 +81,18 @@
       (let [process-fn (fn [rslt ekey]
 
                          (let [afn (ekey action-config)
-                               params (->> eventF ekey :parameters vals (cons {}))
-                               p2 (->> eventF ekey :parameters vals)]
+                               params (->> eventF ekey :parameters vals (cons system-atom))
+                               p2 (->> eventF ekey :parameters vals (cons {}))
+                               p3 (->> eventF ekey :parameters vals)]
 
                            (println ">> p2 params[" p2 "]")
+                           (println ">> p3 params[" p3 "]")
                            (println ">> execute command [" `(~afn ~@params) "]")
 
                            ;; EXECUTE the mapped action
                            (let [eval-result
                                  #_(stefon.shell.kernel-crud/get-domain-schema)
-                                 (try (eval `(~afn ~@params))
+                                 (try (eval `(~afn ~@p2))
                                       (catch Exception e (println "Exception: " (.getMessage e))))]
 
                              #_(println ">> execute result [" eval-result "] / ID ["
