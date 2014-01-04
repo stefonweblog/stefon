@@ -14,7 +14,7 @@
 
 (defn get-domain-schema
   ([] (get-domain-schema nil))
-  ([sistem-atom]
+  ([system-atom]
      {:posts (domain/post-schema)
       :assets (domain/asset-schema)
       :tags (domain/tag-schema)}))

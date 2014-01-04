@@ -72,7 +72,7 @@
         ;; FILTER known message(s)
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
-    (require 'stefon.shell.kernel-crud)
+    #_(require 'stefon.shell.kernel-crud)
 
     ;; DO
     (if filtered-event-keys
@@ -81,18 +81,13 @@
       (let [process-fn (fn [rslt ekey]
 
                          (let [afn (ekey action-config)
-                               params (->> eventF ekey :parameters vals (cons system-atom))
-                               p2 (->> eventF ekey :parameters vals (cons {}))
-                               p3 (->> eventF ekey :parameters vals)]
+                               params (->> eventF ekey :parameters vals (cons system-atom))]
 
-                           (println ">> p2 params[" p2 "]")
-                           (println ">> p3 params[" p3 "]")
-                           (println ">> execute command [" `(~afn ~@params) "]")
+                           #_(println ">> execute command > afn[" afn "] > params[" params "]")
 
                            ;; EXECUTE the mapped action
                            (let [eval-result
-                                 #_(stefon.shell.kernel-crud/get-domain-schema)
-                                 (try (eval `(~afn ~@p2))
+                                 (try (apply @(resolve afn) params)
                                       (catch Exception e (println "Exception: " (.getMessage e))))]
 
                              #_(println ">> execute result [" eval-result "] / ID ["
