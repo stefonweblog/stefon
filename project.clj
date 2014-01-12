@@ -8,6 +8,7 @@
                  [cljs-uuid "0.0.4"]
                  [prismatic/schema "0.1.3"]
                  [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
+                 [com.taoensso/timbre "3.0.0-RC4"]
 
                  ;; Plugins
                  #_[stefon-datomic "0.1.1-SNAPSHOT"]]

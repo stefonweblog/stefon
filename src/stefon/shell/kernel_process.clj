@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.set :as set]
             [clojure.string :as string]
+            [taoensso.timbre :as timbre]
             [schema.core :as s]
             [stefon.shell.kernel-crud :as kcrud]))
 
@@ -14,7 +15,7 @@
 
 (defn send-message-raw [system-atom idlist message]
 
-  #_(println ">> send-message-raw CALLED > idlist [" idlist "] > message [" message "]")
+  (timbre/info ">> send-message-raw CALLED > idlist [" idlist "] > message [" message "]")
   (let [all-send-ids (map :id (:send-fns @system-atom))
 
         filtered-sends (filter #(some #{(:id %)} idlist)
@@ -22,7 +23,7 @@
 
     (reduce (fn [rslt echf]
 
-              #_(println ">> calling fn > " (:fn echf))
+              (timbre/info ">> calling fn > " (:fn echf))
               ((:fn echf) message))
             []
             filtered-sends)))
@@ -72,8 +73,6 @@
         ;; FILTER known message(s)
         filtered-event-keys (keys (select-keys eventF action-keys))]
 
-    #_(require 'stefon.shell.kernel-crud)
-
     ;; DO
     (if filtered-event-keys
 
@@ -83,14 +82,14 @@
                          (let [afn (ekey action-config)
                                params (->> eventF ekey :parameters vals (cons system-atom))]
 
-                           #_(println ">> execute command > afn[" afn "] > params[" params "]")
+                           (timbre/info ">> execute command > afn[" afn "] > params[" params "]")
 
                            ;; EXECUTE the mapped action
                            (let [eval-result
                                  (try (apply @(resolve afn) params)
-                                      (catch Exception e (println "Exception: " (.getMessage e))))]
+                                      (catch Exception e (timbre/error "Exception: " (.getMessage e))))]
 
-                             #_(println ">> execute result [" eval-result "] / ID ["
+                             (timbre/info ">> execute result [" eval-result "] / ID ["
                                       (:id message) "] / message [" message "]")
 
                              ;; SEND evaluation result back to sender
@@ -130,7 +129,7 @@
                                                         (s/required-key :action) s/Keyword
                                                         (s/required-key :result) s/Any}]
 
-  (println "process-result-message CALLED")
+  (timbre/info "process-result-message CALLED")
   (send-message system-atom
                 {:include [(:origin message)]}
                 {:from (:id message)
@@ -151,7 +150,7 @@
                                        (s/required-key :action) s/Keyword
                                        (s/required-key :result) s/Any})]
 
-    #_(println ">> kernel-handler CALLED > " message)
+    (timbre/info ">> kernel-handler CALLED > " message)
 
     ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]

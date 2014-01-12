@@ -1,7 +1,8 @@
 (ns stefon.shell.kernel
   (:require [schema.core :as s]
             [stefon.shell.plugin :as plugin]
-            [stefon.shell.kernel-process :as process]))
+            [stefon.shell.kernel-process :as process]
+            [taoensso.timbre :as timbre]))
 
 (defn generate-system []
   {:domain {:posts []
@@ -25,6 +26,13 @@
                    process/kernel-handler))
   ([system-state khandler]
 
+     ;; initialize logging
+     (timbre/set-config! [:appenders :spit :enabled?] true)
+     (timbre/set-config! [:shared-appender-config :spit-filename] "logs/stefon.log")
+     (timbre/set-level! :warn)
+     (timbre/info "Starting Stefon")
+
+     ;; initialize the system
      (swap! (get-system) (fn [inp] system-state))
 
      (plugin/add-to-channel-list (get-system) (plugin/generate-kernel-channel))
@@ -34,6 +42,7 @@
      (get-system)))
 
 (defn stop-system []
+  (timbre/info "Stopping Stefon")
   (swap! *SYSTEM* (fn [inp] nil)))
 
 
@@ -66,6 +75,7 @@
     :ack))
 
 (defn load-plugin [plugin-ns]
+  (timbre/info "Loading Plugin [" plugin-ns "]")
   (->> plugin-ns
        attach-plugin-from-ns
        (attach-plugin-ack plugin-ns)))
