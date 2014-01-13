@@ -15,16 +15,13 @@
 
 (defn send-message-raw [system-atom idlist message]
 
-  (timbre/info ">> send-message-raw CALLED > idlist [" idlist "] > message [" message "]")
+  (timbre/debug ">> send-message-raw CALLED > idlist [" idlist "] > message [" message "]")
   (let [all-send-ids (map :id (:send-fns @system-atom))
 
         filtered-sends (filter #(some #{(:id %)} idlist)
                                (-> @system-atom :send-fns))]
 
-    (reduce (fn [rslt echf]
-
-              (timbre/info ">> calling fn > " (:fn echf))
-              ((:fn echf) message))
+    (reduce (fn [rslt echf] ((:fn echf) message))
             []
             filtered-sends)))
 
@@ -82,14 +79,14 @@
                          (let [afn (ekey action-config)
                                params (->> eventF ekey :parameters vals (cons system-atom))]
 
-                           (timbre/info ">> execute command > afn[" afn "] > params[" params "]")
+                           (timbre/debug ">> execute command > afn[" afn "] > params[" params "]")
 
                            ;; EXECUTE the mapped action
                            (let [eval-result
                                  (try (apply @(resolve afn) params)
                                       (catch Exception e (timbre/error "Exception: " (.getMessage e))))]
 
-                             (timbre/info ">> execute result [" eval-result "] / ID ["
+                             (timbre/debug ">> execute result [" eval-result "] / ID ["
                                       (:id message) "] / message [" message "]")
 
                              ;; SEND evaluation result back to sender
@@ -129,7 +126,7 @@
                                                         (s/required-key :action) s/Keyword
                                                         (s/required-key :result) s/Any}]
 
-  (timbre/info "process-result-message CALLED")
+  (timbre/debug "process-result-message CALLED")
   (send-message system-atom
                 {:include [(:origin message)]}
                 {:from (:id message)
@@ -150,7 +147,7 @@
                                        (s/required-key :action) s/Keyword
                                        (s/required-key :result) s/Any})]
 
-    (timbre/info ">> kernel-handler CALLED > " message)
+    (timbre/debug ">> kernel-handler CALLED > " message)
 
     ;; NOTIFY tee-fns
     (reduce (fn [rslt echF]
