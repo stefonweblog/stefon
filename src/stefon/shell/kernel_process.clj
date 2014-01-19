@@ -65,19 +65,19 @@
    message :- {(s/required-key :id) s/String
                (s/required-key :message) s/Any}]
 
-  (let [eventF (:message message)
+  (let [incoming-message (:message message)
 
         ;; FILTER known message(s)
-        filtered-event-keys (keys (select-keys eventF action-keys))]
+        filtered-event-keys (keys (select-keys incoming-message action-keys))]
 
     ;; DO
     (if filtered-event-keys
 
       ;; yes
-      (let [process-fn (fn [rslt ekey]
+      (let [process-fn (fn [rslt each-key]
 
-                         (let [afn (ekey action-config)
-                               params (->> eventF ekey :parameters vals (cons system-atom))]
+                         (let [afn (each-key action-config)
+                               params (->> incoming-message each-key :parameters vals reverse (cons system-atom))]
 
                            (timbre/debug ">> execute command > afn[" afn "] > params[" params "]")
 
@@ -92,22 +92,22 @@
                              ;; SEND evaluation result back to sender
                              (send-message system-atom
                                            {:include [(:id message)]}
-                                           {:from "kernel" :action ekey :result eval-result})
+                                           {:from "kernel" :action each-key :result eval-result})
 
                              ;; NOTIFY other plugins what has taken place;
                              ;;  replacing :stefon... with :plugin...
                              (send-message system-atom
                                            {:exclude [(:id message)]}
-                                           (if-not (= :stefon.post.find ekey)
+                                           (if-not (= :stefon.post.find each-key)
                                              {
-                                              (keyword (string/replace (name ekey) #"stefon" "plugin"))
+                                              (keyword (string/replace (name each-key) #"stefon" "plugin"))
                                               {:id (:id message)
-                                               :message {ekey {:parameters
-                                                               (merge (-> message :message ekey :parameters)
+                                               :message {each-key {:parameters
+                                                               (merge (-> message :message each-key :parameters)
                                                                       eval-result)}}}
                                               }
                                              {
-                                              (keyword (string/replace (name ekey) #"stefon" "plugin"))
+                                              (keyword (string/replace (name each-key) #"stefon" "plugin"))
                                               message
                                               })))))]
         (if (= 1 (count filtered-event-keys))
