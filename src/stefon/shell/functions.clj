@@ -2,7 +2,8 @@
 
   (:require [clojure.set :as set]
             [cljs-uuid.core :as uuid]
-            [stefon.domain :as domain]))
+            [stefon.domain :as domain]
+            [taoensso.timbre :as timbre]))
 
 
 
@@ -25,6 +26,9 @@
 
   {:pre (map? update-map)}
 
+  (timbre/debug "stefon.shell.functions/update CALLED > system-atom[" system-atom
+                "] > dkey[" dkey "] > ID[" ID "] update-map[" update-map "]")
+
   (let [indexed-entry (ffirst (filter #(= (-> % second :id) ID)
                                       (map-indexed (fn [idx itm] [idx itm]) (-> @system-atom :stefon/system :domain dkey))))]
 
@@ -32,7 +36,6 @@
            update-in
            [:stefon/system :domain dkey]
            (fn [inp]
-
              (reduce (fn [rslt ech]
                        (conj rslt
                              (if (= (:id ech) ID)
@@ -42,6 +45,7 @@
                      inp)
              ))
 
+    (timbre/trace "system-atom AFTER update [" (:stefon/system @system-atom) "]")
     @system-atom))
 
 (defn delete [system-atom dkey ID]

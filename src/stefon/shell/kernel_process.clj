@@ -58,6 +58,7 @@
        (send-message-raw system-atom filtered-list message))))
 
 
+;; TODO hanve a way to enforce parameter ordering for function parameters
 (s/defn process-original-message
   [system-atom
    action-keys
@@ -77,7 +78,7 @@
       (let [process-fn (fn [rslt each-key]
 
                          (let [afn (each-key action-config)
-                               params (->> incoming-message each-key :parameters vals reverse (cons system-atom))]
+                               params (->> incoming-message each-key :parameters vals (cons system-atom))]
 
                            (timbre/debug ">> execute command > afn[" afn "] > params[" params "]")
 
