@@ -30,7 +30,7 @@
 (defn update-post [system-atom ID update-map] (functions/update system-atom :posts ID update-map))
 (defn delete-post [system-atom ID] (functions/delete system-atom :posts ID))
 (defn find-posts [system-atom param-map] (functions/find system-atom :posts param-map))
-(defn list-posts [system-atom ] (functions/list system-atom :posts))
+(defn list-posts [system-atom] (functions/list system-atom :posts))
 
 
 ;; Assets
