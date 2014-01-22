@@ -11,11 +11,10 @@
 
 
 (defn- system-shape []
-  {:domain {:posts [], :assets [], :tags []},
-   :channel-list [],
-   :send-fns [],
-   :receive-fns [],
-   :tee-fns []})
+  {:domain {:posts []
+            :assets []
+            :tags []}
+   :channel-list []})
 
 (defn- matches-domain-shape [input-shape]
   (= input-shape (system-shape)))

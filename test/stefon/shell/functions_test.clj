@@ -17,8 +17,8 @@
       (is (not (nil? r1)))
       (is (= stefon.domain.Post (type r1)))
 
-      (is (= 1 (count (kcrud/get-posts))))
-      (is (= stefon.domain.Post (type (first (kcrud/get-posts)))))))
+      (is (= 1 (count (kcrud/get-posts system-atom))))
+      (is (= stefon.domain.Post (type (first (kcrud/get-posts system-atom)))))))
 
   (testing "Retrieve a Post"
 
@@ -28,7 +28,7 @@
             r1 (kcrud/create-post system-atom "t" "captain" "c/t" "0000" "1111" nil nil)
 
             postID (:id r1)
-            r2 (kcrud/retrieve-post postID)]
+            r2 (kcrud/retrieve-post system-atom postID)]
 
         (is (not (nil? r2)))
         (is (= stefon.domain.Post (type r2)))
@@ -42,8 +42,8 @@
             r1 (kcrud/create-post system-atom "t1" "fubar" "c/t" "0000" "1111" nil nil)
             postID (:id r1)
 
-            r2 (kcrud/update-post postID {:content "fubar-two"})
-            r3 (kcrud/retrieve-post postID)]
+            r2 (kcrud/update-post system-atom postID {:content "fubar-two"})
+            r3 (kcrud/retrieve-post system-atom postID)]
 
         (is (= "fubar-two" (:content r3)))))
 
@@ -56,15 +56,15 @@
             r1 (kcrud/create-post system-atom "t" "thing" "c/t" "0000" "1111" nil nil)
 
             postID (:id r1)
-            r2 (kcrud/retrieve-post postID)]
+            r2 (kcrud/retrieve-post system-atom postID)]
 
         (is (not (nil? r2)))
         (is (= stefon.domain.Post (type r2)))
         (is (= "thing" (:content r2)))
 
         ;; deleting and checking
-        (let [r2 (kcrud/delete-post postID)]
-          (is (nil? (kcrud/retrieve-post postID))))))
+        (let [r2 (kcrud/delete-post system-atom postID)]
+          (is (nil? (kcrud/retrieve-post system-atom postID))))))
 
   (testing "Find Posts"
 
@@ -74,10 +74,10 @@
             r1 (kcrud/create-post system-atom "fubar one" "c1" "c/t" "0000" "1111" nil nil)
             r2 (kcrud/create-post system-atom "fubar two" "c2" "c/t" "0000" "1111" nil nil)
 
-            r3 (kcrud/find-posts {:title "fubar one"}) ;; This SHOULD work
+            r3 (kcrud/find-posts system-atom {:title "fubar one"}) ;; This SHOULD work
 
-            r4 (kcrud/find-posts {:content "Zzz"}) ;; this should NOT work
-            r5 (kcrud/find-posts {:content "Zzz" :title "fubar one"})]
+            r4 (kcrud/find-posts system-atom {:content "Zzz"}) ;; this should NOT work
+            r5 (kcrud/find-posts system-atom {:content "Zzz" :title "fubar one"})]
 
         (is (not (nil? r3)))
         (is (nil? r4))
@@ -95,7 +95,7 @@
             r1 (kcrud/create-post system-atom "fubar one" "c1" "c/t" "0000" "1111" nil nil)
             r2 (kcrud/create-post system-atom "fubar two" "c2" "c/t" "0000" "1111" nil nil)
 
-            r3 (kcrud/list-posts)]
+            r3 (kcrud/list-posts system-atom)]
 
         ;; ensuring not nil, and a proper count
         (is (not (nil? r3)))
