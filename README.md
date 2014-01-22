@@ -28,8 +28,10 @@ See the [Introduction Page](doc/intro.md) for more detailed usage information.
  * Shell; wrapper where you can run crud commands at a terminal
 
 ## Plug-in System
-   * communication between plug-ins
-   * way to declare 'stefon' service
+
+The architecture consists of a small kernel with a plugin system wrapped around it. The kernel and plugin mechanism has stabilized over the last few weeks. As a goal, I want the plugin architecture to have the following features.
+
+   * way for plugins to communicate between each other
    * way to list possible actions (namespace qualify action names)
    * way to publish actions
    * way to listen for feedback from a plug-in

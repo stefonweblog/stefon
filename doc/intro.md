@@ -1,9 +1,9 @@
-## Introduction 
+## Introduction
 
 Stefon ***i)*** can be used as a stand alone product. Or ***ii)*** it can be embedded in your Clojure (or JVM) web architecture. The most basic use is from the repl, saving posts, with tags and assets. From there, you can add plugins for Database and Web Interface functions.
 
 
-### Install / Run 
+### Install / Run
 Execute `git clone git@github.com:twashing/stefon.git`. Then go to that directory, run the repl, and start using the functions in ***'stefon.shell***
 
 
@@ -31,28 +31,33 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
   * `(list :tag)`
 
 
-### Plugin Inclusion 
-1. Write a ***plugin.clj*** file under your root namespace 
-2. Give it a plugin function like this. Here's [an example](https://github.com/stefonweblog/stefon-datomic/blob/master/src/stefon_datomic/plugin.clj#l249)
+### Plugin Inclusion
+1. Write ***plugin.clj*** file under your root namespace
+2. Give it `plugin` and `plugin-ack` functions like this. Here's [an example](https://github.com/stefonweblog/stefon/blob/master/plugins/heartbeat/plugin.clj)
 
   ```clojure
   (defn plugin
-    ([function-map])
-    ([function-map env]))
+    "Step 1: Simply send back this plugin's handler function"
+    []
+    receivefn)
+
+  (defn plugin-ack
+    "Step 2: We're going to expect an acknowledgement with the following keys: '(:id :sendfn :receivefn :channel)"
+    [result-map])
   ```
 
-3. When Stefon starts up, the function-map passed to your function will have these functions for your use 
+3. When Stefon starts up, the `plugin-ack` function will give you a result-map with the below fields. The :channel is a core.async channel that the kernel uses to send messages to your plugin:
   ```clojure
-  { :system-started? shell/system-started? :start-system shell/start-system :attach-plugin shell/attach-plugin }
+  { :id :channel :sendfn :receivefn }
   ```
 
 
 ### Plugin Attaching
-... 
+...
 
 
 ### Plugin Interface
-After attaching, you will receive a map of functions like below. Expect to send and receive message in the shape described here. 
+After attaching, you will receive a map of functions like below. Expect to send and receive message in the shape described here.
   ```clojure
   { :id your-channel-id :channel ch :sendfn sfn :recievefn rfn }
   ```
@@ -82,5 +87,3 @@ This just provides first pass examples of calling CRUD from a plugin
            :message {:stefon.tag.create
                      {:parameters {:name name}}}}))))
   ```
-
-
