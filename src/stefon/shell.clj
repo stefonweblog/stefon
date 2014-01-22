@@ -19,6 +19,9 @@
 (defn stop-system []
   (kernel/stop-system))
 
+(defn get-system []
+  @(kernel/get-system))
+
 (defn attach-plugin [handlerfn]
   (kernel/attach-plugin (kernel/get-system) handlerfn))
 

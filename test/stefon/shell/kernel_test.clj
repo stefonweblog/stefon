@@ -14,7 +14,7 @@
   {:domain {:posts [], :assets [], :tags []},
    :channel-list [],
    :send-fns [],
-   :recieve-fns [],
+   :receive-fns [],
    :tee-fns []})
 
 (defn- matches-domain-shape [input-shape]
@@ -89,12 +89,12 @@
         (is (= "kernel-channel" (:id result)))))
 
 
-  (testing "on kernel bootstrap, SHOULD have 1 kernel-recieve function"
+  (testing "on kernel bootstrap, SHOULD have 1 kernel-receive function"
 
       (let [xx (kernel/start-system) ]
 
-        (is (not (empty? (-> @(kernel/get-system) :stefon/system :recieve-fns))))
-        (is (fn? (-> @(kernel/get-system) :stefon/system :recieve-fns first :fn)))
+        (is (not (empty? (-> @(kernel/get-system) :stefon/system :receive-fns))))
+        (is (fn? (-> @(kernel/get-system) :stefon/system :receive-fns first :fn)))
 
         ;; sending on the kernel channel should spark the kernel retrieve
         ;; ...
@@ -114,14 +114,14 @@
       ;; ...
       ))
 
-  (testing "on attaching a plugin, plugin SHOULD have 1 new recieve fn on the new-channel"
+  (testing "on attaching a plugin, plugin SHOULD have 1 new receive fn on the new-channel"
 
       (let [xx (kernel/start-system)
 
             handlerfn (fn [system-atom msg] )
             result (shell/attach-plugin handlerfn)]
 
-        (is (fn? (:recievefn result)))
+        (is (fn? (:receivefn result)))
 
         ;; sending on new channel, should spark plugin's rettrieve
         ;; ...
@@ -437,13 +437,13 @@
           plugin-result (kernel/attach-plugin kprocess/kernel-handler)]
 
       (is (map? plugin-result))
-      (is (= '(:recievefn :sendfn :id :channel) (keys plugin-result)))))
+      (is (= '(:receivefn :sendfn :id :channel) (keys plugin-result)))))
 
   (testing "We can invoke plugin's (plugin) function"
 
     (let [plugin-result (kernel/attach-plugin-from-ns 'heartbeat.plugin)]
       (is (map? plugin-result))
-      (is (= '(:recievefn :sendfn :id :channel) (keys plugin-result)))))
+      (is (= '(:receivefn :sendfn :id :channel) (keys plugin-result)))))
 
   (testing "Handshake 2: We can GET the Plugin's ack function"
     (let [ack-fn (kernel/get-ack-fn 'heartbeat.plugin)]

@@ -10,9 +10,9 @@
 
   (testing "Create a Post"
 
-    (let [xx (shell/stop-system)
-          xx (shell/start-system)
-          r1 (kcrud/create-post "t" "c" "c/t" "0000" "1111" nil nil)]
+    (let [x (shell/stop-system)
+          system-atom (shell/start-system)
+          r1 (kcrud/create-post system-atom "t" "c" "c/t" "0000" "1111" nil nil)]
 
       (is (not (nil? r1)))
       (is (= stefon.domain.Post (type r1)))
@@ -22,7 +22,10 @@
 
   (testing "Retrieve a Post"
 
-      (let [r1 (kcrud/create-post "t" "captain" "c/t" "0000" "1111" nil nil)
+      (let [x (shell/stop-system)
+            system-atom (shell/start-system)
+
+            r1 (kcrud/create-post system-atom "t" "captain" "c/t" "0000" "1111" nil nil)
 
             postID (:id r1)
             r2 (kcrud/retrieve-post postID)]
@@ -33,7 +36,10 @@
 
   (testing "Update a Post"
 
-      (let [r1 (kcrud/create-post "t1" "fubar" "c/t" "0000" "1111" nil nil)
+      (let [x (shell/stop-system)
+            system-atom (shell/start-system)
+
+            r1 (kcrud/create-post system-atom "t1" "fubar" "c/t" "0000" "1111" nil nil)
             postID (:id r1)
 
             r2 (kcrud/update-post postID {:content "fubar-two"})
@@ -44,7 +50,10 @@
   (testing "Delete a Post"
 
       ;; inserting and checking
-      (let [r1 (kcrud/create-post "t" "thing" "c/t" "0000" "1111" nil nil)
+      (let [x (shell/stop-system)
+            system-atom (shell/start-system)
+
+            r1 (kcrud/create-post system-atom "t" "thing" "c/t" "0000" "1111" nil nil)
 
             postID (:id r1)
             r2 (kcrud/retrieve-post postID)]
@@ -59,8 +68,11 @@
 
   (testing "Find Posts"
 
-      (let [r1 (kcrud/create-post "fubar one" "c1" "c/t" "0000" "1111" nil nil)
-            r2 (kcrud/create-post "fubar two" "c2" "c/t" "0000" "1111" nil nil)
+      (let [x (shell/stop-system)
+            system-atom (shell/start-system)
+
+            r1 (kcrud/create-post system-atom "fubar one" "c1" "c/t" "0000" "1111" nil nil)
+            r2 (kcrud/create-post system-atom "fubar two" "c2" "c/t" "0000" "1111" nil nil)
 
             r3 (kcrud/find-posts {:title "fubar one"}) ;; This SHOULD work
 
@@ -77,11 +89,11 @@
 
   (testing "List all Posts"
 
-      (let [xx (shell/stop-system)
-            xx (shell/start-system)
+      (let [x (shell/stop-system)
+            system-atom (shell/start-system)
 
-            r1 (kcrud/create-post "fubar one" "c1" "c/t" "0000" "1111" nil nil)
-            r2 (kcrud/create-post "fubar two" "c2" "c/t" "0000" "1111" nil nil)
+            r1 (kcrud/create-post system-atom "fubar one" "c1" "c/t" "0000" "1111" nil nil)
+            r2 (kcrud/create-post system-atom "fubar two" "c2" "c/t" "0000" "1111" nil nil)
 
             r3 (kcrud/list-posts)]
 

@@ -47,13 +47,13 @@
         (is (fn? sendfn))
         (is (= {:id "asdf" :message {:fu :bar}} rvalue))))
 
-  (testing "Should be able to generate a recieve function"
+  (testing "Should be able to generate a receive function"
 
       (let [new-channel (chan)
-            recievefn (plugin/generate-recieve-fn new-channel)
+            receivefn (plugin/generate-receive-fn new-channel)
             system-atom (atom {:stefon/system (kernel/generate-system)})
             result (promise)
-            xx (recievefn system-atom
+            xx (receivefn system-atom
                           (fn [system-atom msg] (deliver result msg)))
             xx (>!! new-channel {:fu :bar})]
 

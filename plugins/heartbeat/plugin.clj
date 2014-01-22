@@ -1,6 +1,5 @@
 (ns heartbeat.plugin)
 
-
 (defn receivefn [msg] (println "hearbeat received from kernel: " msg))
 (defn plugin
   "Step 1: Simply send back this plugin's handler function"
