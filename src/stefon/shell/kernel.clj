@@ -7,8 +7,7 @@
 (defn generate-system []
   {:domain {:posts []
             :assets []
-            :tags []}
-   :channel-list []})
+            :tags []}})
 
 
 (def ^:dynamic *SYSTEM* "The system state" (atom nil))

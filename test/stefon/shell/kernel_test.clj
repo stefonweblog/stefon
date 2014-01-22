@@ -1,7 +1,8 @@
 (ns stefon.shell.kernel-test
   (:use clojure.test
         midje.sweet)
-  (:require [clojure.core.async :as async :refer :all]
+  (:require [clojure.pprint :refer :all]
+            [clojure.core.async :as async :refer :all]
             [stefon.core :as core]
             [stefon.shell :as shell]
             [stefon.shell.kernel :as kernel]
@@ -13,8 +14,7 @@
 (defn- system-shape []
   {:domain {:posts []
             :assets []
-            :tags []}
-   :channel-list []})
+            :tags []}})
 
 (defn- matches-domain-shape [input-shape]
   (= input-shape (system-shape)))
@@ -48,8 +48,8 @@
 
       (let [xx (kernel/start-system)]
 
-        (is (not (nil? (-> @(kernel/get-system) :stefon/system :channel-list))))
-        (is (vector? (-> @(kernel/get-system) :stefon/system :channel-list)))))
+        (is (not (nil? (-> @(kernel/get-system) :channel-list))))
+        (is (vector? (-> @(kernel/get-system) :channel-list)))))
 
 
   (testing "Should be able to add channels to a list"
@@ -73,11 +73,11 @@
         (is (= RuntimeException (type add-result)))
         (is (= RuntimeException (type add-result-2)))
 
-        (is (not (empty? (-> add-result-3 :stefon/system :channel-list))))
-        (is (vector? (-> add-result-3 :stefon/system :channel-list)))
+        (is (not (empty? (-> add-result-3 :channel-list))))
+        (is (vector? (-> add-result-3 :channel-list)))
 
-        (is (not (empty? (-> @(kernel/get-system) :stefon/system :channel-list))))
-        (is (map? (first (-> @(kernel/get-system) :stefon/system :channel-list))))))
+        (is (not (empty? (-> @(kernel/get-system) :channel-list))))
+        (is (map? (first (-> @(kernel/get-system) :channel-list))))))
 
   (testing "on kernel bootstrap, SHOULD have kernel channel"
 
