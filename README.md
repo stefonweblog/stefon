@@ -6,6 +6,11 @@ Stefon is a composable blog engine written in Clojure. This project will *try* t
 
 See the [Introduction Page](doc/intro.md) for more detailed usage information.
 
+## Install / Run
+ * See the [Install / Run](doc/intro.md#install--run) section on the Introduction Page
+
+## Plugin Inclusion
+ * See the [](doc/intro.md#plugin-inclusion) section on the Introdcution Page
 
 ## Functionality
 
