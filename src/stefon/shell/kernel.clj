@@ -13,9 +13,10 @@
 (def ^:dynamic *SYSTEM* "The system state" (atom nil))
 (defn get-system [] *SYSTEM*)
 
-
-(defn get-channel [ID]
-  (plugin/get-channel (get-system) ID))
+(defn get-channel
+  ([ID] (get-channel (get-system) ID))
+  ([system-atom ID]
+     (plugin/get-channel system-atom ID)))
 
 (defn start-system
   "Start the system and state"

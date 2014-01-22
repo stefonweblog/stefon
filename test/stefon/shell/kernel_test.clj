@@ -48,8 +48,7 @@
 
       (let [xx (kernel/start-system)]
 
-        (is (not (nil? (-> @(kernel/get-system) :channel-list))))
-        (is (vector? (-> @(kernel/get-system) :channel-list)))))
+        (is (not (nil? (-> @(kernel/get-system) :channel-list)))) ))
 
 
   (testing "Should be able to add channels to a list"
@@ -74,7 +73,6 @@
         (is (= RuntimeException (type add-result-2)))
 
         (is (not (empty? (-> add-result-3 :channel-list))))
-        (is (vector? (-> add-result-3 :channel-list)))
 
         (is (not (empty? (-> @(kernel/get-system) :channel-list))))
         (is (map? (first (-> @(kernel/get-system) :channel-list))))))
@@ -92,8 +90,8 @@
 
       (let [xx (kernel/start-system) ]
 
-        (is (not (empty? (-> @(kernel/get-system) :stefon/system :receive-fns))))
-        (is (fn? (-> @(kernel/get-system) :stefon/system :receive-fns first :fn)))
+        (is (not (empty? (-> @(kernel/get-system) :receive-fns))))
+        (is (fn? (-> @(kernel/get-system) :receive-fns first :fn)))
 
         ;; sending on the kernel channel should spark the kernel retrieve
         ;; ...
@@ -134,8 +132,8 @@
             handlerfn (fn [system-atom msg] )
             result (shell/attach-plugin handlerfn)]
 
-        (is (not (empty? (-> @(kernel/get-system) :stefon/system :send-fns))))
-        (is (fn? (:fn (first (-> @(kernel/get-system) :stefon/system :send-fns)))))
+        (is (not (empty? (-> @(kernel/get-system) :send-fns))))
+        (is (fn? (:fn (first (-> @(kernel/get-system) :send-fns)))))
 
         ;; using new send fn, should spark plugin's retrieve
         ;; ...
