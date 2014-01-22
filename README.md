@@ -10,7 +10,7 @@ See the [Introduction Page](doc/intro.md) for more detailed usage information.
  * See the [Install / Run](doc/intro.md#install--run) section on the Introduction Page
 
 ## Plugin Inclusion
- * See the [](doc/intro.md#plugin-inclusion) section on the Introdcution Page
+ * See the [Plugin Inclusion](doc/intro.md#plugin-inclusion) section on the Introdcution Page
 
 ## Functionality
 
