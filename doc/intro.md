@@ -46,20 +46,9 @@ Execute `git clone git@github.com:twashing/stefon.git`. Then go to that director
     [result-map])
   ```
 
-3. When Stefon starts up, the `plugin-ack` function will give you a result-map with the below fields. The :channel is a core.async channel that the kernel uses to send messages to your plugin:
+3. When Stefon starts up, the `plugin-ack` function will give you a result-map with the below fields. The :channel is a core.async channel that the kernel uses to send messages to your plugin. :sendfn and :receivefn will be how your plugin communicates to the kernel.
   ```clojure
   { :id :channel :sendfn :receivefn }
-  ```
-
-
-### Plugin Attaching
-...
-
-
-### Plugin Interface
-After attaching, you will receive a map of functions like below. Expect to send and receive message in the shape described here.
-  ```clojure
-  { :id your-channel-id :channel ch :sendfn sfn :recievefn rfn }
   ```
 
 
