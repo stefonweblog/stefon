@@ -22,6 +22,8 @@
 (defn get-system []
   @(kernel/get-system))
 
+
+
 (defn attach-plugin [handlerfn]
   (kernel/attach-plugin (kernel/get-system) handlerfn))
 
@@ -30,6 +32,13 @@
 
 (defn load-plugin [plugin-ns]
   (kernel/load-plugin plugin-ns))
+
+(defn load-all-plugins []
+  (reduce (fn [rslt each-plugin-symbol]
+            (require each-plugin-symbol)
+            (load-plugin each-plugin-symbol))
+          []
+          (:plugins (process/load-config))))
 
 
 ;; CRUD Wrappers around kernel functions

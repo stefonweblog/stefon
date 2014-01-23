@@ -1,6 +1,5 @@
 {
- :action-mappings {
-                   :stefon.post.create 'stefon.shell.kernel-crud/create-post
+ :action-mappings {:stefon.post.create 'stefon.shell.kernel-crud/create-post
                    :stefon.post.create-relationship 'stefon.shell.kernel-crud/create-relationship
                    :stefon.post.retrieve 'stefon.shell.kernel-crud/retrieve-post
                    :stefon.post.update 'stefon.shell.kernel-crud/update-post
@@ -24,9 +23,7 @@
 
                    :stefon.domain 'stefon.shell.kernel-crud/get-domain
                    :stefon.domain.schema 'stefon.shell.kernel-crud/get-domain-schema
-                   :stefon.domain.channel 'stefon.shell.kernel/get-channel
-                   }
+                   :stefon.domain.channel 'stefon.shell.kernel/get-channel }
 
- :plugins [;;'stefon-datomic
-          ]
+ :plugins ['stefon-compojure.plugin]
  }
