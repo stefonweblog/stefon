@@ -5,6 +5,7 @@
             [stefon.shell.plugin :as plugin]))
 
 
+
 (defn create-system []
   (kernel/generate-system))
 
@@ -39,6 +40,11 @@
             (load-plugin each-plugin-symbol))
           []
           (:plugins (process/load-config))))
+
+(defn boot []
+  (start-system)
+  (load-all-plugins))
+
 
 
 ;; CRUD Wrappers around kernel functions
