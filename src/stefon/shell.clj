@@ -34,14 +34,18 @@
 (defn load-plugin [plugin-ns]
   (kernel/load-plugin plugin-ns))
 
-(defn load-all-plugins []
+(defn load-all-plugins
+  "Load all plugins that have been listed in :plugins value in 'config.edn'"
+  []
   (reduce (fn [rslt each-plugin-symbol]
             (require each-plugin-symbol)
             (load-plugin each-plugin-symbol))
           []
           (:plugins (process/load-config))))
 
-(defn boot []
+(defn boot
+  "Starts the system and loads configured plugins"
+  []
   (start-system)
   (load-all-plugins))
 

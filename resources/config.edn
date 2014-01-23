@@ -25,5 +25,8 @@
                    :stefon.domain.schema 'stefon.shell.kernel-crud/get-domain-schema
                    :stefon.domain.channel 'stefon.shell.kernel/get-channel }
 
- :plugins ['stefon-compojure.plugin]
+ ;; Include your plugin namespaces here
+ :plugins [;;'stefon-datomic.plugin
+           ;;'stefon-compojure.plugin
+           ]
  }
