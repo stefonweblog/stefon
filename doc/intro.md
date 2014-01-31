@@ -15,6 +15,10 @@ lein repl
 => (shell/start-system)
 => (shell/create :post "My Title" "My Content" "type/txt" "01/30/2014" "01/30/2014" [] [])
 => (shell/list :post)
+
+;; if you want more debugging
+=> (require '[taoensso.timbre :as timbre])
+=> (timbre/set-level! :trace)
 ```
 
 

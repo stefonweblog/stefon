@@ -95,6 +95,7 @@
                                            {:include [(:id message)]}
                                            {:from "kernel" :action each-key :result eval-result})
 
+
                              ;; NOTIFY other plugins what has taken place;
                              ;;  replacing :stefon... with :plugin...
                              (send-message system-atom
@@ -104,13 +105,21 @@
                                               (keyword (string/replace (name each-key) #"stefon" "plugin"))
                                               {:id (:id message)
                                                :message {each-key {:parameters
-                                                               (merge (-> message :message each-key :parameters)
-                                                                      eval-result)}}}
+
+                                                                   (if (not (nil? (-> message :message each-key :parameters)))
+                                                                     (merge (-> message
+                                                                                :message
+                                                                                each-key
+                                                                                :parameters)
+                                                                            eval-result)
+                                                                     nil)}}
+                                               :result eval-result}
                                               }
                                              {
                                               (keyword (string/replace (name each-key) #"stefon" "plugin"))
                                               message
-                                              })))))]
+                                              }))
+                             eval-result)))]
         (if (= 1 (count filtered-event-keys))
           (process-fn [] (first filtered-event-keys))
           (reduce process-fn [] filtered-event-keys)))
