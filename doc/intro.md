@@ -7,6 +7,17 @@ Stefon ***i)*** can be used as a stand alone product. Or ***ii)*** it can be emb
 Execute `git clone git@github.com:twashing/stefon.git`. Then go to that directory, run the repl, and start using the functions in ***'stefon.shell***
 
 
+```
+git clone git@github.com:twashing/stefon.git
+cd stefon
+lein repl
+=> (require '[stefon.shell :as shell])
+=> (shell/start-system)
+=> (shell/create :post "My Title" "My Content" "type/txt" "01/30/2014" "01/30/2014" [] [])
+=> (shell/list :post)
+```
+
+
 ### Shell CRUD functions
 1. Posts
   * `(create :post title content content-type created-date modified-date assets tags)`
