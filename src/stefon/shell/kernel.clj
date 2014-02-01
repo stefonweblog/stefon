@@ -27,9 +27,9 @@
   ([system-state khandler]
 
      ;; initialize logging
-     (timbre/set-config! [:appenders :spit :enabled?] true)
+     #_(timbre/set-config! [:appenders :standard-out :enabled?] true)
+     #_(timbre/set-config! [:appenders :spit :enabled?] true)
      (timbre/set-config! [:shared-appender-config :spit-filename] "logs/stefon.log")
-     (timbre/set-level! :warn)
      (timbre/info "Starting Stefon")
 
      ;; initialize the system

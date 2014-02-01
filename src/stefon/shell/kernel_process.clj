@@ -95,6 +95,8 @@
                                            {:include [(:id message)]}
                                            {:from "kernel" :action each-key :result eval-result})
 
+                             (timbre/info ">> notify plugins > 1[" (-> message :message) "] > 2[" (-> message :message each-key) "] > 3[" (-> message :message each-key :parameters) "]")
+
                              ;; NOTIFY other plugins what has taken place;
                              ;;  replacing :stefon... with :plugin...
                              (send-message system-atom
@@ -104,8 +106,8 @@
                                               (keyword (string/replace (name each-key) #"stefon" "plugin"))
                                               {:id (:id message)
                                                :message {each-key {:parameters
-                                                               (merge (-> message :message each-key :parameters)
-                                                                      eval-result)}}}
+                                                                   (merge (-> message :message each-key :parameters)
+                                                                          eval-result)}}}
                                               }
                                              {
                                               (keyword (string/replace (name each-key) #"stefon" "plugin"))
