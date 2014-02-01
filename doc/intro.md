@@ -21,7 +21,7 @@ lein repl
 ({:tags [], :assets [], :modified-date "01/30/2014", :created-date "01/30/2014", :content-type "type/txt", :content "It was a dark and stormy night.", :id "5c4f7562-9e9d-47e7-aec2-4583b217787b", :title "Something Else"})
 => 
 => (shell/list :post)
-[#stefon.domain.Post{:id "e4220718-5c90-45e9-adc7-3652c142b636", :title "My Title", :content "My Content", :content-type "type/txt", :created-date "01/30/2014", :modified-date "01/30/2014", :assets [], :tags []} #stefon.domain.Post{:id "5c4f7562-9e9d-47e7-aec2-4583b217787b", :title "Something Else", :content "It was a dark and stormy night.", :content-type "type/txt", :created-date "01/30/2014", :modified-date "01/30/2014", :assets [], :tags []}]
+[#stefon.domain.Post{:id "6bd677ba-8a4f-4bc8-a491-84f3d328bb96", :title "My Title", :content "My Content", :content-type "type/txt", :created-date "01/30/2014", :modified-date "01/30/2014", :assets [], :tags []} #stefon.domain.Post{:id "5a60b772-d4cb-4eb3-a501-cf3cdeb38480", :title "Bits and Bobs", :content "The most basic use of Stefon is from the repl, saving posts, with tags and assets.", :content-type "type/txt", :created-date "01/30/2014", :modified-date "01/30/2014", :assets [], :tags []} #stefon.domain.Post{:id "2ef3908f-e5f6-4bb1-88b2-db9ac6eaba1d", :title "Something Else", :content "It was a dark and stormy night.", :content-type "type/txt", :created-date "01/30/2014", :modified-date "01/30/2014", :assets [], :tags []}]
 =>
 
 ;; if you want more debugging
