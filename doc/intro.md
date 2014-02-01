@@ -14,7 +14,15 @@ lein repl
 => (require '[stefon.shell :as shell])
 => (shell/start-system)
 => (shell/create :post "My Title" "My Content" "type/txt" "01/30/2014" "01/30/2014" [] [])
+=> (shell/create :post "Bits and Bobs" "The most basic use of Stefon is from the repl, saving posts, with tags and assets." "type/txt" "01/30/2014" "01/30/2014" [] [])
+=> (shell/create :post "Something Else" "It was a dark and stormy night." "type/txt" "01/30/2014" "01/30/2014" [] [])
+=>
+=> (shell/find :post {:title "Something Else"})
+({:tags [], :assets [], :modified-date "01/30/2014", :created-date "01/30/2014", :content-type "type/txt", :content "It was a dark and stormy night.", :id "5c4f7562-9e9d-47e7-aec2-4583b217787b", :title "Something Else"})
+=> 
 => (shell/list :post)
+[#stefon.domain.Post{:id "e4220718-5c90-45e9-adc7-3652c142b636", :title "My Title", :content "My Content", :content-type "type/txt", :created-date "01/30/2014", :modified-date "01/30/2014", :assets [], :tags []} #stefon.domain.Post{:id "5c4f7562-9e9d-47e7-aec2-4583b217787b", :title "Something Else", :content "It was a dark and stormy night.", :content-type "type/txt", :created-date "01/30/2014", :modified-date "01/30/2014", :assets [], :tags []}]
+=>
 
 ;; if you want more debugging
 => (require '[taoensso.timbre :as timbre])
