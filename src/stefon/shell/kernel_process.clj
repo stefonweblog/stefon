@@ -52,8 +52,7 @@
                                     (if (= :all exclude)
                                       []
                                       (set/difference (into #{} all-send-ids)
-                                                      (into #{} exclude)))))
-           ]
+                                                      (into #{} exclude)))))]
 
        (send-message-raw system-atom filtered-list message))))
 
