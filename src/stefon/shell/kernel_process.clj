@@ -93,7 +93,10 @@
                              ;; SEND evaluation result back to sender
                              (send-message system-atom
                                            {:include [(:id message)]}
-                                           {:from "kernel" :action each-key :result eval-result})
+                                           {:from "kernel"
+                                            :action each-key
+                                            :result eval-result
+                                            :message-id (-> message :message :message-id)})
 
                              (timbre/info ">> notify plugins > 1[" (-> message :message) "] > 2[" (-> message :message each-key) "] > 3[" (-> message :message each-key :parameters) "]")
 
@@ -105,9 +108,11 @@
                                              {
                                               (keyword (string/replace (name each-key) #"stefon" "plugin"))
                                               {:id (:id message)
-                                               :message {each-key {:parameters
-                                                                   (merge (-> message :message each-key :parameters)
-                                                                          eval-result)}}}
+                                               :message {each-key
+                                                         {:parameters
+                                                          (merge (-> message :message each-key :parameters)
+                                                                 eval-result)}
+                                                         :message-id (-> message :message :message-id)}}
                                               }
                                              {
                                               (keyword (string/replace (name each-key) #"stefon" "plugin"))
